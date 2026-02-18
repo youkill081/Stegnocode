@@ -128,6 +128,7 @@ Les prochains bits seront utiliser par le header. Le header est le suivant :
 ```c++
 struct header {
   uint32_t data_size; // contains number of bits of data stored in image
+  uint8_t data_type;  // contains type of data stored in image
 }
 ```
 
