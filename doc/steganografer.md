@@ -142,5 +142,5 @@ Pour vérifier son intégriter nous devons utiliser le CRC32 précédent
 ### Étape 3 : Lecture de la donnée
 
 La lecture de la donnée est maintenant très simple nous devons seulement utiliser la fonction décrite durant
-l'Inter-étape sur le nombre de bit définit dans le header. Les birs pourrons ensuite être utiliser de la manière
-souhaitez!
+l'Inter-étape sur le nombre de bit définit dans le header.   
+Une dois récupéré, "data_crc32" devras être utiliser sur l'ensemble des bit de récupérer pour vérifier leurs intégrités
