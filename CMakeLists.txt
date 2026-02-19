@@ -33,6 +33,8 @@ set(SOURCES
         src/handlers/StringHandler.cpp
         src/handlers/StringHandler.h
         src/handlers/handlers.h
+        src/handlers/FileHandler.cpp
+        src/handlers/FileHandler.h
 )
 
 add_executable(${APP_NAME} ${SOURCES})

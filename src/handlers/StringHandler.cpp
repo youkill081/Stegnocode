@@ -14,7 +14,7 @@ std::string StringHandler::get_name()
 ByteBuffer StringHandler::encode(const Parameters& parameters)
 {
     if (parameters.get_parameters().empty())
-        throw HandlerParameterError("Missing string to encode !");
+        throw HandlerError("Missing string to encode !");
 
     ByteBuffer buffer;
     for (auto & c : parameters.get_parameters()[0])

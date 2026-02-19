@@ -12,7 +12,8 @@ constexpr uint8_t PROTOCOL_VERSION = 1;
 
 enum DataType
 {
-    STRING
+    STRING,
+    FILE_T
 };
 
 inline std::string data_type_to_string(DataType type)
@@ -20,6 +21,7 @@ inline std::string data_type_to_string(DataType type)
     switch (type)
     {
         case STRING: return "STRING";
+        case FILE_T: return "FILE";
         default: return "UNKNOWN";
     }
 }

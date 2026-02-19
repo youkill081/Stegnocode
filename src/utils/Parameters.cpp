@@ -29,6 +29,7 @@ Mode Parameters::parse_mode(const std::string &mode)
 DataType Parameters::parse_type(const std::string &type)
 {
     if (type == std::string("string")) return STRING;
+    if (type == std::string("file")) return FILE_T;
 
     std::cout << "Unknown type: " << type << std::endl;
     display_help();
@@ -70,5 +71,4 @@ Parameters::Parameters(int ac, char** av)
         parameters = parse_parameters(ac, av);
         output_path = parse_output_path(ac, av);
     }
-
 }

@@ -7,10 +7,10 @@
 #include "../utils/Parameters.h"
 #include "../steganographer/ByteBuffer.h"
 
-class HandlerParameterError final : public std::runtime_error
+class HandlerError final : public std::runtime_error
 {
 public:
-    explicit HandlerParameterError(const std::string& msg) : std::runtime_error(msg) {}
+    explicit HandlerError(const std::string& msg) : std::runtime_error(msg) {}
 };
 
 class IHandler
