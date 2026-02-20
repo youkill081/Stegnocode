@@ -6,12 +6,10 @@ set(APP_NAME stegnocode)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Add subdirectories
 add_subdirectory(libs/stegcommon)
 add_subdirectory(stegasm)
 add_subdirectory(test)
 
-# Bibliothèque statique contenant tout le code du steganographer
 set(LIB_SOURCES
         steganographer/images/pixel.h
         steganographer/images/pixels.h
