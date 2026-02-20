@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "../constant.h"
-#include "../../utils/Logger.h"
+#include "Logger.h"
 
 uint32_t ReadSequence::read_uint32()
 {

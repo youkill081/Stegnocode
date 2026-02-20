@@ -8,7 +8,7 @@
 #include "steganographer/handlers/IHander.h"
 #include "steganographer/images/Image.h"
 #include "steganographer/steganographer/Steganographer.h"
-#include "steganographer/utils/Logger.h"
+#include "Logger.h"
 #include "steganographer/utils/Parameters.h"
 
 int main(int ac, char** av)

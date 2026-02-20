@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCES
         src/main.cpp
+        src/instructions.h
+        src/interpreter/RunTime.h
+        src/interpreter/instructions/instruction.h
 )
 
 add_executable(stegasm ${SOURCES})

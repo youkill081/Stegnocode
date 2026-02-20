@@ -6,7 +6,7 @@
 
 #include <random>
 
-#include "../utils/Logger.h"
+#include "Logger.h"
 #include "sequences/ReadSequence.h"
 #include "sequences/WriteSequence.h"
 

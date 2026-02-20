@@ -15,8 +15,6 @@ set(LIB_SOURCES
         steganographer/images/pixels.h
         steganographer/images/Image.cpp
         steganographer/images/Image.h
-        steganographer/utils/Logger.cpp
-        steganographer/utils/Logger.h
         steganographer/steganographer/Steganographer.cpp
         steganographer/steganographer/Steganographer.h
         steganographer/steganographer/Random32.h

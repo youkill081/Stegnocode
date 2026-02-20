@@ -5,7 +5,7 @@
 #include "SequenceManager.h"
 
 #include "../images/Image.h"
-#include "../utils/Logger.h"
+#include "Logger.h"
 
 pixel &SequenceManager::get_next_pixel()
 {

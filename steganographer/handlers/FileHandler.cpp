@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "../utils/Logger.h"
+#include "Logger.h"
 
 std::string FileHandler::get_name()
 {

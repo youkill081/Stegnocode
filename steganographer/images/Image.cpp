@@ -12,7 +12,7 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
-#include "../utils/Logger.h"
+#include "Logger.h"
 
 Image::Image(const std::string& path)
 {

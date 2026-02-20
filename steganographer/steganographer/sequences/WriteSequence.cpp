@@ -5,7 +5,7 @@
 #include "WriteSequence.h"
 
 #include "../constant.h"
-#include "../../utils/Logger.h"
+#include "Logger.h"
 
 void WriteSequence::write_uint32(uint32_t value)
 {

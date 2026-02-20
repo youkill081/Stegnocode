@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(stegcommon STATIC
         ByteBuffer.cpp
         ByteBuffer.h
+        Logger.cpp
+        Logger.h
 )
 
 target_include_directories(stegcommon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
