@@ -1,4 +1,6 @@
-// Tests "CLI" : validation du parsing d'arguments via Parameters(ac,av)
+//
+// AI Generated tests for Steganographer Parameters
+//
 
 #include <gtest/gtest.h>
 
