@@ -13,38 +13,38 @@ add_subdirectory(test)
 
 # Bibliothèque statique contenant tout le code du steganographer
 set(LIB_SOURCES
-        src/images/pixel.h
-        src/images/pixels.h
-        src/images/Image.cpp
-        src/images/Image.h
-        src/utils/Logger.cpp
-        src/utils/Logger.h
-        src/steganographer/Steganographer.cpp
-        src/steganographer/Steganographer.h
-        src/steganographer/Random32.h
-        src/steganographer/SequenceManager.cpp
-        src/steganographer/SequenceManager.h
-        src/steganographer/sequences/WriteSequence.cpp
-        src/steganographer/sequences/WriteSequence.h
-        src/steganographer/constant.h
-        src/steganographer/sequences/ReadSequence.cpp
-        src/steganographer/sequences/ReadSequence.h
-        src/steganographer/header.hpp
-        src/utils/Parameters.cpp
-        src/utils/Parameters.h
-        src/handlers/IHander.h
-        src/handlers/StringHandler.cpp
-        src/handlers/StringHandler.h
-        src/handlers/handlers.h
-        src/handlers/FileHandler.cpp
-        src/handlers/FileHandler.h
+        steganographer/images/pixel.h
+        steganographer/images/pixels.h
+        steganographer/images/Image.cpp
+        steganographer/images/Image.h
+        steganographer/utils/Logger.cpp
+        steganographer/utils/Logger.h
+        steganographer/steganographer/Steganographer.cpp
+        steganographer/steganographer/Steganographer.h
+        steganographer/steganographer/Random32.h
+        steganographer/steganographer/SequenceManager.cpp
+        steganographer/steganographer/SequenceManager.h
+        steganographer/steganographer/sequences/WriteSequence.cpp
+        steganographer/steganographer/sequences/WriteSequence.h
+        steganographer/steganographer/constant.h
+        steganographer/steganographer/sequences/ReadSequence.cpp
+        steganographer/steganographer/sequences/ReadSequence.h
+        steganographer/steganographer/header.hpp
+        steganographer/utils/Parameters.cpp
+        steganographer/utils/Parameters.h
+        steganographer/handlers/IHander.h
+        steganographer/handlers/StringHandler.cpp
+        steganographer/handlers/StringHandler.h
+        steganographer/handlers/handlers.h
+        steganographer/handlers/FileHandler.cpp
+        steganographer/handlers/FileHandler.h
 )
 
 add_library(stegnocode_lib STATIC ${LIB_SOURCES})
 
 target_link_libraries(stegnocode_lib PUBLIC stegcommon)
 target_include_directories(stegnocode_lib PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/steganographer
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/stb
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/stegcommon
 )

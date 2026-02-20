@@ -4,12 +4,12 @@
 
 #include <iostream>
 
-#include "src/handlers/handlers.h"
-#include "src/handlers/IHander.h"
-#include "src/images/Image.h"
-#include "src/steganographer/Steganographer.h"
-#include "src/utils/Logger.h"
-#include "src/utils/Parameters.h"
+#include "steganographer/handlers/handlers.h"
+#include "steganographer/handlers/IHander.h"
+#include "steganographer/images/Image.h"
+#include "steganographer/steganographer/Steganographer.h"
+#include "steganographer/utils/Logger.h"
+#include "steganographer/utils/Parameters.h"
 
 int main(int ac, char** av)
 {
