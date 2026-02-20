@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(libs/stegcommon)
 add_subdirectory(stegasm)
 
-set(SOURCES
-        main.cpp
+# Bibliothèque statique contenant tout le code du steganographer
+set(LIB_SOURCES
         src/images/pixel.h
         src/images/pixels.h
         src/images/Image.cpp
@@ -39,11 +39,22 @@ set(SOURCES
         src/handlers/FileHandler.h
 )
 
-add_executable(${APP_NAME} ${SOURCES})
+add_library(stegnocode_lib STATIC ${LIB_SOURCES})
 
-target_link_libraries(${APP_NAME} PRIVATE stegcommon)
-target_include_directories(${APP_NAME} PRIVATE
+target_link_libraries(stegnocode_lib PUBLIC stegcommon)
+target_include_directories(stegnocode_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/stb
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/stegcommon
 )
+
+# Exécutable principal
+add_executable(${APP_NAME} main.cpp)
+target_link_libraries(${APP_NAME} PRIVATE stegnocode_lib)
+
+# Add tests (optional, can be disabled with -DBUILD_TESTS=OFF)
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif()
 

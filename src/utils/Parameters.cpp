@@ -65,10 +65,17 @@ Parameters::Parameters(int ac, char** av)
     mode = parse_mode(av[1]);
     image_path = parse_image_path(ac, av);
 
-    if (mode == ENCODE)
+    if (mode == DECODE)
     {
-        type = parse_type(av[2]);
-        parameters = parse_parameters(ac, av);
-        output_path = parse_output_path(ac, av);
+        image_path = parse_image_path(ac, av);
+        output_path.clear();
+        parameters.clear();
+        return;
     }
+
+    if (ac < 6) display_help();
+
+    type = parse_type(av[2]);
+    parameters = parse_parameters(ac, av);
+    output_path = parse_output_path(ac, av);
 }

@@ -35,7 +35,9 @@ int main(int ac, char** av)
         }
     }
     catch (const ParametersError &)
-    {}
+    {
+        return 1;
+    }
     catch (const std::exception &e)
     {
         Logger::log(std::string("Error -> ") + e.what());
