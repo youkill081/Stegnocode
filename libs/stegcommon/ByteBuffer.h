@@ -37,14 +37,17 @@ public:
     [[nodiscard]] uint32_t get_crc32() const; // calculate crc32 of the bytebuffer
 
     void write_uint8(uint8_t value);
+    void write_uint16(uint16_t value);
     void write_uint32(uint32_t value);
 
     uint8_t read_uint8();
+    uint8_t read_uint16();
     uint32_t read_uint32() ;
 
     void reset_cursor();
     [[nodiscard]] size_t size() const; // Return number of byte in  the buffer
     [[nodiscard]] size_t remaining_uint8() const;
+    [[nodiscard]] size_t remaining_uint16() const;
     [[nodiscard]] size_t remaining_uint32() const;
 
     [[nodiscard]] const std::vector<uint8_t>& data() const;

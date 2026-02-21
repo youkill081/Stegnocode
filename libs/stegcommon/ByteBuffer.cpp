@@ -65,6 +65,12 @@ void ByteBuffer::write_uint8(uint8_t value)
     this->buffer.push_back(value);
 }
 
+void ByteBuffer::write_uint16(uint16_t value)
+{
+    buffer.push_back((value >> 8) & 0xFF);
+    buffer.push_back(value & 0xFF);
+}
+
 void ByteBuffer::write_uint32(uint32_t value)
 {
     buffer.push_back((value >> 24) & 0xFF);
@@ -76,6 +82,13 @@ void ByteBuffer::write_uint32(uint32_t value)
 uint8_t ByteBuffer::read_uint8()
 {
     return buffer[cursor++];
+}
+
+uint8_t ByteBuffer::read_uint16()
+{
+    uint16_t v = (buffer[cursor] << 8) | buffer[cursor + 1];
+    cursor += 2;
+    return v;
 }
 
 uint32_t ByteBuffer::read_uint32()
@@ -103,6 +116,11 @@ size_t ByteBuffer::size() const
 size_t ByteBuffer::remaining_uint8() const
 {
     return buffer.size() - cursor;
+}
+
+size_t ByteBuffer::remaining_uint16() const
+{
+    return (buffer.size() - cursor) / 2;
 }
 
 size_t ByteBuffer::remaining_uint32() const
