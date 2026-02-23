@@ -20,6 +20,15 @@ void Logger::log(const std::string& message, const std::string& from)
 
 }
 
+void Logger::log_uint16_as_bit(uint16_t number)
+{
+    for (int i = 15; i >= 0; --i)
+    {
+        std::cout << ((number >> i) & 1u);
+    }
+    std::cout << '\n';
+}
+
 void Logger::log_uint32_as_bit(uint32_t number)
 {
     for (int i = 31; i >= 0; --i)
