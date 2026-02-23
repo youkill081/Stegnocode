@@ -10,18 +10,18 @@
 #include "Logger.h"
 #include "interpreter/runtime/Runtime.h"
 
-uint16_t InstructionView::get_d1(const Runtime& rt) const
+uint16_t InstructionView::get_d1(const Runtime &rt) const
 {
-    const auto val = static_cast<uint16_t>((raw_data >> 16) & 0xFFFF);
+    const auto val = static_cast<uint16_t>((raw_data >> 32) & 0xFFFF);
     if (is_d1_addr()) {
         return rt.memory.read(val);
     }
     return val;
 }
 
-uint16_t InstructionView::get_d2(const Runtime& rt) const
+uint16_t InstructionView::get_d2(const Runtime &rt) const
 {
-    const auto val = static_cast<uint16_t>((raw_data >> 48) & 0xFFFF);
+    const auto val = static_cast<uint16_t>(raw_data & 0xFFFF);
     if (is_d2_addr()) {
         return rt.memory.read(val);
     }
@@ -63,8 +63,8 @@ void instr_STORER(Runtime &runtime, InstructionView view)
 void instr_MOV(Runtime &runtime, InstructionView view)
 {
     runtime.registries.write(
-        view.r2(),
-        runtime.registries.read(view.r1())
+        view.r1(),
+        runtime.registries.read(view.r2())
     );
 }
 
@@ -199,4 +199,10 @@ void instr_FREE(Runtime &runtime, InstructionView view)
     runtime.memory.free(
         runtime.registries.read(view.r1())
     );
+}
+
+void instr_DEBUG_R(Runtime& runtime, InstructionView view)
+{
+    Logger::log("DEBUG_REGISTRIES", "instr_DEBUG_REGISTRIES");
+    runtime.registries.display();
 }

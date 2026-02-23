@@ -21,3 +21,8 @@ class RegistryError final: public InterpreterError
 {
     using InterpreterError::InterpreterError;
 };
+
+class LoaderError final: public InterpreterError
+{
+    using InterpreterError::InterpreterError;
+};

@@ -28,3 +28,12 @@ void Logger::log_uint32_as_bit(uint32_t number)
     }
     std::cout << '\n';
 }
+
+void Logger::log_uint64_as_bit(uint64_t number)
+{
+    for (int i = 63; i >= 0; --i)
+    {
+        std::cout << ((number >> i) & 1u);
+    }
+    std::cout << '\n';
+}

@@ -16,6 +16,12 @@ using ComparisonFlag = struct ComparisonFlag
     bool lower = false;
 };
 
+using LoadedInstruction = struct LoadedInstruction
+{
+    InstructionView view;
+    const InstructionDesc &desc;
+};
+
 class Runtime
 {
 public:
@@ -23,7 +29,7 @@ public:
     Registries registries;
     ComparisonFlag comparison_flag;
 
-    std::vector<uint64_t> instructions{};
+    std::vector<LoadedInstruction> instructions{};
     uint64_t instruction_pointer = 0;
     bool is_running = true;
 

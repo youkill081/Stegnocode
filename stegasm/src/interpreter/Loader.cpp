@@ -4,6 +4,8 @@
 
 #include "Loader.h"
 
+#include "exceptions.h"
+
 void Loader::init_variables(ByteBuffer& buffer, Runtime& runtime)
 {
     const uint32_t number_of_variable = buffer.read_uint32();
@@ -20,11 +22,42 @@ void Loader::init_variables(ByteBuffer& buffer, Runtime& runtime)
     }
 }
 
+const InstructionDesc &get_instruction_desc(uint8_t opcode)
+{
+    for (const auto &instruction : instructionSet)
+    {
+        if (instruction.opcode == opcode)
+            return instruction;
+    }
+    throw LoaderError("Opcode not found !");
+}
+
+void Loader::init_instructions(ByteBuffer& buffer, Runtime& runtime)
+{
+    while (buffer.remaining_uint32() != 0)
+    {
+        const uint32_t instruction_beg = buffer.read_uint32();
+
+        auto current_instruction = InstructionView(static_cast<uint64_t>(instruction_beg) << 32);
+        const auto &current_instruction_desc = get_instruction_desc(current_instruction.opcode());
+
+        if (current_instruction_desc.regCount > 2 || current_instruction_desc.dataCount > 1)
+        {
+            current_instruction.raw_data |= static_cast<uint64_t>(buffer.read_uint32());
+        }
+        runtime.instructions.push_back({
+            .view = current_instruction,
+            .desc = current_instruction_desc
+        });
+    }
+}
+
 Runtime Loader::load(ByteBuffer& buffer)
 {
     Runtime runtime;
 
     buffer.reset_cursor();
     init_variables(buffer, runtime);
+    init_instructions(buffer, runtime);
     return runtime;
 }

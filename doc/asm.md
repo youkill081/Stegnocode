@@ -67,7 +67,7 @@ Toutes les opération auront des signatures fixe ; cet a dire qu'on connaits leu
 |   LOADR    |  0x2   |   RegX(1) ; RegX(2)    |       Charge une donnée depuis une addresse **stocker dans un registre** RegX(2) dans le registre RegX(1)        |
 |   STOREA   |  0x3   |    RegX(1) ; data1     |            Charge une donnée en RAM depuis un registre RegX(1) vers une addresse **hardcoder** data1             |
 |   STORER   |  0x4   |   RegX(1) ; RegX(2)    | Charge une donnée en RAM depuis un registre RegX(1) vers une addresse **stocker dans un autre registre** RegX(2) |
-|    MOV     |  0x5   |   RegX(1) ; RegX(2)    |                               Déplace la valeurs du registre RegX(1) vers RegX(2)                                |
+|    MOV     |  0x5   |   RegX(1) ; RegX(2)    |                               Déplace la valeurs du registre RegX(2) vers RegX(1)                                |
 |    ADD     |  0x6   |   RegX(1) ; RegX(2)    |                        Additionne RegX(1) avec  RegX(2) et stock le résultat dans RegX(1)                        |
 |    SUB     |  0x7   |   RegX(1) ; RegX(2)    |                         Soustrait RegX(1) avec RegX(2) et stock le résultat dans RegX(1)                         |
 |    JMP     |  0x8   |         data1          |                                     Saute à l'instruction data1 du programme                                     |
@@ -87,4 +87,5 @@ Toutes les opération auront des signatures fixe ; cet a dire qu'on connaits leu
 |   ALOCA    |  0x16  |     RegX(1), data1     |                        Alloues data1 mot et retourne l'addresse dans le registre RegX(1)                         |
 |   ALOCR    |  0x17  |    RegX(1), RegX(2)    |                       Alloues RegX(2) mot et retourne l'addresse dans le registre RegX(1)                        |
 |    FREE    |  0x18  |        RegX(1)         |                                   Free la mémoire allouer à l'addresse RegX(1)                                   |
+|  DEBUG_R   |  0x19  |                        |                                       Affiche l'état de tous les registres                                       |
 

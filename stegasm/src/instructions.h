@@ -44,22 +44,26 @@ enum DataCount
 
 struct InstructionView
 {
-    const uint64_t raw_data;
+    uint64_t raw_data;
+
+    // opcode
+    [[nodiscard]] uint8_t opcode() const { return static_cast<uint8_t>((raw_data >> 56) & 0xFF); }
 
     // Registries
-    [[nodiscard]] RegNames r1() const { return static_cast<RegNames>((raw_data >> 8) & 0x7); }
-    [[nodiscard]] RegNames r2() const { return static_cast<RegNames>((raw_data >> 13) & 0x7); }
-    [[nodiscard]] RegNames r3() const { return static_cast<RegNames>((raw_data >> 32) & 0x7); }
-    [[nodiscard]] RegNames r4() const { return static_cast<RegNames>((raw_data >> 35) & 0x7); }
-    [[nodiscard]] RegNames r5() const { return static_cast<RegNames>((raw_data >> 38) & 0x7); }
-    [[nodiscard]] RegNames r6() const { return static_cast<RegNames>((raw_data >> 41) & 0x7); }
-    [[nodiscard]] RegNames r7() const { return static_cast<RegNames>((raw_data >> 44) & 0x7); }
+    [[nodiscard]] RegNames r1() const { return static_cast<RegNames>((raw_data >> 53) & 0x7); }
+    [[nodiscard]] RegNames r2() const { return static_cast<RegNames>((raw_data >> 48) & 0x7); }
+    [[nodiscard]] RegNames r3() const { return static_cast<RegNames>((raw_data >> 29) & 0x7); }
+    [[nodiscard]] RegNames r4() const { return static_cast<RegNames>((raw_data >> 26) & 0x7); }
+    [[nodiscard]] RegNames r5() const { return static_cast<RegNames>((raw_data >> 23) & 0x7); }
+    [[nodiscard]] RegNames r6() const { return static_cast<RegNames>((raw_data >> 20) & 0x7); }
+    [[nodiscard]] RegNames r7() const { return static_cast<RegNames>((raw_data >> 17) & 0x7); }
 
     // Datas
-    [[nodiscard]] bool is_d1_addr() const { return (raw_data >> 11) & 0x1; }
-    [[nodiscard]] bool is_d2_addr() const { return (raw_data >> 12) & 0x1; }
-    [[nodiscard]] uint16_t get_d1(const Runtime& rt) const;
-    [[nodiscard]] uint16_t get_d2(const Runtime& rt) const;
+    [[nodiscard]] bool is_d1_addr() const { return (raw_data >> 52) & 0x1; }
+    [[nodiscard]] bool is_d2_addr() const { return (raw_data >> 51) & 0x1; }
+    [[nodiscard]] uint16_t get_d1(const Runtime&) const;
+    [[nodiscard]] uint16_t get_d2(const Runtime&) const;
+
 };
 
 using InstructionFct = void(*)(Runtime &, InstructionView raw_data);
@@ -97,6 +101,7 @@ inline void instr_HALT(Runtime &runtime, InstructionView view);
 inline void instr_ALOCA(Runtime &runtime, InstructionView view);
 inline void instr_ALOCR(Runtime &runtime, InstructionView view);
 inline void instr_FREE(Runtime &runtime, InstructionView view);
+inline void instr_DEBUG_R(Runtime &runtime, InstructionView view);
 
 constexpr std::array instructionSet =
 {
@@ -124,6 +129,7 @@ constexpr std::array instructionSet =
     InstructionDesc{ "ALOCA", 0x16, ONE_REG, ONE_DATA, &instr_ALOCA },
     InstructionDesc{ "ALOCR", 0x17, TWO_REG, NO_DATA, &instr_ALOCR },
     InstructionDesc{ "FREE", 0x18, ONE_REG, NO_DATA, &instr_FREE },
+    InstructionDesc{ "DEBUG_R", 0x19, NO_REG, NO_DATA, &instr_DEBUG_R },
 };
 
 #include "check_instructions.hpp"

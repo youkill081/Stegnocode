@@ -7,10 +7,26 @@
 #include "Loader.h"
 #include "runtime/Runtime.h"
 
+#include <iostream>
+
+#include "Logger.h"
+
 void Vm::run(ByteBuffer& buffer)
 {
     Runtime runtime = Loader::load(buffer);
+    std::cout << "found " << runtime.instructions.size() << " instructions" << std::endl;
+    std::cout << "----------" << std::endl;
 
-    runtime.memory.display();
-    runtime.registries.display();
+    while (runtime.is_running)
+    {
+        if (runtime.instructions.size() <= runtime.instruction_pointer)
+        {
+            Logger::log("Reach end of program", "Vm");
+            break;
+        }
+
+        const auto &current_instr = runtime.instructions[runtime.instruction_pointer];
+        runtime.instruction_pointer++;
+        current_instr.desc.fn(runtime, current_instr.view);
+    }
 }
