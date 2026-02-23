@@ -255,7 +255,7 @@ void Compiler::writeRegXInBuffer(
     const UsedRegistries& registries,
     ByteBuffer& buffer
 ) {
-    if (reg_x >= static_cast<uint8_t>(reg_count))
+    if (reg_x <= static_cast<uint8_t>(reg_count))
     {
         const uint8_t reg = registries[reg_x - 1];
         const uint8_t write_reg = static_cast<uint8_t>(reg & 0b111);
