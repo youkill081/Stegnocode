@@ -178,7 +178,7 @@ namespace compiler
         static RegNames stringToRegName(const std::string &reg_name);
         static UsedRegistries getUsedRegistriesFromParsedLine(const InstructionDesc &desc, const ParsedLine &line);
         static std::string userVariableWriteAsAddressToString(const std::string &token);
-        static bool userWriteVariableAsAddress(const std::string &token);
+        static bool user_write_value_in_bracket(const std::string &token);
         static uint16_t tokenToUint16(const std::string &token);
         static bool tokenIsValidValue(const std::string &token);
         static DataValueParsingResult parseDataValue(std::string token, const VariableSet &variables, const LabelMap &labels);

@@ -140,12 +140,12 @@ UsedRegistries Compiler::getUsedRegistriesFromParsedLine(const InstructionDesc &
  */
 std::string Compiler::userVariableWriteAsAddressToString(const std::string& token)
 {
-    if (not userWriteVariableAsAddress(token))
+    if (not user_write_value_in_bracket(token))
         throw CompilerError("[userVariableWriteAsAddressToString] Invalid variable address \"" + token + "\"");
     return token.substr(1, token.size() - 2);
 }
 
-bool Compiler::userWriteVariableAsAddress(const std::string& token)
+bool Compiler::user_write_value_in_bracket(const std::string& token)
 {
     return token[0] == '[' && token[token.size() - 1] == ']';
 }
@@ -170,13 +170,13 @@ bool Compiler::tokenIsValidValue(const std::string& token)
 
 DataValueParsingResult Compiler::parseDataValue(std::string token, const VariableSet &variables, const LabelMap &labels)
 {
-    bool is_address = userWriteVariableAsAddress(token);
-    if (is_address) // User hardcoded address ex : LOAD A [5]
+    bool is_in_bracket = user_write_value_in_bracket(token);
+    if (is_in_bracket) // User hardcoded address ex : LOAD A [5]
         token = userVariableWriteAsAddressToString(token);
 
     if (tokenIsValidValue(token)) // User hardcoded a constant ex : LOAD A 5
         return {
-            .is_address = is_address,
+            .is_address = is_in_bracket,
             .value = tokenToUint16(token)
         };
 
@@ -188,7 +188,7 @@ DataValueParsingResult Compiler::parseDataValue(std::string token, const Variabl
         };
     }
     return {
-        .is_address = true, // Variables are always managed as address'
+        .is_address = is_in_bracket,
         .value = variables.get_variable_address(variables.get_variable_by_name(token))
     };
 }

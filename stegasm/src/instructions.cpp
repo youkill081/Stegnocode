@@ -150,12 +150,12 @@ void instr_DISPLAY_AN(Runtime &runtime, InstructionView view)
 
 void instr_DISPLAY_C(Runtime &runtime, InstructionView view)
 {
-    std::cout << static_cast<char>(runtime.registries.read(view.r1())) << std::endl;
+    std::cout << static_cast<char>(runtime.registries.read(view.r1())) << std::flush;
 }
 
 void instr_DISPLAY_AC(Runtime &runtime, InstructionView view)
 {
-    std::cout << static_cast<char>(runtime.memory.read(runtime.registries.read(view.r1()))) << std::endl;
+    std::cout << static_cast<char>(runtime.memory.read(runtime.registries.read(view.r1()))) << std::flush;
 }
 
 void instr_DISPLAY_B(Runtime &runtime, InstructionView view)
@@ -207,4 +207,12 @@ void instr_DEBUG_M(Runtime& runtime, InstructionView view)
 {
     Logger::log("DEBUG_MEMORY", "instr_DEBUG_MEMORY");
     runtime.memory.display();
+}
+
+void instr_ADDA(Runtime& runtime, InstructionView view)
+{
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) + view.get_d1(runtime)
+    );
 }
