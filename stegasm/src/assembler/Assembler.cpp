@@ -12,7 +12,7 @@
 
 using namespace assembler;
 
-std::span<const ParsedLine> Assembler::getSectionLines(
+std::span<const ParsedLine> Assembler::get_section_lines(
     const std::vector<ParsedLine>& lines,
     const std::string &sectionName,
     bool throwIfNotFound
@@ -52,7 +52,7 @@ std::span<const ParsedLine> Assembler::getSectionLines(
     return {};
 }
 
-std::vector<uint16_t> Assembler::tokenToData(const std::string& token, const std::string &variableName)
+std::vector<uint16_t> Assembler::token_to_data(const std::string& token, const std::string &variableName)
 {
     uint16_t result;
     auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), result);
@@ -74,7 +74,7 @@ std::vector<uint16_t> Assembler::tokenToData(const std::string& token, const std
     throw AssemblerError("Failed to parse token \"" + token + "\" for variable \"" + variableName + "\"");
 }
 
-Variable Assembler::parsedLineToVariable(const ParsedLine& line)
+Variable Assembler::parsed_line_to_variable(const ParsedLine& line)
 {
     if (line.tokens.size() < 2)
         throw AssemblerError("Invalid variable declaration: " + line.original_line);
@@ -83,7 +83,7 @@ Variable Assembler::parsedLineToVariable(const ParsedLine& line)
     std::string variable_name = line.tokens[0];
     for (int i = 1; i < line.tokens.size(); i++)
     {
-        auto token_data = tokenToData(line.tokens[i], variable_name);
+        auto token_data = token_to_data(line.tokens[i], variable_name);
         data.insert(data.end(), token_data.begin(), token_data.end());
     }
 
@@ -95,9 +95,9 @@ Variable Assembler::parsedLineToVariable(const ParsedLine& line)
     };
 }
 
-VariableSet Assembler::parseVariables(const std::vector<ParsedLine> &lines)
+VariableSet Assembler::parse_variables(const std::vector<ParsedLine> &lines)
 {
-    const auto variables_lines = getSectionLines(lines, VARIABLE_SECTION_NAME);
+    const auto variables_lines = get_section_lines(lines, VARIABLE_SECTION_NAME);
     if (variables_lines.empty())
     {
         return {};
@@ -105,11 +105,11 @@ VariableSet Assembler::parseVariables(const std::vector<ParsedLine> &lines)
 
     VariableSet variables;
     for (const auto &line : variables_lines)
-        variables.push_variable(parsedLineToVariable(line));
+        variables.push_variable(parsed_line_to_variable(line));
     return variables;
 }
 
-const InstructionDesc &Assembler::getInstructionDescFromParsedLine(const ParsedLine& line)
+const InstructionDesc &Assembler::get_instruction_desc_from_parsed_line(const ParsedLine& line)
 {
     std::string instruction_name = line.tokens[0];
     for (auto &instruction : instructionSet)
@@ -121,25 +121,25 @@ const InstructionDesc &Assembler::getInstructionDescFromParsedLine(const ParsedL
     throw AssemblerError("Unknown instruction \"" + instruction_name + "\"");
 }
 
-RegNames Assembler::stringToRegName(const std::string& reg_name)
+RegNames Assembler::string_to_reg_name(const std::string& reg_name)
 {
     if (not stringToRegistry.contains(reg_name))
         throw AssemblerError("Unknown register \"" + reg_name + "\"");
     return stringToRegistry.at(reg_name);
 }
 
-UsedRegistries Assembler::getUsedRegistriesFromParsedLine(const InstructionDesc &desc, const ParsedLine& line)
+UsedRegistries Assembler::get_used_registries_from_parsed_line(const InstructionDesc &desc, const ParsedLine& line)
 {
     UsedRegistries registries;
     for (uint32_t i = 1; i < static_cast<uint32_t>(desc.regCount) + 1; i++)
-        registries[i - 1] = stringToRegName(line.tokens[i]);
+        registries[i - 1] = string_to_reg_name(line.tokens[i]);
     return registries;
 }
 
 /*
  * Basically this function remove brackets from strings ([variable] -> variable)
  */
-std::string Assembler::userVariableWriteAsAddressToString(const std::string& token)
+std::string Assembler::user_variable_write_as_address_to_string(const std::string& token)
 {
     if (not user_write_value_in_bracket(token))
         throw AssemblerError("[userVariableWriteAsAddressToString] Invalid variable address \"" + token + "\"");
@@ -151,9 +151,9 @@ bool Assembler::user_write_value_in_bracket(const std::string& token)
     return token[0] == '[' && token[token.size() - 1] == ']';
 }
 
-uint16_t Assembler::tokenToUint16(const std::string& token)
+uint16_t Assembler::token_to_uint16(const std::string& token)
 {
-    if (tokenIsValidValue(token))
+    if (token_is_valid_value(token))
     {
         uint16_t result;
         std::from_chars(token.data(), token.data() + token.size(), result);
@@ -162,23 +162,23 @@ uint16_t Assembler::tokenToUint16(const std::string& token)
     throw AssemblerError("Invalid uint16 value \"" + token + "\"");
 }
 
-bool Assembler::tokenIsValidValue(const std::string& token)
+bool Assembler::token_is_valid_value(const std::string& token)
 {
     uint16_t result;
     auto [ptr, ec] = std::from_chars(token.data(), token.data() + token.size(), result);
     return ec == std::errc();
 }
 
-DataValueParsingResult Assembler::parseDataValue(std::string token, const VariableSet &variables, const LabelMap &labels)
+DataValueParsingResult Assembler::parse_data_value(std::string token, const VariableSet &variables, const LabelMap &labels)
 {
     bool is_in_bracket = user_write_value_in_bracket(token);
     if (is_in_bracket) // User hardcoded address ex : LOAD A [5]
-        token = userVariableWriteAsAddressToString(token);
+        token = user_variable_write_as_address_to_string(token);
 
-    if (tokenIsValidValue(token)) // User hardcoded a constant ex : LOAD A 5
+    if (token_is_valid_value(token)) // User hardcoded a constant ex : LOAD A 5
         return {
             .is_address = is_in_bracket,
-            .value = tokenToUint16(token)
+            .value = token_to_uint16(token)
         };
 
     if (labels.contains(token)) // User used a label
@@ -194,7 +194,7 @@ DataValueParsingResult Assembler::parseDataValue(std::string token, const Variab
     };
 }
 
-DataValues Assembler::getDataValuesFromParsedLine(
+DataValues Assembler::get_data_values_from_parsed_line(
     const InstructionDesc& desc,
     const ParsedLine& line,
     const LabelMap &labels,
@@ -204,13 +204,13 @@ DataValues Assembler::getDataValuesFromParsedLine(
     switch (desc.dataCount)
     {
     case TWO_DATA:
-        data[1] = parseDataValue(
+        data[1] = parse_data_value(
             line.tokens[desc.regCount + 2],
             variables,
             labels
         );
     case ONE_DATA:
-        data[0] = parseDataValue(
+        data[0] = parse_data_value(
             line.tokens[desc.regCount + 1],
             variables,
             labels
@@ -220,9 +220,9 @@ DataValues Assembler::getDataValuesFromParsedLine(
     }
 }
 
-Instruction Assembler::parsedLineToInstruction(const ParsedLine& line, const VariableSet& variables, const LabelMap &labels)
+Instruction Assembler::parsed_line_to_instruction(const ParsedLine& line, const VariableSet& variables, const LabelMap &labels)
 {
-    const InstructionDesc &desc = getInstructionDescFromParsedLine(line);
+    const InstructionDesc &desc = get_instruction_desc_from_parsed_line(line);
     uint32_t token_needed = static_cast<uint32_t>(desc.dataCount) + static_cast<uint32_t>(desc.regCount) + 1;
 
     if (line.tokens.size() != token_needed)
@@ -230,24 +230,24 @@ Instruction Assembler::parsedLineToInstruction(const ParsedLine& line, const Var
 
     return {
         .desc = desc,
-        .registries = getUsedRegistriesFromParsedLine(desc, line),
-        .datas = getDataValuesFromParsedLine(desc, line, labels, variables)
+        .registries = get_used_registries_from_parsed_line(desc, line),
+        .datas = get_data_values_from_parsed_line(desc, line, labels, variables)
     };
 }
 
-InstructionSet Assembler::parseInstructions(const std::vector<ParsedLine>& lines, const VariableSet& variables)
+InstructionSet Assembler::parse_instructions(const std::vector<ParsedLine>& lines, const VariableSet& variables)
 {
-    auto instructions_lines = getSectionLines(lines, INSTRUCTION_SECTION_NAME, true);
+    auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME, true);
     if (instructions_lines.empty())
         throw AssemblerError("No instructions in .text section !");
 
-    LabelMap labels = parseLabels(instructions_lines, variables);
+    LabelMap labels = parse_labels(instructions_lines, variables);
     InstructionSet instructions;
     for (const auto &line : instructions_lines)
     {
         if (not line.is_instruction)
             continue;
-        instructions.push_back(parsedLineToInstruction(line, variables, labels));
+        instructions.push_back(parsed_line_to_instruction(line, variables, labels));
     }
     return instructions;
 }
@@ -257,7 +257,7 @@ bool Assembler::is_label(const ParsedLine &line)
     return line.tokens.size() == 1 && line.tokens[0].ends_with(':');
 }
 
-LabelMap Assembler::parseLabels(const std::span<const ParsedLine> &lines, const VariableSet &variables)
+LabelMap Assembler::parse_labels(const std::span<const ParsedLine> &lines, const VariableSet &variables)
 {
     LabelMap labels{};
     uint64_t current_instruction_idx = 0;
@@ -284,7 +284,7 @@ LabelMap Assembler::parseLabels(const std::span<const ParsedLine> &lines, const 
     return labels;
 }
 
-CompiledFile Assembler::compileFile(const std::string& path)
+CompiledFile Assembler::compile_file(const std::string& path)
 {
     TextParser parser(path);
 
@@ -292,8 +292,8 @@ CompiledFile Assembler::compileFile(const std::string& path)
     {
         const auto lines = parser.parse();
 
-        VariableSet variables = parseVariables(lines);
-        InstructionSet instructions = parseInstructions(lines, variables);
+        VariableSet variables = parse_variables(lines);
+        InstructionSet instructions = parse_instructions(lines, variables);
         return {
             .variables = variables,
             .instructions = instructions
@@ -304,7 +304,7 @@ CompiledFile Assembler::compileFile(const std::string& path)
     }
 }
 
-void Assembler::writeRegXInBuffer(
+void Assembler::write_reg_x_in_buffer(
     uint8_t reg_x,
     const RegCount& reg_count,
     const UsedRegistries& registries,
@@ -325,7 +325,7 @@ void Assembler::writeRegXInBuffer(
     }
 }
 
-void Assembler::writeDatasFlagInBuffer(
+void Assembler::write_datas_flag_in_buffer(
     const DataCount& data_count,
     const DataValues& data_parsing_result,
     ByteBuffer& buffer)
@@ -337,7 +337,7 @@ void Assembler::writeDatasFlagInBuffer(
     buffer.push_bit(second_bit_value);
 }
 
-ByteBuffer Assembler::compiledFileToBytebuffer(const CompiledFile& compiledFile)
+ByteBuffer Assembler::compiled_file_to_bytebuffer(const CompiledFile& compiledFile)
 {
     ByteBuffer buffer;
 
@@ -359,9 +359,9 @@ ByteBuffer Assembler::compiledFileToBytebuffer(const CompiledFile& compiledFile)
         buffer.write_uint8(instruction.desc.opcode);
 
         // Registry And Flag
-        writeRegXInBuffer(1, instruction.desc.regCount, instruction.registries, buffer); // RegX(1) | 3 bit
-        writeDatasFlagInBuffer(instruction.desc.dataCount, instruction.datas, buffer); // Data Flag | 2 bit
-        writeRegXInBuffer(2, instruction.desc.regCount, instruction.registries, buffer); // RegX(2) | 3 bit
+        write_reg_x_in_buffer(1, instruction.desc.regCount, instruction.registries, buffer); // RegX(1) | 3 bit
+        write_datas_flag_in_buffer(instruction.desc.dataCount, instruction.datas, buffer); // Data Flag | 2 bit
+        write_reg_x_in_buffer(2, instruction.desc.regCount, instruction.registries, buffer); // RegX(2) | 3 bit
 
         // 8 bit was wrote, ByteBuffer flushed
 
@@ -369,11 +369,11 @@ ByteBuffer Assembler::compiledFileToBytebuffer(const CompiledFile& compiledFile)
 
         if (instruction.desc.dataCount == TWO_DATA || static_cast<uint8_t>(instruction.desc.regCount) > 2)
         {
-            writeRegXInBuffer(3, instruction.desc.regCount, instruction.registries, buffer); // RegX(3) | 3 bit
-            writeRegXInBuffer(4, instruction.desc.regCount, instruction.registries, buffer); // RegX(4) | 3 bit
-            writeRegXInBuffer(5, instruction.desc.regCount, instruction.registries, buffer); // RegX(5) | 3 bit
-            writeRegXInBuffer(6, instruction.desc.regCount, instruction.registries, buffer); // RegX(6) | 3 bit
-            writeRegXInBuffer(7, instruction.desc.regCount, instruction.registries, buffer); // RegX(7) | 3 bit
+            write_reg_x_in_buffer(3, instruction.desc.regCount, instruction.registries, buffer); // RegX(3) | 3 bit
+            write_reg_x_in_buffer(4, instruction.desc.regCount, instruction.registries, buffer); // RegX(4) | 3 bit
+            write_reg_x_in_buffer(5, instruction.desc.regCount, instruction.registries, buffer); // RegX(5) | 3 bit
+            write_reg_x_in_buffer(6, instruction.desc.regCount, instruction.registries, buffer); // RegX(6) | 3 bit
+            write_reg_x_in_buffer(7, instruction.desc.regCount, instruction.registries, buffer); // RegX(7) | 3 bit
             buffer.push_bit(0); // 1 bit
 
             // 16 bit was wrote, ByteBuffer flushed
@@ -387,6 +387,6 @@ ByteBuffer Assembler::compiledFileToBytebuffer(const CompiledFile& compiledFile)
 
 ByteBuffer Assembler::assemble(const std::string& path)
 {
-    CompiledFile file = compileFile(path);
-    return compiledFileToBytebuffer(file);
+    CompiledFile file = compile_file(path);
+    return compiled_file_to_bytebuffer(file);
 }
