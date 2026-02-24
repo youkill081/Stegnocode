@@ -237,7 +237,11 @@ void instr_RET(Runtime& runtime, InstructionView view)
 
 void instr_WINDOW_CREATE(Runtime& runtime, InstructionView view)
 {
-    runtime.graphical_backend.create_window();
+    uint16_t width = runtime.registries.read(view.r1());
+    uint16_t height = runtime.registries.read(view.r2());
+    std::string name = runtime.utils.get_string_from_address(view.get_d1(runtime));
+
+    runtime.graphical_backend.create_window(width, height, name);
 }
 
 void instr_WINDOW_CLOSE(Runtime& runtime, InstructionView view)

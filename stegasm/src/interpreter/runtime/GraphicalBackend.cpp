@@ -17,11 +17,11 @@ bool GraphicalBackend::check_inited(bool throw_if_not_inited)
     return IsWindowReady();
 }
 
-void GraphicalBackend::create_window()
+void GraphicalBackend::create_window(uint16_t width, uint16_t height, const std::string &title)
 {
     if (check_inited())
         throw GraphicalBackendError("A window is already created");
-    InitWindow(1280, 720, "Steganocode");
+    InitWindow(width, height, title.c_str());
 }
 
 void GraphicalBackend::close_window()

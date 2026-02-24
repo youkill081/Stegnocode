@@ -155,7 +155,7 @@ constexpr std::array rawInstructionSet =
     RawInstruction{"ADDA", ONE_REG, ONE_DATA, &instr_ADDA},
     RawInstruction{"CALL", NO_REG, ONE_DATA, &instr_CALL},
     RawInstruction{"RET", NO_REG, NO_DATA, &instr_RET},
-    RawInstruction{"WINDOW_CREATE", NO_REG, NO_DATA, &instr_WINDOW_CREATE},
+    RawInstruction{"WINDOW_CREATE", TWO_REG, ONE_DATA, &instr_WINDOW_CREATE},
     RawInstruction{"WINDOW_CLOSE", NO_REG, NO_DATA, &instr_WINDOW_CLOSE},
     RawInstruction{"WINDOW_POOL", NO_REG, NO_DATA, &instr_WINDOW_POOL},
     RawInstruction{"WINDOW_SHOULD_CLOSE", ONE_REG, NO_DATA, &instr_WINDOW_SHOULD_CLOSE},

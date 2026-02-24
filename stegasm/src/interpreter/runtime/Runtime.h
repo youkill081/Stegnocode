@@ -10,6 +10,7 @@
 #include "GraphicalBackend.h"
 #include "Memory.h"
 #include "Registries.h"
+#include "Utils.h"
 
 using ComparisonFlag = struct ComparisonFlag
 {
@@ -32,6 +33,7 @@ public:
     ComparisonFlag comparison_flag;
     std::stack<uint16_t> stack{};
     GraphicalBackend graphical_backend;
+    Utils utils{*this};
 
     std::vector<LoadedInstruction> instructions{};
 

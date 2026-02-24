@@ -93,7 +93,7 @@ De plus les op-code seront automatiquement calculer lors de la compilation.
 | ADDA                  |      RegX(1), data1       |                        Additionne RegX(1) avec le contenus de data1 ; stock le résultat dans RegX(1)                         |
 | CALL                  |           data1           |                                  Stock l'instruction pointeur dans la stack et jump à data1                                  |
 | RET                   |                           |                                          Pop la stack et jump à la valeurs récupéré                                          |
-| WINDOW_CREATE         |                           |                                                       Crée une fenêtre                                                       |
+| WINDOW_CREATE         |  RegX(1), RegX(1), data1  |          Crée une fenêtre de taille RegX(1) x RegX(2) avec comme titre data1 (dois pointer vers une string valide)           |
 | WINDOW_CLOSE          |                           |                                                       Ferme la fenêtre                                                       |
 | WINDOW_POOL           |                           |                                                       Pool les events                                                        |
 | WINDOW_SHOULD_CLOSE   |          RegX(1)          |      Retourne si l'utilisateur a demander de fermer la fenêtre (ex: clique sur la croix) stock le résutat dans RegX(1)       |

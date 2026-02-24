@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <string>
 #include <cstdint>
 #include <raylib.h>
 
@@ -14,7 +15,7 @@ private:
 public:
     // Windows Management
 
-    void create_window();
+    void create_window(uint16_t width, uint16_t height, const std::string &title);
     void close_window();
     void poll_events();
     bool should_close();
