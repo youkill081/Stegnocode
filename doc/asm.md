@@ -48,6 +48,8 @@ Seul le numéro du descripteur et le ByteCode du fichier seras stocker.
 
 struct fichier :   
 -> uint16 descripteur  
+-> uint8 nombre char dans extention
+-> X fois uint8 ; extension du fichier 
 -> uint32 nombre de mot dans le fichier  
 -> M fois uint8 ; ByteCode du fichier 
 

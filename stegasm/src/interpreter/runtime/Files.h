@@ -13,28 +13,37 @@
 
 using descriptor = uint16_t;
 
+enum class FileType { EMPTY, NORMAL, BYTECODE };
+
 class File final : public Observable
 {
 private:
-    bool modified = false; // True if file was modified
-    bool new_file = false; // True if file was create with create_empty_file
-    bool data_was_read = false; // True if _file_data has been filed up
-    bool file_from_bytebuffer = false; // True if file was created from a FileBuffer
-
-    std::string _path = "";
-
+    FileType _type;
+    bool _data_was_read = false;
+    bool _modified = false;
+    std::string _path;
+    std::string _extension;
     ByteBuffer _file_data{};
 
     void read_data_if_needed();
+
 public:
-    File(const bool new_file, const std::string &path) : new_file(new_file), _path(path) {}
-    explicit File(const ByteBuffer& buffer) : data_was_read(true), file_from_bytebuffer(true), _file_data(buffer) {};
+    File(FileType type, const std::string& path) : _type(type), _path(path) {}
+    File(const ByteBuffer& buffer, const std::string& extension)
+        : _type(FileType::BYTECODE), _extension(extension),
+          _data_was_read(true), _file_data(buffer) {}
     ~File();
 
-    [[nodiscard]] const std::string &get_path();
+    static std::shared_ptr<File> create_empty_file(const std::string& path)
+        { return std::make_shared<File>(FileType::EMPTY, path); }
 
-    static std::shared_ptr<File> create_empty_file(const std::string& path);
-    static std::shared_ptr<File> open_file(const std::string& path);
+    static std::shared_ptr<File> open_file(const std::string& path)
+        { return std::make_shared<File>(FileType::NORMAL, path); }
+
+    static std::shared_ptr<File> from_bytecode(const ByteBuffer& buffer, const std::string& extension)
+        { return std::make_shared<File>(buffer, extension); }
+
+    [[nodiscard]] const std::string &get_path();
 
     void close();
 

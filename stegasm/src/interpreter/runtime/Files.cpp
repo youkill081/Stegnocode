@@ -18,7 +18,7 @@
 #endif
 void File::read_data_if_needed()
 {
-    if (data_was_read || new_file)
+    if (_data_was_read || _type == FileType::EMPTY)
         return;
 
     std::ifstream file_stream(this->_path, std::ios::binary);
@@ -32,16 +32,14 @@ void File::read_data_if_needed()
     }
 
     this->_file_data.reset_cursor();
-    this->modified = false;
-    this->data_was_read = true;
+    this->_modified = false;
+    this->_data_was_read = true;
 }
 
 #include <iostream>
 File::~File()
 {
-    if (this->modified)
-        Logger::log("Warning: Modifier file was closed without saving !");
-    if (file_from_bytebuffer && not this->_path.empty())
+    if (_type == FileType::BYTECODE && not this->_path.empty())
     {
         if (std::filesystem::exists(this->_path))
         {
@@ -75,9 +73,12 @@ std::filesystem::path get_available_temp_path()
 #endif
 }
 
-std::filesystem::path write_buffer_to_file(ByteBuffer &buffer)
+std::filesystem::path write_buffer_to_file(ByteBuffer &buffer, const std::string &extension)
 {
-    std::filesystem::path path = get_available_temp_path();
+    auto path = get_available_temp_path();
+    if (!extension.empty())
+        path.replace_extension("." + extension);
+
     Logger::log("Temporary file path : " + path.string(), "Files");
 
     std::ofstream file(path, std::ios::binary);
@@ -93,24 +94,12 @@ std::filesystem::path write_buffer_to_file(ByteBuffer &buffer)
 
 const std::string& File::get_path()
 {
-    if (this->_path.empty() && this->file_from_bytebuffer)
+    if (this->_path.empty() && _type == FileType::BYTECODE)
     {
-        auto path = write_buffer_to_file(this->_file_data);
+        auto path = write_buffer_to_file(this->_file_data, this->_extension);
         this->_path = path.string();
     }
     return _path;
-}
-
-std::shared_ptr<File> File::create_empty_file(const std::string& path)
-{
-    return std::make_shared<File>(true, path);
-}
-
-std::shared_ptr<File> File::open_file(const std::string& path)
-{
-    if (not std::filesystem::exists(path))
-        throw FileError("File not found at path : " + path);
-    return std::make_shared<File>(false, path);
 }
 
 void File::close()
@@ -120,7 +109,7 @@ void File::close()
 
 void File::save()
 {
-    if (this->file_from_bytebuffer)
+    if (_type == FileType::BYTECODE)
         throw FileError("Can't save a file from files section !");
 
     std::ofstream file(this->_path, std::ios::binary);
@@ -134,12 +123,12 @@ void File::save()
     }
     file.close();
 
-    this->modified = false;
+    this->_modified = false;
 }
 
 void File::delete_file()
 {
-    if (this->file_from_bytebuffer)
+    if (_type == FileType::BYTECODE)
         throw FileError("Can't delete a file from files section !");
     std::filesystem::remove(this->_path);
 }
@@ -157,7 +146,7 @@ void File::clear_data()
 
     this->_file_data.clear_data();
     this->reset_cursor();
-    modified = true;
+    _modified = true;
 }
 
 uint8_t File::read_byte()
@@ -179,7 +168,7 @@ void File::append_byte(uint8_t byte)
     this->read_data_if_needed();
 
     this->_file_data.write_uint8(byte);
-    this->modified = true;
+    this->_modified = true;
 }
 
 void File::append_word(uint16_t word)
@@ -187,7 +176,7 @@ void File::append_word(uint16_t word)
     this->read_data_if_needed();
 
     this->_file_data.write_uint16(word);
-    this->modified = true;
+    this->_modified = true;
 }
 
 bool File::has_byte_remaining()
@@ -198,8 +187,7 @@ bool File::has_byte_remaining()
 
 bool File::has_word_remaining()
 {
-    if (not this->new_file && not this->data_was_read)
-        this->read_data_if_needed();
+    this->read_data_if_needed();
     return this->_file_data.remaining_uint16() != 0;
 }
 

@@ -8,9 +8,12 @@
 #include <filesystem>
 #include <fstream>
 
-void assembler::FileSet::push_file(const std::string& user_name, const std::string& path)
+void assembler::FileSet::push_file(
+    const std::string &user_name,
+    const std::string &path,
+    const std::string &extension)
 {
-    File new_file = {user_name, path, current_descriptor++};
+    File new_file = {user_name, path, extension, current_descriptor++};
 
     if (not std::filesystem::exists(path))
         throw AssemblerError("File \"" + path + "\" not found !");

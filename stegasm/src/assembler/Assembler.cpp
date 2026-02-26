@@ -56,7 +56,11 @@ void Assembler::parsed_line_to_file(const ParsedLine& line, FileSet& files)
 {
     if (line.tokens.size() != 2)
         throw AssemblerError("Invalid file declaration: " + line.original_line);
-    files.push_file(line.tokens[0], line.tokens[1]);
+    files.push_file(
+        line.tokens[0],
+        line.tokens[1],
+        std::filesystem::path(line.tokens[1]).extension().string().substr(1)
+    );
 }
 
 FileSet Assembler::parse_files(const std::vector<ParsedLine>& lines)
@@ -391,6 +395,11 @@ ByteBuffer Assembler::compiled_file_to_bytebuffer(CompiledFile &compiledFile)
         file.file_data.reset_cursor();
 
         buffer.write_uint16(file.descriptor);
+
+        buffer.write_uint8(file.extension.size());
+        for (const auto &c : file.extension)
+            buffer.write_uint8(c);
+
         buffer.write_uint32(file.file_data.remaining_uint8());
         while (file.file_data.remaining_uint8())
             buffer.write_uint8(file.file_data.read_uint8());

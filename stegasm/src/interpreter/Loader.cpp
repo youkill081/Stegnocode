@@ -30,14 +30,19 @@ void Loader::init_files(ByteBuffer& buffer, Runtime& runtime)
     for (int i = 0; i < number_of_files; i++)
     {
         uint16_t descriptor = buffer.read_uint16();
-        uint32_t size = buffer.read_uint32();
 
+        uint8_t extension_size = buffer.read_uint8();
+        std::string extension;
+        for (int y = 0; y < extension_size; y++)
+            extension += static_cast<char>(buffer.read_uint8());
+
+        uint32_t size = buffer.read_uint32();
         ByteBuffer data;
         for (int y = 0; y < size; y++)
             data.write_uint8(buffer.read_uint8());
         data.reset_cursor();
 
-        runtime.files.push_file(descriptor, std::make_shared<File>(data));
+        runtime.files.push_file(descriptor, std::make_shared<File>(data, extension));
     }
 }
 

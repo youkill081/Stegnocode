@@ -15,6 +15,7 @@ namespace assembler
     {
         std::string user_name; // Name given by user to the file
         std::string path;
+        std::string extension;
         uint16_t descriptor = 0;
 
         ByteBuffer file_data{};
@@ -25,6 +26,6 @@ namespace assembler
     private:
         uint16_t current_descriptor = 0;
     public:
-        void push_file(const std::string &user_name, const std::string &path);
+        void push_file(const std::string &user_name, const std::string &path, const std::string &extension);
     };
 }
