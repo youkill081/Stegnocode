@@ -87,7 +87,11 @@ De plus les op-code seront automatiquement calculer lors de la compilation.
 | STORER                 |     RegX(1) ; RegX(2)     |       Charge une donnée en RAM depuis un registre RegX(1) vers une addresse **stocker dans un autre registre** RegX(2)       |
 | MOV                    |     RegX(1) ; RegX(2)     |                                     Déplace la valeurs du registre RegX(2) vers RegX(1)                                      |
 | ADD                    |     RegX(1) ; RegX(2)     |                              Additionne RegX(1) avec  RegX(2) et stock le résultat dans RegX(1)                              |
+| ADDA                   |      RegX(1), data1       |                                Additionne RegX(1) avec data1 ; stock le résultat dans RegX(1)                                |
 | SUB                    |     RegX(1) ; RegX(2)     |                               Soustrait RegX(1) avec RegX(2) et stock le résultat dans RegX(1)                               |
+| SUBA                   |      RegX(1) ; data1      |                                Soustrait RegX(1) avec data1 ; stock le résultat dans RegX(1)                                 |
+| MUL                    |      RegX(1) ; data1      |                              Multiplie RegX(1) avec  RegX(2) et stock le résultat dans RegX(1)                               |
+| MULA                   |      RegX(1) ; data1      |                                 Multiple RegX(1) avec data1 ; stock le résultat dans RegX(1)                                 |
 | JMP                    |           data1           |                                           Saute à l'instruction data1 du programme                                           |
 | CMPR                   |     RegX(1) ; RegX(2)     |                                             Compare les valeurs de deux registre                                             |
 | CMPA                   |      RegX(1) ; data1      |                                   Compare la valeurs dans le registre Reg(1) et dans data1                                   |
@@ -107,7 +111,6 @@ De plus les op-code seront automatiquement calculer lors de la compilation.
 | FREE                   |          RegX(1)          |                                         Free la mémoire allouer à l'addresse RegX(1)                                         |
 | DEBUG_R                |                           |                                             Affiche l'état de tous les registres                                             |
 | DEBUG_M                |                           |                                                 Affiche l'état de la mémoire                                                 |
-| ADDA                   |      RegX(1), data1       |                        Additionne RegX(1) avec le contenus de data1 ; stock le résultat dans RegX(1)                         |
 | CALL                   |           data1           |                                  Stock l'instruction pointeur dans la stack et jump à data1                                  |
 | RET                    |                           |                                          Pop la stack et jump à la valeurs récupéré                                          |
 | WINDOW_CREATE          |  RegX(1), RegX(1), data1  |          Crée une fenêtre de taille RegX(1) x RegX(2) avec comme titre data1 (dois pointer vers une string valide)           |

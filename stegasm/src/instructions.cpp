@@ -77,11 +77,64 @@ void instr_ADD(Runtime &runtime, InstructionView view)
     );
 }
 
+void instr_ADDA(Runtime& runtime, InstructionView view)
+{
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) + view.get_d1(runtime)
+    );
+}
+
+
 void instr_SUB(Runtime &runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
         runtime.registries.read(view.r1()) - runtime.registries.read(view.r2())
+    );
+}
+
+void instr_SUBA(Runtime& runtime, InstructionView view)
+{
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) - view.get_d1(runtime)
+    );
+}
+
+void instr_MUL(Runtime& runtime, InstructionView view)
+{
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) * runtime.registries.read(view.r2())
+    );
+}
+
+void instr_MULA(Runtime& runtime, InstructionView view)
+{
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) * view.get_d1(runtime)
+    );
+}
+
+void instr_DIV(Runtime& runtime, InstructionView view)
+{
+    if (runtime.registries.read(view.r2()) == 0)
+        throw InterpreterError("[DIV] Division by zero !");
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) / runtime.registries.read(view.r2())
+    );
+}
+
+void instr_DIVA(Runtime& runtime, InstructionView view)
+{
+    if (view.get_d1(runtime) == 0)
+        throw InterpreterError("[DIV] Division by zero !");
+    runtime.registries.write(
+        view.r1(),
+        runtime.registries.read(view.r1()) / view.get_d1(runtime)
     );
 }
 
@@ -208,14 +261,6 @@ void instr_DEBUG_M(Runtime& runtime, InstructionView view)
 {
     Logger::log("DEBUG_MEMORY", "instr_DEBUG_MEMORY");
     runtime.memory.display();
-}
-
-void instr_ADDA(Runtime& runtime, InstructionView view)
-{
-    runtime.registries.write(
-        view.r1(),
-        runtime.registries.read(view.r1()) + view.get_d1(runtime)
-    );
 }
 
 void instr_CALL(Runtime& runtime, InstructionView view)

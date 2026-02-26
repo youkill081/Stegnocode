@@ -74,7 +74,13 @@ void instr_STOREA(Runtime &runtime, InstructionView view);
 void instr_STORER(Runtime &runtime, InstructionView view);
 void instr_MOV(Runtime &runtime, InstructionView view);
 void instr_ADD(Runtime &runtime, InstructionView view);
+void instr_ADDA(Runtime &runtime, InstructionView view);
 void instr_SUB(Runtime &runtime, InstructionView view);
+void instr_SUBA(Runtime &runtime, InstructionView view);
+void instr_MUL(Runtime &runtime, InstructionView view);
+void instr_MULA(Runtime &runtime, InstructionView view);
+void instr_DIV(Runtime &runtime, InstructionView view);
+void instr_DIVA(Runtime &runtime, InstructionView view);
 void instr_JMP(Runtime &runtime, InstructionView view);
 void instr_CMPR(Runtime &runtime, InstructionView view);
 void instr_CMPA(Runtime &runtime, InstructionView view);
@@ -94,7 +100,6 @@ void instr_ALOCR(Runtime &runtime, InstructionView view);
 void instr_FREE(Runtime &runtime, InstructionView view);
 void instr_DEBUG_R(Runtime &runtime, InstructionView view);
 void instr_DEBUG_M(Runtime &runtime, InstructionView view);
-void instr_ADDA(Runtime &runtime, InstructionView view);
 void instr_CALL(Runtime &runtime, InstructionView view);
 void instr_RET(Runtime &runtime, InstructionView view);
 void instr_WINDOW_CREATE(Runtime &runtime, InstructionView view);
@@ -109,6 +114,7 @@ void instr_WINDOW_SET_TARGET_FPS(Runtime &runtime, InstructionView view);
 void instr_WINDOW_SET_TEXT_SIZE(Runtime &runtime, InstructionView view);
 void instr_WINDOW_SET_TEXT_COLOR(Runtime &runtime, InstructionView view);
 void instr_WINDOW_DRAW_TEXT(Runtime &runtime, InstructionView view);
+void instr_FILE_OPEN(Runtime &runtime, InstructionView view);
 void instr_FILE_OPEN(Runtime &runtime, InstructionView view);
 void instr_FILE_CREATE(Runtime &runtime, InstructionView view);
 void instr_FILE_SAVE(Runtime &runtime, InstructionView view);
@@ -148,7 +154,13 @@ constexpr std::array rawInstructionSet =
     RawInstruction{"STORER", TWO_REG, NO_DATA, &instr_STORER},
     RawInstruction{"MOV", TWO_REG, NO_DATA, &instr_MOV},
     RawInstruction{"ADD", TWO_REG, NO_DATA, &instr_ADD},
+    RawInstruction{"ADDA", ONE_REG, ONE_DATA, &instr_ADDA},
     RawInstruction{"SUB", TWO_REG, NO_DATA, &instr_SUB},
+    RawInstruction{"SUBA", ONE_REG, ONE_DATA, &instr_SUBA},
+    RawInstruction{"MUL", TWO_REG, NO_DATA, &instr_MUL},
+    RawInstruction{"MULA", ONE_REG, ONE_DATA, &instr_MULA},
+    RawInstruction{"DIV", TWO_REG, NO_DATA, &instr_DIV},
+    RawInstruction{"DIVA", ONE_REG, ONE_DATA, &instr_DIVA},
     RawInstruction{"JMP", NO_REG, ONE_DATA, &instr_JMP},
     RawInstruction{"CMPR", TWO_REG, NO_DATA, &instr_CMPR},
     RawInstruction{"CMPA", ONE_REG, ONE_DATA, &instr_CMPA},
@@ -168,7 +180,6 @@ constexpr std::array rawInstructionSet =
     RawInstruction{"FREE", ONE_REG, NO_DATA, &instr_FREE},
     RawInstruction{"DEBUG_R", NO_REG, NO_DATA, &instr_DEBUG_R},
     RawInstruction{"DEBUG_M", NO_REG, NO_DATA, &instr_DEBUG_M},
-    RawInstruction{"ADDA", ONE_REG, ONE_DATA, &instr_ADDA},
     RawInstruction{"CALL", NO_REG, ONE_DATA, &instr_CALL},
     RawInstruction{"RET", NO_REG, NO_DATA, &instr_RET},
     RawInstruction{"WINDOW_CREATE", TWO_REG, ONE_DATA, &instr_WINDOW_CREATE},
