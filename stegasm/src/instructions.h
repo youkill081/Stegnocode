@@ -114,6 +114,7 @@ void instr_WINDOW_SET_TARGET_FPS(Runtime &runtime, InstructionView view);
 void instr_WINDOW_SET_TEXT_SIZE(Runtime &runtime, InstructionView view);
 void instr_WINDOW_SET_TEXT_COLOR(Runtime &runtime, InstructionView view);
 void instr_WINDOW_DRAW_TEXT(Runtime &runtime, InstructionView view);
+void instr_WINDOW_DRAW_TEXTURE(Runtime &runtime, InstructionView view);
 void instr_FILE_OPEN(Runtime &runtime, InstructionView view);
 void instr_FILE_OPEN(Runtime &runtime, InstructionView view);
 void instr_FILE_CREATE(Runtime &runtime, InstructionView view);
@@ -194,6 +195,7 @@ constexpr std::array rawInstructionSet =
     RawInstruction{"WINDOW_SET_TEXT_SIZE", NO_REG, ONE_DATA, &instr_WINDOW_SET_TEXT_SIZE},
     RawInstruction{"WINDOW_SET_TEXT_COLOR", THREE_REG, NO_DATA, &instr_WINDOW_SET_TEXT_COLOR},
     RawInstruction{"WINDOW_DRAW_TEXT", TWO_REG, ONE_DATA, &instr_WINDOW_DRAW_TEXT},
+    RawInstruction{"WINDOW_DRAW_TEXTURE", TWO_REG, ONE_DATA, &instr_WINDOW_DRAW_TEXTURE},
     RawInstruction{"FILE_OPEN", ONE_REG, ONE_DATA, &instr_FILE_OPEN},
     RawInstruction{"FILE_CREATE", ONE_REG, ONE_DATA, &instr_FILE_CREATE},
     RawInstruction{"FILE_SAVE", ONE_REG, NO_DATA, &instr_FILE_SAVE},

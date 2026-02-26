@@ -17,6 +17,27 @@ bool GraphicalBackend::check_inited(bool throw_if_not_inited)
     return IsWindowReady();
 }
 
+void GraphicalBackend::load_texture(const std::shared_ptr<File> &file)
+{
+    check_inited(true);
+
+    file->add_callback([this, weak = std::weak_ptr(file)]() {
+        if (auto f = weak.lock())
+            unload_texture(f);
+    });
+
+    this->_textures[file] = LoadTexture(file->get_path().c_str());
+}
+
+void GraphicalBackend::unload_texture(const std::shared_ptr<File> &file)
+{
+    if (_textures.contains(file))
+    {
+        UnloadTexture(_textures[file]);
+        _textures.erase(file);
+    }
+}
+
 void GraphicalBackend::create_window(uint16_t width, uint16_t height, const std::string &title)
 {
     if (check_inited())
@@ -70,6 +91,15 @@ void GraphicalBackend::draw_text(const std::string& text, int x, int y)
     check_inited(true);
 
     DrawText(text.c_str(), x, y, _text_size, _text_color);
+}
+
+void GraphicalBackend::draw_texture(const std::shared_ptr<File> &file, int x, int y)
+{
+    check_inited(true);
+
+    if (not _textures.contains(file))
+        this->load_texture(file);
+    DrawTexture(_textures[file], x, y, WHITE);
 }
 
 bool GraphicalBackend::key_down(uint16_t key)

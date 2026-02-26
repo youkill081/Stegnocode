@@ -61,7 +61,7 @@ namespace assembler
         static DataValueParsingResult parse_data_value(std::string token, const VariableSet &variables, const LabelMap &labels);
         static DataValues get_data_values_from_parsed_line(const InstructionDesc &desc, const ParsedLine &line, const LabelMap &labels, const VariableSet &variables);
         static Instruction parsed_line_to_instruction(const ParsedLine &line, const VariableSet &variables, const LabelMap &labels);
-        static InstructionSet parse_instructions(const std::vector<ParsedLine> &lines, const VariableSet &variables);
+        static InstructionSet parse_instructions(const std::vector<ParsedLine>& lines, const VariableSet& variables, const FileSet& files);
 
         // Labels
         static bool is_label(const ParsedLine &line);

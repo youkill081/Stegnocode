@@ -36,10 +36,19 @@ void File::read_data_if_needed()
     this->data_was_read = true;
 }
 
+#include <iostream>
 File::~File()
 {
     if (this->modified)
         Logger::log("Warning: Modifier file was closed without saving !");
+    if (file_from_bytebuffer && not this->_path.empty())
+    {
+        if (std::filesystem::exists(this->_path))
+        {
+            std::filesystem::remove(this->_path);
+            Logger::log("Temporary file deleted : " + this->_path, "Files");
+        }
+    }
 }
 
 std::filesystem::path get_available_temp_path()
@@ -92,16 +101,21 @@ const std::string& File::get_path()
     return _path;
 }
 
-File File::create_empty_file(const std::string& path)
+std::shared_ptr<File> File::create_empty_file(const std::string& path)
 {
-    return File(true, path);
+    return std::make_shared<File>(true, path);
 }
 
-File File::open_file(const std::string& path)
+std::shared_ptr<File> File::open_file(const std::string& path)
 {
     if (not std::filesystem::exists(path))
         throw FileError("File not found at path : " + path);
-    return File(false, path);
+    return std::make_shared<File>(false, path);
+}
+
+void File::close()
+{
+    this->call_callbacks();
 }
 
 void File::save()
@@ -205,7 +219,7 @@ descriptor Files::create_file(const std::string& path)
     return this->current_descriptor;
 }
 
-void Files::push_file(uint16_t descriptor, File file)
+void Files::push_file(uint16_t descriptor, std::shared_ptr<File> file)
 {
     this->files.emplace(descriptor, std::move(file));
 }
@@ -217,8 +231,6 @@ void Files::close_file(descriptor descriptor)
 
 void Files::delete_file(descriptor descriptor)
 {
-    this->files.at(descriptor).delete_file();
+    this->files.at(descriptor)->delete_file();
     this->files.erase(descriptor);
 }
-
-

@@ -5,6 +5,7 @@
 #include "Assembler.h"
 
 #include <charconv>
+#include <iostream>
 
 #include "assembler_exception.h"
 #include "utils/utils.hpp"
@@ -253,13 +254,23 @@ Instruction Assembler::parsed_line_to_instruction(const ParsedLine& line, const 
     };
 }
 
-InstructionSet Assembler::parse_instructions(const std::vector<ParsedLine>& lines, const VariableSet& variables)
-{
+InstructionSet Assembler::parse_instructions(
+    const std::vector<ParsedLine>& lines,
+    const VariableSet& variables,
+    const FileSet& files
+) {
     auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME, true);
     if (instructions_lines.empty())
         throw AssemblerError("No instructions in .text section !");
 
     LabelMap labels = parse_labels(instructions_lines, variables);
+    for (const auto &file : files)
+    {
+        if (labels.contains(file.user_name))
+            throw AssemblerError("Fine name collide with label \"" + file.user_name + "\"");
+        labels[file.user_name] = file.descriptor;
+    }
+
     InstructionSet instructions;
     for (const auto &line : instructions_lines)
     {
@@ -312,10 +323,7 @@ CompiledFile Assembler::compile_file(const std::string& path)
 
         FileSet files = parse_files(lines);
         VariableSet variables = parse_variables(lines);
-        for (const auto &file : files)
-            variables.push_variable({file.user_name, {file.descriptor}});
-
-        InstructionSet instructions = parse_instructions(lines, variables);
+        InstructionSet instructions = parse_instructions(lines, variables, files);
         return {
             .files = files,
             .variables = variables,

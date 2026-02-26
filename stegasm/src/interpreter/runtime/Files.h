@@ -8,11 +8,12 @@
 #include <string>
 
 #include "ByteBuffer.h"
+#include "Observable.h"
 #include "interpreter/exceptions.h"
 
 using descriptor = uint16_t;
 
-class File
+class File final : public Observable
 {
 private:
     bool modified = false; // True if file was modified
@@ -20,20 +21,22 @@ private:
     bool data_was_read = false; // True if _file_data has been filed up
     bool file_from_bytebuffer = false; // True if file was created from a FileBuffer
 
-    std::string _path;
+    std::string _path = "";
 
     ByteBuffer _file_data{};
 
     void read_data_if_needed();
 public:
     File(const bool new_file, const std::string &path) : new_file(new_file), _path(path) {}
-    explicit File(const ByteBuffer& buffer) : file_from_bytebuffer(true), _file_data(buffer), data_was_read(true) {};
+    explicit File(const ByteBuffer& buffer) : data_was_read(true), file_from_bytebuffer(true), _file_data(buffer) {};
     ~File();
 
     [[nodiscard]] const std::string &get_path();
 
-    static File create_empty_file(const std::string &path);
-    static File open_file(const std::string &path);
+    static std::shared_ptr<File> create_empty_file(const std::string& path);
+    static std::shared_ptr<File> open_file(const std::string& path);
+
+    void close();
 
     void save();
     void delete_file();
@@ -55,16 +58,16 @@ class Files
 {
 private:
     descriptor current_descriptor = 0;
-    std::map<descriptor, File> files;
+    std::map<descriptor, std::shared_ptr<File>> files;
 public:
     descriptor open_file(const std::string &path);
     descriptor create_file(const std::string &path);
-    void push_file(uint16_t descriptor, File file);
+    void push_file(uint16_t descriptor, std::shared_ptr<File> file);
 
     void close_file(descriptor descriptor);
     void delete_file(descriptor descriptor);
 
-    File &operator[](const descriptor &desc)
+    std::shared_ptr<File> operator[](const descriptor &desc)
     {
         if (!this->files.contains(desc))
             throw FileError("File descriptor " + std::to_string(desc) + " not found !");

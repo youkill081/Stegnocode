@@ -4,6 +4,8 @@
 
 #include "Loader.h"
 
+#include <iostream>
+
 #include "exceptions.h"
 
 void Loader::init_variables(ByteBuffer& buffer, Runtime& runtime)
@@ -35,7 +37,7 @@ void Loader::init_files(ByteBuffer& buffer, Runtime& runtime)
             data.write_uint8(buffer.read_uint8());
         data.reset_cursor();
 
-        runtime.files.push_file(descriptor, File(data));
+        runtime.files.push_file(descriptor, std::make_shared<File>(data));
     }
 }
 
