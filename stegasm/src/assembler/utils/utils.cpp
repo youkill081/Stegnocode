@@ -13,8 +13,7 @@ namespace assembler
 {
     std::span<const ParsedLine> get_section_lines(
         const std::vector<ParsedLine>& lines,
-        const std::string &sectionName,
-        bool throwIfNotFound
+        const std::string &sectionName
     ) {
         bool is_in_section = false;
         uint32_t section_start_index = 0, number_line_section = 0, current_index = 0;
@@ -46,8 +45,6 @@ namespace assembler
         if (number_line_section != 0)
             return {lines.data() + section_start_index + 1, number_line_section};
 
-        if (throwIfNotFound)
-            throw assembler::AssemblerError("Mandatory section \"" + sectionName + "\" not found");
         return {};
     }
 
@@ -66,6 +63,6 @@ namespace assembler
             std::from_chars(token.data(), token.data() + token.size(), result);
             return result;
         }
-        throw AssemblerError("Invalid uint16 value \"" + token + "\"");
+        Linter::error("Invalid uint16 value \"" + token + "\"");
     }
 }

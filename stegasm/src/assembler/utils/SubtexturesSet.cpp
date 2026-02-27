@@ -47,7 +47,8 @@ void assembler::SubtexturesSet::push_subtexture_from_parsed_line(const ParsedLin
 
 assembler::SubtexturesSet assembler::SubtexturesSet::from_parsed_lines(
     const std::vector<ParsedLine> &lines,
-    const FileSet &files
+    const FileSet &files,
+    Linter &linter
 ) {
     const auto files_lines = get_section_lines(lines, SUBTEXTURES_SECTION_NAME);
     if (files_lines.empty())

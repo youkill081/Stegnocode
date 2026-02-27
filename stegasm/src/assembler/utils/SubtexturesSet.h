@@ -31,7 +31,8 @@ namespace assembler
     public:
         static SubtexturesSet from_parsed_lines(
             const std::vector<ParsedLine> &lines,
-            const FileSet &files
+            const FileSet &files,
+            Linter &
         );
         [[nodiscard]] SymbolSet get_symbols() const override;
 

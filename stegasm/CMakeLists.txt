@@ -45,6 +45,8 @@ set(STEGASM_LIB_SOURCES
         src/assembler/Symbol.cpp
         src/assembler/utils/LabelSet.cpp
         src/assembler/utils/LabelSet.h
+        src/assembler/Linter.cpp
+        src/assembler/Linter.h
 )
 
 add_library(stegasm_lib STATIC ${STEGASM_LIB_SOURCES})

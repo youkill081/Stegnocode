@@ -10,6 +10,7 @@
 #include "utils/InstructionSet.h"
 #include "utils/SubtexturesSet.h"
 #include "utils/VariableSet.h"
+#include "Linter.h"
 
 #define SECTION_KEYWORD "section"
 #define VARIABLE_SECTION_NAME ".data"
@@ -33,7 +34,7 @@ namespace assembler
         static void write_reg_x_in_buffer(uint8_t reg_x, const RegCount &reg_count, const UsedRegistries &registries, ByteBuffer &buffer);
         static void write_datas_flag_in_buffer(const DataCount &data_count, const DataValues &data_parsing_result, ByteBuffer &buffer);
         static ByteBuffer compiled_file_to_bytebuffer(CompiledFile &compiledFile);
-        static CompiledFile compile_file(const std::string &path);
+        static CompiledFile compile_file(const std::string &path, Linter &linter);
     public:
         static ByteBuffer assemble(const std::string &path);
     };

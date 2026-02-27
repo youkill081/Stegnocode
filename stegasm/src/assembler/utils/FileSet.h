@@ -9,6 +9,7 @@
 #include "ByteBuffer.h"
 
 #include "assembler/ISymbolSource.h"
+#include "assembler/Linter.h"
 
 namespace assembler
 {
@@ -33,7 +34,7 @@ namespace assembler
 
         void push_file(const std::string &user_name, const std::string &path, const std::string &extension);
         void push_file_from_parsed_line(const ParsedLine &line);
-        static FileSet from_parsed_lines(const std::vector<ParsedLine> &lines);
+        static FileSet from_parsed_lines(const std::vector<ParsedLine> &lines, Linter &);
 
         [[nodiscard]] SymbolSet get_symbols() const override;
 

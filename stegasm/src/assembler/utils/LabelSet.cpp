@@ -24,13 +24,13 @@ SymbolSet LabelSet::get_symbols() const
     return symbols;
 }
 
-LabelSet LabelSet::from_parsed_lines(const std::vector<ParsedLine> &lines)
+LabelSet LabelSet::from_parsed_lines(const std::vector<ParsedLine> &lines, Linter &linter)
 {
     const auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME);
     LabelSet label_set;
     uint64_t current_instruction_idx = 0;
 
-    for (auto &line : instructions_lines)
+    linter.foreach(instructions_lines, [&](const ParsedLine &line)
     {
         if (!is_label(line))
         {
@@ -43,10 +43,10 @@ LabelSet LabelSet::from_parsed_lines(const std::vector<ParsedLine> &lines)
             std::string label_name = line.tokens[0].substr(0, line.tokens[0].size() - 1);
 
             if (label_set.labels.contains(label_name))
-                throw AssemblerError("Label \"" + label_name + "\" is already defined");
+                linter.error("Label already defined !", 0);
 
             label_set.labels[label_name] = current_instruction_idx;
         }
-    }
+    });
     return label_set;
 }

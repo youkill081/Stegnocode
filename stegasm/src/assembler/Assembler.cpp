@@ -15,20 +15,20 @@
 
 using namespace assembler;
 
-CompiledFile Assembler::compile_file(const std::string &path)
+CompiledFile Assembler::compile_file(const std::string &path, Linter &linter)
 {
     TextParser parser(path);
     try
     {
         const auto lines = parser.parse();
-        auto files = FileSet::from_parsed_lines(lines);
-        auto subtextures = SubtexturesSet::from_parsed_lines(lines, files);
-        auto variables = VariableSet::from_parsed_lines(lines);
-        auto labels = LabelSet::from_parsed_lines(lines);
+        auto files = FileSet::from_parsed_lines(lines, linter);
+        auto subtextures = SubtexturesSet::from_parsed_lines(lines, files, linter);
+        auto variables = VariableSet::from_parsed_lines(lines, linter);
+        auto labels = LabelSet::from_parsed_lines(lines, linter);
 
         auto symbols = files.get_symbols() + subtextures.get_symbols() + variables.get_symbols() + labels.get_symbols();
 
-        auto instructions = InstructionSet::from_parsed_lines(lines, symbols);
+        auto instructions = InstructionSet::from_parsed_lines(lines, symbols, linter);
         return {
             .files = std::move(files),
             .variables = std::move(variables),
@@ -154,6 +154,10 @@ ByteBuffer Assembler::compiled_file_to_bytebuffer(CompiledFile &compiledFile)
 
 ByteBuffer Assembler::assemble(const std::string& path)
 {
-    CompiledFile file = compile_file(path);
+    Linter linter;
+    CompiledFile file = compile_file(path, linter);
+
+    if (linter.has_errors())
+        throw AssemblerError("Errors found in file \"" + path + "\"");
     return compiled_file_to_bytebuffer(file);
 }

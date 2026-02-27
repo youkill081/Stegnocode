@@ -25,7 +25,7 @@ void FileSet::push_file(
 {
     File new_file = {user_name, path, extension, get_next_descriptor()};
     if (not std::filesystem::exists(path))
-        throw AssemblerError("File \"" + path + "\" not found !");
+        Linter::error("File at path \"" + path + "\" not found !");
     std::ifstream file_stream(path, std::ios::binary);
     int byte = 0;
     while ((byte = file_stream.get()) != EOF)
@@ -36,7 +36,7 @@ void FileSet::push_file(
 void FileSet::push_file_from_parsed_line(const ParsedLine &line)
 {
     if (line.tokens.size() != 2)
-        throw AssemblerError("Invalid file declaration: " + line.original_line);
+        Linter::error("Number of token missmath on file declaration");
     push_file(
         line.tokens[0],
         line.tokens[1],
@@ -44,15 +44,17 @@ void FileSet::push_file_from_parsed_line(const ParsedLine &line)
     );
 }
 
-FileSet FileSet::from_parsed_lines(const std::vector<ParsedLine> &lines)
+FileSet FileSet::from_parsed_lines(const std::vector<ParsedLine> &lines, Linter &linter)
 {
     const auto files_lines = get_section_lines(lines, FILES_SECTION_NAME);
     if (files_lines.empty())
         return {};
 
     FileSet files{};
-    for (const auto &line : files_lines)
+    linter.foreach(files_lines, [&](const ParsedLine &line)
+    {
         files.push_file_from_parsed_line(line);
+    });
     return files;
 }
 

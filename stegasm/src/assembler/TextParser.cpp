@@ -104,12 +104,13 @@ std::vector<ParsedLine> TextParser::parse() const
 
     while (std::getline(file, line))
     {
+        lineNumber++;
         std::string clean_string = trim(remove_comments(line));
         if (clean_string.empty())
             continue;
 
         ParsedLine parsed;
-        parsed.line_number = lineNumber++;
+        parsed.line_number = lineNumber;
         parsed.original_line = clean_string;
         parsed.tokens = tokenize(clean_string);
 

@@ -19,13 +19,14 @@ const InstructionDesc &InstructionSet::get_instruction_desc_from_parsed_line(con
     for (auto &instruction : instructionSet)
         if (isEqual(instruction_name, instruction.name))
             return instruction;
-    throw AssemblerError("Unknown instruction \"" + instruction_name + "\"");
+    Linter::error("Unknown instruction \"" + instruction_name + "\"");
+    return instructionSet[0];
 }
 
 RegNames InstructionSet::string_to_reg_name(const std::string &reg_name)
 {
     if (not stringToRegistry.contains(reg_name))
-        throw AssemblerError("Unknown register \"" + reg_name + "\"");
+        Linter::error("Unknown register \"" + reg_name + "\"");
     return stringToRegistry.at(reg_name);
 }
 
@@ -40,7 +41,7 @@ UsedRegistries InstructionSet::get_used_registries_from_parsed_line(const Instru
 std::string InstructionSet::remove_brackets(const std::string &token)
 {
     if (not token_is_in_brackets(token))
-        throw AssemblerError("[userVariableWriteAsAddressToString] Invalid variable address \"" + token + "\"");
+        Linter::error("Invalid variable address \"" + token + "\"");
     return token.substr(1, token.size() - 2);
 }
 
@@ -59,7 +60,7 @@ DataValueParsingResult InstructionSet::parse_data_value(std::string token, const
         return { .is_address = is_in_bracket, .value = token_to_uint16(token) };
 
     if (!symbols.contains(token))
-        throw AssemblerError("Unknown symbol \"" + token + "\"");
+        Linter::error("Unknown symbol \"" + token + "\"");
 
     return { .is_address = is_in_bracket, .value = symbols.at(token).value };
 }
@@ -87,7 +88,7 @@ Instruction InstructionSet::parsed_line_to_instruction(const ParsedLine &line, c
     uint32_t token_needed = static_cast<uint32_t>(desc.dataCount) + static_cast<uint32_t>(desc.regCount) + 1;
 
     if (line.tokens.size() != token_needed)
-        throw AssemblerError("Number of token missmatch for instruction \"" + line.original_line + "\"");
+        Linter::error("Number of token missmatch for instruction");
 
     return {
         .desc = desc,
@@ -98,19 +99,20 @@ Instruction InstructionSet::parsed_line_to_instruction(const ParsedLine &line, c
 
 InstructionSet InstructionSet::from_parsed_lines(
     const std::vector<ParsedLine> &lines,
-    const SymbolSet &symbols)
-{
-    auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME, true);
+    const SymbolSet &symbols,
+    Linter &linter
+) {
+    auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME);
     if (instructions_lines.empty())
-        throw AssemblerError("No instructions in .text section !");
+        linter.inline_error("No instructions in .text section !");
 
     InstructionSet instructions;
-    for (const auto &line : instructions_lines)
+    linter.foreach(instructions_lines, [&](const ParsedLine &line)
     {
         if (not line.is_instruction)
-            continue;
+            return;
         instructions.push_back(parsed_line_to_instruction(line, symbols));
-    }
+    });
     return instructions;
 }
 

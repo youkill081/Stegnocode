@@ -8,14 +8,15 @@
 #include <vector>
 #include <string>
 
+#include "assembler/Linter.h"
+
 namespace assembler
 {
     struct ParsedLine;
 
     std::span<const ParsedLine> get_section_lines(
         const std::vector<ParsedLine>& lines,
-        const std::string& sectionName,
-        bool throwIfNotFound = false
+        const std::string& sectionName
     );
 
     bool token_is_uint16_value(const std::string &token);

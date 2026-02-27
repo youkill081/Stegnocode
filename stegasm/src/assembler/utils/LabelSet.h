@@ -9,6 +9,7 @@
 #include <span>
 
 #include "assembler/ISymbolSource.h"
+#include "assembler/Linter.h"
 
 namespace assembler
 {
@@ -23,6 +24,6 @@ namespace assembler
     public:
         [[nodiscard]] SymbolSet get_symbols() const override;
 
-        static LabelSet from_parsed_lines(const std::vector<ParsedLine> &lines);
+        static LabelSet from_parsed_lines(const std::vector<ParsedLine> &lines, Linter &);
     };
 }

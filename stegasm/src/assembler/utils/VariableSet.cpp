@@ -4,7 +4,6 @@
 
 #include "VariableSet.h"
 #include "utils.h"
-#include "assembler/assembler_exception.h"
 #include <charconv>
 #include <iostream>
 #include <utils.h>
@@ -29,14 +28,14 @@ std::vector<uint16_t> VariableSet::token_to_data(const std::string &token, const
         return end_vector;
     }
     if (ec == std::errc::result_out_of_range)
-        throw AssemblerError("Value \"" + token + "\" for variable \"" + variableName + "\" is out of range");
-    throw AssemblerError("Failed to parse token \"" + token + "\" for variable \"" + variableName + "\"");
+        Linter::error("Value \"" + token + "\" for variable \"" + variableName + "\" is out of range");
+    Linter::error("Failed to parse token \"" + token + "\" for variable \"" + variableName + "\"");
 }
 
 Variable VariableSet::parsed_line_to_variable(const ParsedLine &line)
 {
     if (line.tokens.size() < 2)
-        throw AssemblerError("Invalid variable declaration: " + line.original_line);
+        Linter::error("Number of token missmatch for variable declaration");
 
     std::vector<uint16_t> data;
     std::string variable_name = line.tokens[0];
@@ -50,15 +49,17 @@ Variable VariableSet::parsed_line_to_variable(const ParsedLine &line)
     return { .name = variable_name, .value = data };
 }
 
-VariableSet VariableSet::from_parsed_lines(const std::vector<ParsedLine> &lines)
+VariableSet VariableSet::from_parsed_lines(const std::vector<ParsedLine> &lines, Linter &linter)
 {
     const auto variables_lines = get_section_lines(lines, VARIABLE_SECTION_NAME);
     if (variables_lines.empty())
         return {};
 
     VariableSet variables;
-    for (const auto &line : variables_lines)
+    linter.foreach(variables_lines, [&](const ParsedLine &line)
+    {
         variables.push_variable(parsed_line_to_variable(line));
+    });
     return variables;
 }
 
@@ -81,7 +82,7 @@ void VariableSet::push_variable(const Variable &new_variable)
     for (const auto &variable : *this)
     {
         if (string_equal(variable.name, new_variable.name))
-            throw AssemblerError("Multiple variable with name " + new_variable.name + " !");
+            Linter::error("Variable \"" + new_variable.name + "\" already defined !");
     }
     this->push_back(new_variable);
     this->variables_address[new_variable] = current_address;
@@ -91,7 +92,7 @@ void VariableSet::push_variable(const Variable &new_variable)
 uint16_t VariableSet::get_variable_address(const Variable &variable) const
 {
     if (not this->variables_address.contains(variable))
-        throw AssemblerError("[get_variable_address] Variable \"" + variable.name + "\" not found !");
+        Linter::error("Variable \"" + variable.name + "\" not found !");
     return this->variables_address.at(variable);
 }
 
@@ -100,7 +101,8 @@ const Variable &VariableSet::get_variable_by_name(const std::string &name) const
     for (const auto &variable : *this)
         if (variable.name == name)
             return variable;
-    throw AssemblerError("[get_variable_by_name] Variable \"" + name + "\" not found !");
+    Linter::error("Variable \"" + name + "\" not found !");
+
 }
 
 bool VariableSet::contains_variable_by_name(const std::string &name) const

@@ -9,6 +9,7 @@
 #include <span>
 
 #include "instructions.h"
+#include "assembler/Linter.h"
 #include "assembler/Symbol.h"
 
 namespace assembler
@@ -45,7 +46,7 @@ namespace assembler
         static Instruction parsed_line_to_instruction(const ParsedLine &line, const SymbolSet &symbols);
     public:
         void display() const;
-        static InstructionSet from_parsed_lines(const std::vector<ParsedLine> &lines, const SymbolSet &symbols);
+        static InstructionSet from_parsed_lines(const std::vector<ParsedLine> &lines, const SymbolSet &symbols, Linter &);
 
         using Base::begin;
         using Base::end;
