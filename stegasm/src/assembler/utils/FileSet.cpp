@@ -13,9 +13,9 @@
 
 using namespace assembler;
 
-uint16_t FileSet::get_next_descriptor() const
+uint16_t FileSet::get_next_descriptor()
 {
-    return current_descriptor;
+    return ++current_descriptor;
 }
 
 void FileSet::push_file(

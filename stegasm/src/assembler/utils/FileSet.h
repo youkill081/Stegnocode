@@ -30,7 +30,7 @@ namespace assembler
     private:
         uint16_t current_descriptor = 0;
     public:
-        uint16_t get_next_descriptor() const;
+        uint16_t get_next_descriptor();
 
         void push_file(const std::string &user_name, const std::string &path, const std::string &extension);
         void push_file_from_parsed_line(const ParsedLine &line);

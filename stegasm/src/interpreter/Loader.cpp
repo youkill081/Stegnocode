@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "exceptions.h"
+#include "runtime/files/SubTexture.h"
 
 void Loader::init_variables(ByteBuffer& buffer, Runtime& runtime)
 {
@@ -57,6 +58,11 @@ void Loader::init_subtextures(ByteBuffer& buffer, Runtime& runtime)
         uint16_t y = buffer.read_uint16();
         uint16_t width = buffer.read_uint16();
         uint16_t height = buffer.read_uint16();
+
+        runtime.files.push_file(descriptor, std::make_shared<SubTexture>(
+            runtime.files.get_file(origin_file_descriptor),
+            x, y, width, height
+        ));
     }
 }
 

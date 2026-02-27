@@ -4,13 +4,14 @@
 
 #pragma once
 
-#include "Files.h"
+#include "files/File.h"
 
 #include <string>
 #include <cstdint>
 #include <raylib.h>
 #include <functional>
 #include <memory>
+#include <map>
 
 class GraphicalBackend
 {
@@ -20,10 +21,10 @@ private:
     uint16_t _text_size = 8;
     Color _text_color = WHITE;
 
-    std::map<std::shared_ptr<File>, Texture2D, std::owner_less<std::shared_ptr<File>>> _textures;
+    std::map<std::shared_ptr<FileBase>, Texture2D, std::owner_less<>> _textures;
 
-    void load_texture(const std::shared_ptr<File> &file);
-    void unload_texture(const std::shared_ptr<File> &file);
+    void load_texture(const std::shared_ptr<FileBase> &file);
+    void unload_texture(const std::shared_ptr<FileBase> &file);
 public:
     // Windows Management
 
@@ -43,7 +44,7 @@ public:
     void set_text_color(const Color &color) { _text_color = color; }
     void draw_text(const std::string &text, int x, int y);
 
-    void draw_texture(const std::shared_ptr<File> &file, int x, int y);
+    void draw_texture(const std::shared_ptr<FileBase> &file, int x, int y);
 
     // Input management
     bool key_down(uint16_t key);

@@ -27,11 +27,11 @@ namespace assembler
         using Base = std::vector<Subtexture>;
     private:
         static const File &get_file(const std::string &name, const FileSet& files) ;
-        void push_subtexture_from_parsed_line(const ParsedLine &line, const FileSet& files);
+        void push_subtexture_from_parsed_line(const ParsedLine &line, FileSet& files);
     public:
         static SubtexturesSet from_parsed_lines(
             const std::vector<ParsedLine> &lines,
-            const FileSet &files,
+            FileSet &files,
             Linter &
         );
         [[nodiscard]] SymbolSet get_symbols() const override;

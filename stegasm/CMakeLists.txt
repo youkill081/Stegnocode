@@ -27,8 +27,8 @@ set(STEGASM_LIB_SOURCES
         src/interpreter/runtime/GraphicalBackend.cpp
         src/interpreter/runtime/Utils.cpp
         src/interpreter/runtime/Utils.h
-        src/interpreter/runtime/Files.cpp
-        src/interpreter/runtime/Files.h
+        src/interpreter/runtime/files/File.cpp
+        src/interpreter/runtime/files/File.h
         src/assembler/utils/VariableSet.cpp
         src/assembler/utils/VariableSet.h
         src/assembler/assembler_exception.h
@@ -47,6 +47,10 @@ set(STEGASM_LIB_SOURCES
         src/assembler/utils/LabelSet.h
         src/assembler/Linter.cpp
         src/assembler/Linter.h
+        src/interpreter/runtime/files/FileBase.h
+        src/interpreter/runtime/files/Subtexture.h
+        src/interpreter/runtime/files/Files.cpp
+        src/interpreter/runtime/files/Files.h
 )
 
 add_library(stegasm_lib STATIC ${STEGASM_LIB_SOURCES})

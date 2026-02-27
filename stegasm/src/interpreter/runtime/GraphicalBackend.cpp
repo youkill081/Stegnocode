@@ -8,8 +8,6 @@
 
 #include <iostream>
 
-#include "Logger.h"
-
 bool GraphicalBackend::check_inited(bool throw_if_not_inited)
 {
     if (not IsWindowReady() && throw_if_not_inited)
@@ -17,7 +15,7 @@ bool GraphicalBackend::check_inited(bool throw_if_not_inited)
     return IsWindowReady();
 }
 
-void GraphicalBackend::load_texture(const std::shared_ptr<File> &file)
+void GraphicalBackend::load_texture(const std::shared_ptr<FileBase> &file)
 {
     check_inited(true);
 
@@ -29,7 +27,7 @@ void GraphicalBackend::load_texture(const std::shared_ptr<File> &file)
     this->_textures[file] = LoadTexture(file->get_path().c_str());
 }
 
-void GraphicalBackend::unload_texture(const std::shared_ptr<File> &file)
+void GraphicalBackend::unload_texture(const std::shared_ptr<FileBase> &file)
 {
     if (_textures.contains(file))
     {
@@ -93,13 +91,23 @@ void GraphicalBackend::draw_text(const std::string& text, int x, int y)
     DrawText(text.c_str(), x, y, _text_size, _text_color);
 }
 
-void GraphicalBackend::draw_texture(const std::shared_ptr<File> &file, int x, int y)
+void GraphicalBackend::draw_texture(const std::shared_ptr<FileBase> &file, int x, int y)
 {
     check_inited(true);
 
     if (not _textures.contains(file))
         this->load_texture(file);
-    DrawTexture(_textures[file], x, y, WHITE);
+
+    if (auto crop = file->get_crop())
+    {
+        Rectangle src = { (float)crop->x, (float)crop->y, (float)crop->w, (float)crop->h };
+        DrawTextureRec(_textures[file], src, { (float)x, (float)y }, WHITE);
+    }
+    else
+    {
+        DrawTexture(_textures[file], x, y, WHITE);
+    }
+
 }
 
 bool GraphicalBackend::key_down(uint16_t key)

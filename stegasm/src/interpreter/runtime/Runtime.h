@@ -7,11 +7,11 @@
 #include <stack>
 #include <vector>
 
-#include "Files.h"
 #include "GraphicalBackend.h"
 #include "Memory.h"
 #include "Registries.h"
 #include "Utils.h"
+#include "files/Files.h"
 
 using ComparisonFlag = struct ComparisonFlag
 {
@@ -41,8 +41,6 @@ public:
 
     uint64_t instruction_pointer = 0;
     bool is_running = true;
-
-
 
     uint16_t return_value = 0;
 };

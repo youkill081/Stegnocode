@@ -18,7 +18,7 @@ const assembler::File& assembler::SubtexturesSet::get_file(const std::string& na
     Linter::error("File \"" + name + "\" not found !");
 }
 
-void assembler::SubtexturesSet::push_subtexture_from_parsed_line(const ParsedLine &line,  const FileSet &files)
+void assembler::SubtexturesSet::push_subtexture_from_parsed_line(const ParsedLine &line, FileSet &files)
 {
     if (line.tokens.size() != 6)
         throw AssemblerError("Invalid subtexture declaration: " + line.original_line);
@@ -47,7 +47,7 @@ void assembler::SubtexturesSet::push_subtexture_from_parsed_line(const ParsedLin
 
 assembler::SubtexturesSet assembler::SubtexturesSet::from_parsed_lines(
     const std::vector<ParsedLine> &lines,
-    const FileSet &files,
+    FileSet &files,
     Linter &linter
 ) {
     const auto files_lines = get_section_lines(lines, SUBTEXTURES_SECTION_NAME);
