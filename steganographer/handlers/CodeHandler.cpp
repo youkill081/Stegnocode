@@ -25,5 +25,3 @@ void CodeHandler::decode(const Parameters& parameters, ByteBuffer& buffer)
 {
     Vm::run(buffer);
 }
-
-
