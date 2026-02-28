@@ -383,6 +383,13 @@ void instr_WINDOW_DRAW_TEXTURE(Runtime& runtime, InstructionView view)
     );
 }
 
+void instr_WINDOW_SET_ICON(Runtime& runtime, InstructionView view)
+{
+    runtime.graphical_backend.set_window_icon(
+        runtime.files[view.get_d1(runtime)]
+    );
+}
+
 void instr_FILE_OPEN(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(

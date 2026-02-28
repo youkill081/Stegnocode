@@ -34,6 +34,7 @@ public:
     bool should_close();
 
     void set_target_fps(uint16_t fps);
+    void set_window_icon(const std::shared_ptr<FileBase> &file);
 
     // Drawing management
 

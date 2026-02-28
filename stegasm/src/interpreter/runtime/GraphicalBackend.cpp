@@ -69,6 +69,17 @@ void GraphicalBackend::set_target_fps(uint16_t fps)
     SetTargetFPS(fps);
 }
 
+void GraphicalBackend::set_window_icon(const std::shared_ptr<FileBase>& file)
+{
+    check_inited(true);
+
+    Image icon = LoadImage(file->get_path().c_str());
+    if (!IsImageValid(icon))
+        throw GraphicalBackendError("Invalid icon");
+    SetWindowIcon(icon);
+    UnloadImage(icon);
+}
+
 void GraphicalBackend::clear_window(const Color& color)
 {
     check_inited(true);

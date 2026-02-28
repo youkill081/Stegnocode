@@ -147,6 +147,7 @@ De plus les op-code seront automatiquement calculer lors de la compilation.
 | WINDOW_SET_TEXT_COLOR  | RegX(1), RegX(2), RegX(3) |                              Définit la couleur pour les prochains texte dessiné sur la fenêtre                              |
 | WINDOW_DRAW_TEXT       |  RegX(1), RegX(2), data1  |                     Dessine un texte à l'addresse data1 sur la fenêtre au coordonnée x=RegX(1) y=RegX(2)                     |
 | WINDOW_DRAW_TEXTURE    |  RegX(1), RegX(2), data1  |                          Dessine une texture au descripteur data1 au coordonnée x=RegX(1) y=RegX(2)                          |
+| WINDOW_SET_ICON        |           data1           |                                         Change l'icône de le descripteur dans data1                                          |
 | FILE_OPEN              |      RegX(1), data1       |                               Ouvre le fichier au path data1 et met le descriteur dans RegX(1)                               |
 | FILE_CREATE            |      RegX(1), data1       |                             Crée un fichier vide au path data1 et met le descriteur dans RegX(1)                             |
 | FILE_SAVE              |          RegX(1)          |                                  Sauvegarde le fichier sur le pc ; descripteur dans RegX(1)                                  |
