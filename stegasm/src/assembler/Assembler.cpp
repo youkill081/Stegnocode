@@ -203,7 +203,7 @@ ByteBuffer Assembler::assemble(const std::string& path, Linter &linter, bool thr
     if (linter.has_errors())
     {
         if (throw_if_error)
-            throw AssemblerError("Errors found in file \"" + path + "\"");
+            throw AssemblerError("Errors detected during assembly");
         return {};
     }
     return bytes;
@@ -221,7 +221,7 @@ ByteBuffer Assembler::assemble_from_text(const std::string& text_data, Linter& l
     if (linter.has_errors())
     {
         if (throw_if_error)
-            throw AssemblerError("Errors found in text data");
+            throw AssemblerError("Errors detected during assembly");
         return {};
     }
     return bytes;
