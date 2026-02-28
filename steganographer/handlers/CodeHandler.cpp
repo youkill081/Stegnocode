@@ -18,7 +18,10 @@ ByteBuffer CodeHandler::encode(const Parameters& parameters)
         throw HandlerError("Missing file to encode !");
 
     assembler::Linter linter;
-    return assembler::Assembler::assemble(parameters.get_parameters()[0], linter);
+    ByteBuffer data = assembler::Assembler::assemble(parameters.get_parameters()[0], linter);
+    if (linter.has_errors())
+        throw HandlerError("Errors detected during assembly");
+    return data;
 }
 
 void CodeHandler::decode(const Parameters& parameters, ByteBuffer& buffer)
