@@ -111,19 +111,35 @@ InstructionSet InstructionSet::from_parsed_lines(
     const SymbolSet &symbols,
     Linter &linter
 ) {
-    auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME);
-    if (instructions_lines.empty())
-        return {};
-
     InstructionSet instructions;
+    auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME);
+
     linter.foreach_lines(instructions_lines, [&](const ParsedLine &line)
     {
-        if (not line.is_instruction)
+        if (LabelSet::is_label(line))
             return;
         instructions.push_back(parsed_line_to_instruction(line, symbols));
     });
     instructions.push_back(get_eof_instruction()); // Add EOF instruction as last instructions of file
     return instructions;
+}
+
+uint64_t InstructionSet::count_text_lines(const std::vector<ParsedLine>& lines)
+{
+    uint64_t instruction_count = 0;
+    auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME);
+
+    for (const auto &instruction_line: instructions_lines)
+        instruction_count += not LabelSet::is_label(instruction_line);
+    instruction_count += 1; // Count added EOF
+    return instruction_count;
+}
+
+void InstructionSet::merge(const InstructionSet& other, Linter& linter)
+{
+    linter.foreach(other, [&](const Instruction &instruction){
+        this->push_back(instruction);
+    });
 }
 
 

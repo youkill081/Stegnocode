@@ -4,6 +4,8 @@
 
 #include "LabelSet.h"
 
+#include <iostream>
+
 #include "utils.h"
 #include "assembler/Assembler.h"
 #include "assembler/TextParser.h"
@@ -28,13 +30,12 @@ LabelSet LabelSet::from_parsed_lines(const std::vector<ParsedLine> &lines, Linte
 {
     const auto instructions_lines = get_section_lines(lines, INSTRUCTION_SECTION_NAME);
     LabelSet label_set;
-    uint64_t current_instruction_idx = 0;
 
     linter.foreach_lines(instructions_lines, [&](const ParsedLine &line)
     {
         if (!is_label(line))
         {
-            line.line_number_in_section = current_instruction_idx++;
+            line.line_number_in_section = label_set._current_instruction_idx++;
             line.is_instruction = true;
         }
         else
@@ -45,8 +46,27 @@ LabelSet LabelSet::from_parsed_lines(const std::vector<ParsedLine> &lines, Linte
             if (label_set.labels.contains(label_name))
                 Linter::error("Duplicate label \"" + label_name + "\" !");
 
-            label_set.labels[label_name] = current_instruction_idx;
+            label_set.labels[label_name] = label_set._current_instruction_idx;
         }
     });
     return label_set;
+}
+
+void LabelSet::add_padding(uint64_t padding_size)
+{
+    for (auto &label : this->labels)
+    {
+        label.second += padding_size;
+    }
+}
+
+void LabelSet::merge(const LabelSet& other, Linter& linter)
+{
+
+    linter.foreach(other.labels, [&](auto &current)
+    {
+        if (this->labels.contains(current.first))
+            Linter::error("Duplicate label \"" + current.first + "\" !");
+        this->labels[current.first] = current.second;
+    });
 }

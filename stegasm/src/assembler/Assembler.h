@@ -11,6 +11,7 @@
 #include "utils/SubtexturesSet.h"
 #include "utils/VariableSet.h"
 #include "Linter.h"
+#include "utils/LabelSet.h"
 
 #define SECTION_KEYWORD "section"
 #define VARIABLE_SECTION_NAME ".data"
@@ -26,6 +27,7 @@ namespace assembler
         FileSet files{};
         VariableSet variables{};
         SubtexturesSet subtextures{};
+        LabelSet labels{};
 
         SymbolSet symbols{};
         InstructionSet instructions{};
@@ -40,8 +42,12 @@ namespace assembler
         static void write_datas_flag_in_buffer(const DataCount &data_count, const DataValues &data_parsing_result, ByteBuffer &buffer);
         static ByteBuffer compiled_file_to_bytebuffer(CompiledFile &compiledFile, Linter &linter);
         static void compile_symbols(CompiledFile &compiled_file, const std::vector<ParsedLine> &lines, Linter &linter);
+
+        static void collect_labels(CompiledFile& compiled_file, const std::vector<ParsedLine>& lines, Linter& linter, uint64_t& instruction_counter);
+        static void emit_instructions(CompiledFile &compiled_file, const std::vector<ParsedLine> &lines, Linter &linter);
+
         static void compile_instructions(CompiledFile &compiled_file, const std::vector<ParsedLine> &lines, Linter &linter);
-        static void compile_imported_files(CompiledFile &compiled_file, const std::vector<ParsedLine> &lines, Linter &linter);
+
         static void compile_file(CompiledFile &compiled_file, TextParser &parser, Linter &linter);
     public:
         static ByteBuffer assemble(const std::string &path, Linter &linter, bool throw_if_error = true);

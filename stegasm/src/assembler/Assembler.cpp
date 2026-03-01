@@ -45,17 +45,65 @@ void Assembler::compile_symbols(CompiledFile &compiled_file, const std::vector<P
     compiled_file.variables.merge(variables, linter);
 }
 
-void Assembler::compile_instructions(CompiledFile &compiled_file, const std::vector<ParsedLine> &lines, Linter &linter)
+void Assembler::collect_labels(
+    CompiledFile& compiled_file,
+    const std::vector<ParsedLine>& lines,
+    Linter& linter,
+    uint64_t &instruction_counter)
 {
     auto labels = LabelSet::from_parsed_lines(lines, linter);
+    labels.add_padding(instruction_counter);
+    compiled_file.labels.merge(labels, linter);
+
+    instruction_counter += InstructionSet::count_text_lines(lines);
+
+    auto section_lines = get_section_lines(lines, IMPORT_SECTION_NAME);
+    linter.foreach_lines(section_lines, [&](const ParsedLine &line)
+    {
+        if (line.tokens.size() != 1)
+            Linter::error("Number of token mismatch for import");
+        TextParser parser(line.tokens[0]);
+        try
+        {
+            const auto imported_lines = parser.parse();
+            collect_labels(compiled_file, imported_lines, linter, instruction_counter);
+        }
+        catch (const TextParserError &error) { throw AssemblerError(error.what()); }
+    });
+}
+
+void Assembler::emit_instructions(CompiledFile& compiled_file, const std::vector<ParsedLine>& lines, Linter& linter)
+{
+    auto new_instructions = InstructionSet::from_parsed_lines(lines, compiled_file.symbols, linter);
+    compiled_file.instructions.merge(new_instructions, linter);
+
+    auto section_lines = get_section_lines(lines, IMPORT_SECTION_NAME);
+    linter.foreach_lines(section_lines, [&](const ParsedLine &line)
+    {
+        if (line.tokens.size() != 1)
+            Linter::error("Number of token mismatch for import");
+        TextParser parser(line.tokens[0]);
+        try
+        {
+            const auto imported_lines = parser.parse();
+            emit_instructions(compiled_file, imported_lines, linter); // ← emit, pas compile
+        }
+        catch (const TextParserError &error) { throw AssemblerError(error.what()); }
+    });
+}
+
+void Assembler::compile_instructions(CompiledFile &compiled_file, const std::vector<ParsedLine> &lines, Linter &linter)
+{
+    uint64_t counter = 0;
+    collect_labels(compiled_file, lines, linter, counter);
 
     compiled_file.symbols =
         compiled_file.files.get_symbols() +
         compiled_file.subtextures.get_symbols() +
         compiled_file.variables.get_symbols() +
-        labels.get_symbols();
+        compiled_file.labels.get_symbols();
 
-    compiled_file.instructions = InstructionSet::from_parsed_lines(lines, compiled_file.symbols, linter);
+    emit_instructions(compiled_file, lines, linter);
 }
 
 void Assembler::compile_file(CompiledFile &compiled_file, TextParser &parser, Linter &linter)

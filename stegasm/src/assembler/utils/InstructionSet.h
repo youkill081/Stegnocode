@@ -49,6 +49,9 @@ namespace assembler
         void display() const;
 
         static InstructionSet from_parsed_lines(const std::vector<ParsedLine> &lines, const SymbolSet &symbols, Linter &);
+        static uint64_t count_text_lines(const std::vector<ParsedLine> &lines);
+
+        void merge(const InstructionSet& other, Linter &linter);
 
         using Base::begin;
         using Base::end;
