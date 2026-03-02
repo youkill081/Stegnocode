@@ -2,6 +2,7 @@ section .import
     "examples/tetris/game/blocks/choose_random_next_block.stegasm"
     "examples/tetris/game/blocks/draw_next_block.stegasm"
     "examples/tetris/game/blocks/draw_alive_block.stegasm"
+    "examples/tetris/game/blocks/move_next_to_current.stegasm"
 
 section .data
     number_of_block_type 7
@@ -171,4 +172,55 @@ get_block_type_is_4x4_7:
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_end:
+    RET
+
+
+; ---------------------------------------
+; R1 -> Block type (1-number_of_block_type)
+; R0 -> Number of rotations
+get_block_type_rotation_count:
+    CMPA R1, 1
+    JE get_block_type_rot_1
+    CMPA R1, 2
+    JE get_block_type_rot_2
+    CMPA R1, 3
+    JE get_block_type_rot_3
+    CMPA R1, 4
+    JE get_block_type_rot_4
+    CMPA R1, 5
+    JE get_block_type_rot_5
+    CMPA R1, 6
+    JE get_block_type_rot_6
+    CMPA R1, 7
+    JE get_block_type_rot_7
+
+get_block_type_rot_1:
+    LOADA R0, [block_type_1_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_2:
+    LOADA R0, [block_type_2_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_3:
+    LOADA R0, [block_type_3_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_4:
+    LOADA R0, [block_type_4_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_5:
+    LOADA R0, [block_type_5_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_6:
+    LOADA R0, [block_type_6_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_7:
+    LOADA R0, [block_type_7_rotations]
+    JMP get_block_type_rot_end
+
+get_block_type_rot_end:
     RET

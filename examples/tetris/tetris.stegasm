@@ -7,6 +7,7 @@ section .import
     "examples/tetris/game/lines.stegasm"
     "examples/tetris/game/score.stegasm"
     "examples/tetris/game/level.stegasm"
+    "examples/tetris/game/inputs/check_rotation.stegasm"
 
     "examples/tetris/game/map.stegasm"
 
@@ -39,20 +40,24 @@ section .text
     WINDOW_SET_TEXT_SIZE [default_string_size]
     WINDOW_SET_FONT tetrisNesFont
 
-    CALL choose_next_random_block ; Choose first block
+    CALL choose_random_next_block ; Choose first block
+    CALL move_next_to_current ; Put the next block on the current one and generate another one
 window_loop:
     CALL close_if_should_close
     CALL clear_window ; Clear Window
 
     CALL display_background
 
+    ; Display all texts
     CALL display_game_mode
     CALL display_broken_lines
     CALL display_scores
     CALL display_level
 
-    CALL draw_map
+    CALL check_rotation
 
+    ; Draw blocks
+    CALL draw_map
     CALL draw_next_block
 
     WINDOW_PRESENT ; Display drew stuff
