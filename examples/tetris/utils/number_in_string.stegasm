@@ -1,0 +1,33 @@
+; Function number_in_string ;
+; R0 -> Pointer to string ;
+; R1 -> Size of the string ;
+; R2 -> Number to write in string ;
+; ============================ ;
+; EX R0="000" R1=3 R2=5245 ;
+; RETURN R0="245" ;
+
+
+section .text
+number_to_string:
+    MOV R4, R0 ; R4 = Pointer to last char
+    ADD R4, R1
+    SUBA R4, 1 ; Move R4 to last char
+
+number_to_string_loop:
+    CMPA R1, 0 ; If not more space in string
+    JE number_to_string_end
+
+    MOV R6, R2
+    DIVA  R6, 10 ; remove last digit : 1234 -> 123
+
+    MODA  R2, 10 ; Get last digit : 1234 -> 4
+    ADDA  R2, 48 ; Digit to ASCII : 4 -> '4'
+    STORER R2, R4 ; Store digit in string
+
+    MOV R2, R6 ; Put new digits to write in R2
+    SUBA R4, 1 ; Move R4 to previous char
+    SUBA R1, 1 ; Decrement size of string
+    JMP  number_to_string_loop
+
+number_to_string_end:
+    RET

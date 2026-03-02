@@ -1,0 +1,68 @@
+section .import
+    "examples/tetris/game/map/block_drawer.stegasm"
+
+section .files
+    block_skin_1 "examples/tetris/ressources/block_type_1.png"
+    block_skin_2 "examples/tetris/ressources/block_type_2.png"
+    block_white_background "examples/tetris/ressources/block_white.png"
+
+section .data
+    ; map of 20x10 cells, so vector of 200 cells
+    ; 0 - empty cell
+    ; two digits for each block type and skins
+    ; first digits = block type, second digits = skin
+    ; EX : 12 = block type 1, skin 2
+    map 11 11 11 11 11 11 11 11 11 11 12 12 12 12 12 12 12 12 12 12 21 21 21 21 21 21 21 21 21 21 22 22 22 22 22 22 22 22 22 22 31 31 31 31 31 31 31 31 31 31 32 32 32 32 32 32 32 32 32 32 41 41 41 41 41 41 41 41 41 41 42 42 42 42 42 42 42 42 42 42 51 51 51 51 51 51 51 51 51 51 52 52 52 52 52 52 52 52 52 52 61 61 61 61 61 61 61 61 61 61 62 62 62 62 62 62 62 62 62 62 71 71 71 71 71 71 71 71 71 71 72 72 72 72 72 72 72 72 72 72 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+    block_type_1_color_R 255
+    block_type_1_color_G 0
+    block_type_1_color_B 0
+
+    map_x_padding 96
+    map_y_padding 41
+
+section .text
+draw_map:
+    LOADA R6, 0     ; R6 = cell index
+    LOADA R7, map   ; R7 = current map address
+
+draw_map_loop:
+    CMPA R6, 200
+    JE draw_map_end
+
+    LOADR R5, R7  ; R5 = cell value
+    CMPA R5, 0
+    JE draw_map_next
+
+    ; R0 = x = (index % 10) * 8 + padding
+    MOV R0, R6
+    MODA R0, 10
+    MULA R0, 8
+    ADDA R0, [map_x_padding]
+
+    ; R1 = y = (index / 10) * 8 + padding
+    MOV R1, R6
+    DIVA R1, 10
+    MULA R1, 8
+    ADDA R1, [map_y_padding]
+
+    ; Decode : R2 = block type (color), R3 = skin
+    MOV R2, R5
+    DIVA R2, 10
+    MOV R3, R5
+    MODA R3, 10
+
+    CALL draw_white_background_at_coordinate ; Need R0 (X), R1 (Y)
+    CALL set_color_by_block_type ; Need R2 (block type)
+
+    MOV R2, R3
+    CALL draw_skin_at_coordinate ; Need R0 (X), R1 (Y), R2 (skin number)
+
+draw_map_next:
+    ADDA R6, 1
+    ADDA R7, 1
+    JMP draw_map_loop
+
+draw_map_end:
+    WINDOW_RESET_TEXTURE_COLOR_MASK
+    RET

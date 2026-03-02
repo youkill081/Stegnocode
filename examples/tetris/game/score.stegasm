@@ -1,0 +1,43 @@
+section .data
+    top_score_header_string "TOP"
+    top_score_string "......"
+    top_score 5163
+
+    score_header_string "SCORE"
+    score_string "......"
+    score 152
+
+section .text
+; Display Two Scores
+display_scores:
+    ; Convert top_score in top_score_string ;
+    LOADA R0, top_score_string
+    LOADA R1, 6 ; Number of digits
+    LOADA R2, [top_score]
+    CALL number_to_string
+
+    ; Convert score in score_string ;
+    LOADA R0, score_string
+    LOADA R1, 6 ; Number of digits
+    LOADA R2, [score]
+    CALL number_to_string
+
+
+    ; Display top_score strings ;
+    LOADA R0, 193
+    LOADA R1, 19
+    WINDOW_DRAW_TEXT R0 R1 top_score_header_string
+
+    ADDA R1, 11
+    WINDOW_DRAW_TEXT R0 R1 top_score_string
+
+
+    ; Display score strings ;
+    LOADA R0, 193
+    LOADA R1, 46
+    WINDOW_DRAW_TEXT R0 R1 score_header_string
+
+    ADDA R1, 11
+    WINDOW_DRAW_TEXT R0 R1 score_string
+
+    RET
