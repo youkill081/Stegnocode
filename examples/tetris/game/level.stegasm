@@ -1,7 +1,7 @@
 section .data
     level_header_string "LEVEL"
     level_number ".."
-    level 10
+    level 1
 
     level_text_size 11
 
