@@ -3,6 +3,7 @@ section .import
     "examples/tetris/game/blocks/draw_next_block.stegasm"
     "examples/tetris/game/blocks/draw_alive_block.stegasm"
     "examples/tetris/game/blocks/move_next_to_current.stegasm"
+    "examples/tetris/game/blocks/draw_current_block.stegasm"
 
 section .data
     number_of_block_type 7

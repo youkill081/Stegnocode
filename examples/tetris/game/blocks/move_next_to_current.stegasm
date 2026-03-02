@@ -20,7 +20,7 @@ move_next_to_current:
 
     STOREA R1, current_block_type
     STOREA R2, current_block_rotation
-    STOREA R3, next_block_skin
+    STOREA R3, current_block_skin
     STOREA R4, current_block_X
     STOREA R5, current_block_Y
 

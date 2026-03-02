@@ -58,6 +58,7 @@ window_loop:
 
     ; Draw blocks
     CALL draw_map
+    CALL draw_current_block
     CALL draw_next_block
 
     WINDOW_PRESENT ; Display drew stuff
