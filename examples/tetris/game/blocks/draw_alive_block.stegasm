@@ -6,11 +6,14 @@
 ; R5 -> Block Y (grid position) ;
 ; R6 -> padding X (pixel) ;
 ; R7 -> padding Y (pixel) ;
+
 section .data
     DAB_padding_x_pixel 0
     DAB_padding_y_pixel 0
     DAB_block_type 0
     DAB_block_skin 0
+    DAB_block_grid_x 0  ; ADDED: stores block grid X (R4) to survive across compute_block_position_from_coords call
+    DAB_block_grid_y 0  ; ADDED: stores block grid Y (R5) to survive across compute_block_position_from_coords call
 
 section .text
 draw_alive_block:
@@ -18,11 +21,13 @@ draw_alive_block:
     STOREA R7, DAB_padding_y_pixel
     STOREA R1, DAB_block_type
     STOREA R3, DAB_block_skin
+    STOREA R4, DAB_block_grid_x
+    STOREA R5, DAB_block_grid_y
 
     PUSH R3
     PUSH R4
     PUSH R5
-    CALL get_block_array_from_type_rotation ; R1 = type, R2 = rotation -> R0 = array address
+    CALL get_block_array_from_type_rotation ; GET R1 = type, R2 = rotation RETURN R0 = array address
     POP R5
     POP R4
     POP R3
@@ -40,24 +45,29 @@ draw_alive_block_loop:
     CMPA R2, 0
     JE draw_alive_block_next
 
-    PUSH R0 ; Save value - R0 will be X
-    PUSH R1 ; Save value - R1 will be Y
+    PUSH R0
+    PUSH R1
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
 
-    ; Pixel X
-    MOV R0, R6
-    MODA R0, 4
-    ADD R0, R4
-    MULA R0, 8
-    ADDA R0, [DAB_padding_x_pixel]
-    ADDA R0, [map_x_padding]
-
-    ; Pixel Y
+    ; Compute absolute grid col (X) = (cell_index % 4) + block_grid_x
     MOV R1, R6
-    DIVA R1, 4
-    ADD R1, R5
-    MULA R1, 8
-    ADDA R1, [DAB_padding_y_pixel]
-    ADDA R1, [map_y_padding]
+    MODA R1, 4
+    LOADA R4, [DAB_block_grid_x]
+    ADD R1, R4
+
+    ; Compute absolute grid row (Y) = (cell_index / 4) + block_grid_y
+    MOV R2, R6
+    DIVA R2, 4
+    LOADA R5, [DAB_block_grid_y]
+    ADD R2, R5
+
+    CALL compute_block_position_from_coords ; GET R1 = X, R2 = Y RETURN R0 = Coordinates X RETURN R1 = Coordinates Y
+
+    ADDA R0, [DAB_padding_x_pixel] ; Add padding X
+    ADDA R1, [DAB_padding_y_pixel] ; Add padding Y
 
     CALL draw_white_background_at_coordinate ; Need R0 (X), R1 (Y)
 
@@ -67,8 +77,12 @@ draw_alive_block_loop:
     LOADA R2, [DAB_block_skin]
     CALL draw_skin_at_coordinate ; Need R0 (X), R1 (Y), R2 (skin number)
 
-    POP R0
+    POP R7
+    POP R6
+    POP R5
+    POP R4
     POP R1
+    POP R0
 
 draw_alive_block_next:
     ADDA R6, 1

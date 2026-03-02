@@ -58,6 +58,8 @@ section .data
     current_block_type 0
     current_block_rotation 0
     current_block_skin 0
+    current_block_X 3 ; Default X value
+    current_block_Y 0 ; Default Y value
 
     next_block_type 0
     next_block_rotation 0

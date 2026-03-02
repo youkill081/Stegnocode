@@ -22,14 +22,14 @@ draw_next_block:
 
 draw_next_block_set_3x3_coords:
     LOADA R4, 12
-    LOADA R5, 8
+    LOADA R5, 10
     LOADA R6, 4
     LOADA R7, 0
     JMP draw_next_block_end
 
 draw_next_block_set_4x4_coords:
     LOADA R4, 12
-    LOADA R5, 8
+    LOADA R5, 10
     LOADA R6, 0
     LOADA R7, 1
     JMP draw_next_block_end

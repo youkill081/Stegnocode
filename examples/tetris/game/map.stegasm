@@ -29,7 +29,6 @@ section .text
 ; R1 -> Y pixel coordinate
 compute_block_position_from_coords:
     MOV R3, R1 ; R3 = col
-    MODA R3, 10
     MULA R3, 8
     ADDA R3, [map_x_padding]
 

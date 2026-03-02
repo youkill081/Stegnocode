@@ -15,10 +15,14 @@ move_next_to_current:
     LOADA R1, [next_block_type]
     LOADA R2, [next_block_rotation]
     LOADA R3, [next_block_skin]
+    LOADA R4, 3 ; Default X position
+    LOADA R5, 0 ; Default Y position
 
     STOREA R1, current_block_type
     STOREA R2, current_block_rotation
     STOREA R3, next_block_skin
+    STOREA R4, current_block_X
+    STOREA R5, current_block_Y
 
     CALL choose_random_next_block
 
