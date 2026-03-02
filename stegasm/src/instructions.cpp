@@ -576,7 +576,7 @@ void instr_CLOCK_GET_ELAPSED_MS(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
-        runtime.clocks.get_clock_time_ms(runtime.registries.read(view.r1()))
+        runtime.clocks.get_clock_time_ms(runtime.registries.read(view.r2()))
     );
 }
 
@@ -584,7 +584,7 @@ void instr_CLOCK_GET_ELAPSED_S(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
-        runtime.clocks.get_clock_time_s(runtime.registries.read(view.r1()))
+        runtime.clocks.get_clock_time_s(runtime.registries.read(view.r2()))
     );
 }
 
