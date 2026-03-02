@@ -7,7 +7,10 @@ section .import
     "examples/tetris/game/lines.stegasm"
     "examples/tetris/game/score.stegasm"
     "examples/tetris/game/level.stegasm"
+
     "examples/tetris/game/map.stegasm"
+
+    "examples/tetris/game/blocks/block_definition.stegasm"
 
 section .files
     icon "cmake-build-debug/texture.png"
@@ -35,6 +38,8 @@ section .text
 
     WINDOW_SET_TEXT_SIZE [default_string_size]
     WINDOW_SET_FONT tetrisNesFont
+
+    CALL choose_next_random_block ; Choose first block
 window_loop:
     CALL close_if_should_close
     CALL clear_window ; Clear Window
@@ -47,6 +52,8 @@ window_loop:
     CALL display_level
 
     CALL draw_map
+
+    CALL draw_next_block
 
     WINDOW_PRESENT ; Display drew stuff
 

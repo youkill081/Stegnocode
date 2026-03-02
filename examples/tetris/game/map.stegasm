@@ -7,16 +7,14 @@ section .files
     block_white_background "examples/tetris/ressources/block_white.png"
 
 section .data
+    number_of_block_skin 2
+
     ; map of 20x10 cells, so vector of 200 cells
     ; 0 - empty cell
     ; two digits for each block type and skins
     ; first digits = block type, second digits = skin
     ; EX : 12 = block type 1, skin 2
     map 11 11 11 11 11 11 11 11 11 11 12 12 12 12 12 12 12 12 12 12 21 21 21 21 21 21 21 21 21 21 22 22 22 22 22 22 22 22 22 22 31 31 31 31 31 31 31 31 31 31 32 32 32 32 32 32 32 32 32 32 41 41 41 41 41 41 41 41 41 41 42 42 42 42 42 42 42 42 42 42 51 51 51 51 51 51 51 51 51 51 52 52 52 52 52 52 52 52 52 52 61 61 61 61 61 61 61 61 61 61 62 62 62 62 62 62 62 62 62 62 71 71 71 71 71 71 71 71 71 71 72 72 72 72 72 72 72 72 72 72 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-
-    block_type_1_color_R 255
-    block_type_1_color_G 0
-    block_type_1_color_B 0
 
     map_x_padding 96
     map_y_padding 41
