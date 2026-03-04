@@ -81,7 +81,6 @@ draw_alive_block_loop:
     CALL draw_skin_at_coordinate ; Need R0 (X), R1 (Y), R2 (skin number)
 
 bypass_draw_current_block:
-
     POP R7
     POP R6
     POP R5

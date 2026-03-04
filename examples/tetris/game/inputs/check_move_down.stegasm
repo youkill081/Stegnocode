@@ -83,7 +83,7 @@ emplace_current_block:
     LOADA R0, 0
     STOREA R0, soft_drop_count
 
+    CALL increase_current_block_stat
     CALL place_current_block_on_map
-;    CALL move_next_to_current
     CALL check_lines_after_lock
     RET

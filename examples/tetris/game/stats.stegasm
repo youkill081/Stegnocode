@@ -186,7 +186,7 @@ set_text_common_values:
 
 ; -----
 
-restart_stats_values:
+reset_stats_values:
     LOADA R1 0
     STOREA R1 stat_block_T
     STOREA R1 stat_block_J
@@ -195,4 +195,66 @@ restart_stats_values:
     STOREA R1 stat_block_Z
     STOREA R1 stat_block_L
     STOREA R1 stat_block_I
+    RET
+
+; -----
+
+increase_current_block_stat:
+    LOADA R1 [current_block_type]
+    CMPA R1 1
+    JE increase_block_O_stat
+    CMPA R1 2
+    JE increase_block_I_stat
+    CMPA R1 3
+    JE increase_block_S_stat
+    CMPA R1 4
+    JE increase_block_Z_stat
+    CMPA R1 5
+    JE increase_block_T_stat
+    CMPA R1 6
+    JE increase_block_J_stat
+    CMPA R1 7
+    JE increase_block_L_stat
+    RET
+
+increase_block_T_stat:
+    LOADA R1, [stat_block_T]
+    ADDA R1, 1
+    STOREA R1, stat_block_T
+    RET
+
+increase_block_J_stat:
+    LOADA R1, [stat_block_J]
+    ADDA R1, 1
+    STOREA R1, stat_block_J
+    RET
+
+increase_block_S_stat:
+    LOADA R1, [stat_block_S]
+    ADDA R1, 1
+    STOREA R1, stat_block_S
+    RET
+
+increase_block_O_stat:
+    LOADA R1, [stat_block_O]
+    ADDA R1, 1
+    STOREA R1, stat_block_O
+    RET
+
+increase_block_Z_stat:
+    LOADA R1, [stat_block_Z]
+    ADDA R1, 1
+    STOREA R1, stat_block_Z
+    RET
+
+increase_block_L_stat:
+    LOADA R1, [stat_block_L]
+    ADDA R1, 1
+    STOREA R1, stat_block_L
+    RET
+
+increase_block_I_stat:
+    LOADA R1, [stat_block_I]
+    ADDA R1, 1
+    STOREA R1, stat_block_I
     RET
