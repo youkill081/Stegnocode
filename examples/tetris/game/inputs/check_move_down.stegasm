@@ -44,9 +44,10 @@ check_move_down_key_end:
 ; -----
 
 check_move_down_clock:
+    CALL get_current_speed ; R0 = current_speed in MS
     LOADA R1, [move_down_clock]
     CLOCK_GET_ELAPSED_MS R2, R1
-    CMPA R2, 500
+    CMPR R2, R0
     JB check_move_down_clock_end ; if < 500ms passed, end
 
     LOADA R1, [move_down_clock]

@@ -5,6 +5,12 @@ section .data
 
     level_text_size 11
 
+    speed_table 430, 370, 310, 260, 220, 180, 150, 120, 100, 85, 70, 60, 50, 40, 30, 25, 20, 16
+
+    red_level_table 63 34 163 63 237 0 136 112 63 237
+    green_level_table 73 177 73 73 28 162 0 146 73 28
+    blue_level_table 204 76 164 204 36 232 21 190 204 36
+
 section .text
 display_level:
     LOADA R0, level_number
@@ -23,5 +29,47 @@ display_level:
     WINDOW_DRAW_TEXT R0 R1 level_number
 
     WINDOW_SET_TEXT_SIZE [default_string_size]
+
+    RET
+
+update_level:
+    LOADA R0, [broken_lines]
+    DIVA R0, 10
+    STOREA R0, level
+    RET
+
+; Put in R0 the speed of the current level
+get_current_speed:
+    LOADA R0, speed_table
+
+    LOADA R1, [level]
+    MINA R1, 17 ; clamp to 17 ;  number of value in speed_table
+
+    ADD R0, R1
+    LOADR R0, R0
+    RET
+
+; ---
+
+; Load level color in R3 R4 R5
+set_level_color:
+    PUSH R1
+
+    LOADA R1, [level]
+    MODA R1, 10
+
+    LOADA R3, red_level_table
+    ADD R3, R1
+    LOADR R3, R3
+
+    LOADA R4, green_level_table
+    ADD R4, R1
+    LOADR R4, R4
+
+    LOADA R5, blue_level_table
+    ADD R5, R1
+    LOADR R5, R5
+
+    POP R1
 
     RET

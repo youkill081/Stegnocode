@@ -52,6 +52,8 @@ window_loop:
 
     CALL display_background
 
+    CALL update_level ; Compute current level
+
     ; Display all texts
     CALL display_game_mode
     CALL display_broken_lines

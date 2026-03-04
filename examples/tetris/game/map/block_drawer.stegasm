@@ -31,6 +31,8 @@ set_color_by_block_type: ; R2 -> Block type
     PUSH R4
     PUSH R5
 
+    CALL set_level_color
+
     CMPA R2, 1
     JE set_color_type_1
     CMPA R2, 2
@@ -48,55 +50,53 @@ set_color_by_block_type: ; R2 -> Block type
     JMP set_color_end
 
 set_color_type_1: ; I - Cyan
-    LOADA R3, 0
-    LOADA R4, 255
-    LOADA R5, 255
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 10
+    ADDA R4, 10
+    ADDA R5, 10
     JMP set_color_end
 
 set_color_type_2: ; O - Yellow
-    LOADA R3, 255
-    LOADA R4, 255
-    LOADA R5, 0
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 20
+    ADDA R4, 20
+    ADDA R5, 20
     JMP set_color_end
 
 set_color_type_3: ; T - Purple
-    LOADA R3, 128
-    LOADA R4, 0
-    LOADA R5, 128
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 0
+    ADDA R4, 0
+    ADDA R5, 0
     JMP set_color_end
 
 set_color_type_4: ; S - Green
-    LOADA R3, 0
-    LOADA R4, 255
-    LOADA R5, 0
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 30
+    ADDA R4, 30
+    ADDA R5, 30
     JMP set_color_end
 
 set_color_type_5: ; Z - Red
-    LOADA R3, 255
-    LOADA R4, 0
-    LOADA R5, 0
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 40
+    ADDA R4, 40
+    ADDA R5, 40
     JMP set_color_end
 
 set_color_type_6: ; J - Blue
-    LOADA R3, 0
-    LOADA R4, 0
-    LOADA R5, 255
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 50
+    ADDA R4, 50
+    ADDA R5, 50
     JMP set_color_end
 
 set_color_type_7: ; L - Orange
-    LOADA R3, 255
-    LOADA R4, 127
-    LOADA R5, 0
-    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
+    ADDA R3, 50
+    ADDA R4, 50
+    ADDA R5 50
     JMP set_color_end
 
 set_color_end:
+    MODA R3, 255
+    MODA R4, 255
+    MODA R5, 255
+
+    WINDOW_SET_TEXTURE_COLOR_MASK R3 R4 R5
     POP R5
     POP R4
     POP R3
