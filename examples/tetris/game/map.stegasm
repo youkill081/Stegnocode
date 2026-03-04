@@ -103,3 +103,22 @@ draw_map_next:
 draw_map_end:
     WINDOW_RESET_TEXTURE_COLOR_MASK
     RET
+
+; ----
+
+reset_map:
+    LOADA R0, 0
+    LOADA R1, map
+    LOADA R2, 0 ; always 0
+reset_map_loop:
+    CMPA R0, 220
+    JE reset_map_end
+
+    STORER R2, R1 ; store 0 at R1 address
+
+    ADDA R0, 1
+    ADDA R1, 1
+
+    JMP reset_map_loop
+reset_map_end:
+    RET

@@ -9,6 +9,9 @@ place_current_block_on_map_loop:
 
     CALL compute_block_position_in_map ; Now R5 = X, R6 = Y
 
+    CMPA R6, 3 ; Lose if R6 < 3
+    JB set_game_over ; Set the game_over flag and return
+
     ; Compute index in map
 
     PUSH R3 ; Save registries
