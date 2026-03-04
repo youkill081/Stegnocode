@@ -43,6 +43,7 @@ section .text
     WINDOW_SET_FONT tetrisNesFont
 
     CALL init_move_down
+    CALL init_animation
     CALL choose_random_next_block ; Choose first block
     CALL move_next_to_current ; Put the next block on the current one and generate another one
 window_loop:
@@ -57,6 +58,10 @@ window_loop:
     CALL display_scores
     CALL display_level
 
+    LOADA R0, [game_state]
+    CMPA R0, 1
+    JE window_loop_animating
+
     CALL check_rotation
     CALL check_right_left
     CALL check_move_down
@@ -68,6 +73,12 @@ window_loop:
 
     WINDOW_PRESENT ; Display drew stuff
 
+    JMP window_loop
+
+window_loop_animating:
+    CALL draw_map
+    CALL update_line_clear_anim
+    WINDOW_PRESENT
     JMP window_loop
 
 display_background:

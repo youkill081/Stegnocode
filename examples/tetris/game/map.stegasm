@@ -1,6 +1,9 @@
 section .import
     "examples/tetris/game/map/block_drawer.stegasm"
 
+    "examples/tetris/game/map/line_detection.stegasm"
+    "examples/tetris/game/map/line_anim.stegasm"
+
 section .files
     block_skin_1 "examples/tetris/ressources/block_type_1.png"
     block_skin_2 "examples/tetris/ressources/block_type_2.png"
