@@ -27,6 +27,8 @@ section .data
     test_string "...."
     default_string_size 13
 
+    game_state 0 ; 0 = Playing ; 1 = Line clear anim ; 2 = Game over
+
 section .text
     LOADA R0, 1280 ; window size X
     LOADA R1, 1125 ; window size Y

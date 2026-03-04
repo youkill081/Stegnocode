@@ -1,5 +1,4 @@
 section .data
-    game_state 0 ; 0 = Playing ; 1 = Line clear anim
     lines_cleared 0 ; Nb of lines cleared
 
     pending_rows 255 255 255 255 ; Line index to animation
