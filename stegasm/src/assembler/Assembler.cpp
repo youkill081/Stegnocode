@@ -32,7 +32,7 @@ void Assembler::compile_symbols(CompiledFile &compiled_file, const std::vector<P
             const auto imported_lines = parser.parse();
             compile_symbols(compiled_file, imported_lines, linter);
         }
-        catch (const TextParserError &error) { throw AssemblerError(error.what()); }
+        catch (const TextParserError &error) { Linter::error(error.what()); }
     });
 
     auto files = FileSet::from_parsed_lines(lines, linter);
@@ -68,7 +68,7 @@ void Assembler::collect_labels(
             const auto imported_lines = parser.parse();
             collect_labels(compiled_file, imported_lines, linter, instruction_counter);
         }
-        catch (const TextParserError &error) { throw AssemblerError(error.what()); }
+        catch (const TextParserError &error) { Linter::error(error.what()); }
     });
 }
 
