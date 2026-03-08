@@ -5,6 +5,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <functional>
 
 #include "CodeHandler.h"

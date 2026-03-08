@@ -9,7 +9,7 @@
 
 #include "pixel.h"
 
-class pixels : public std::vector<pixel>
+class Pixels : public std::vector<pixel>
 {
 public:
     void display()

@@ -6,7 +6,7 @@
 
 #include <ByteBuffer.h>
 #include "constant.h"
-#include "header.hpp"
+#include "Header.hpp"
 #include "../images/Image.h"
 #include "Random32.h"
 
@@ -28,7 +28,7 @@ public:
 
     struct DecodeResult
     {
-        header header{};
+        Header header{};
         ByteBuffer data;
     };
     static DecodeResult decode(Image &image);

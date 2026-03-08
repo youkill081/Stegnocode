@@ -11,7 +11,7 @@ add_subdirectory(libs/stegcommon)
 add_subdirectory(libs/raylib)
 
 add_subdirectory(stegasm)
-add_subdirectory(stegasmlsp)
+add_subdirectory(stegasmLsp)
 
 add_subdirectory(test)
 

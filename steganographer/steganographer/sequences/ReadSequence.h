@@ -5,7 +5,7 @@
 #pragma once
 
 #include <ByteBuffer.h>
-#include "../header.hpp"
+#include "../Header.hpp"
 #include "../SequenceManager.h"
 
 class ReadSequence : public SequenceManager
@@ -16,7 +16,7 @@ private:
 
     ByteBuffer _header_buffer;
     ByteBuffer _data_buffer;
-    header _header;
+    Header _header;
 
     void check_checksum();
 public:
@@ -24,5 +24,5 @@ public:
 
     ByteBuffer &get_data_buffer() { return _data_buffer; }
     ByteBuffer &get_header_buffer() { return _header_buffer; }
-    header &get_header() { return _header; }
+    Header &get_header() { return _header; }
 };

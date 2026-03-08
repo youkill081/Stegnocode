@@ -10,7 +10,7 @@
 
 #include "constant.h"
 
-struct header {
+struct Header {
     uint8_t version; // current version of protocole (current 0b1)
     uint32_t data_size_byte; // contains number of bits of data stored in image
     uint8_t data_type;  // contains type of data stored in image
@@ -30,7 +30,7 @@ inline ByteBuffer gen_header(const ByteBuffer &data, DataType data_type)
     return header_buffer;
 }
 
-inline header convert_byte_buffer_to_header(ByteBuffer &buffer)
+inline Header convert_byte_buffer_to_header(ByteBuffer &buffer)
 {
     return {
         .version = buffer.read_uint8(),

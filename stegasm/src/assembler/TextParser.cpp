@@ -4,6 +4,8 @@
 
 #include "TextParser.h"
 
+
+#include <memory>
 #include <fstream>
 #include <string>
 #include <utility>

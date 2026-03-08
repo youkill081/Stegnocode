@@ -4,6 +4,8 @@
 
 #include "GraphicalBackend.h"
 
+#include <cmath>
+
 #include "interpreter/exceptions.h"
 
 #include <iostream>

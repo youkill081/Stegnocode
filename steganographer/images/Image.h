@@ -7,14 +7,14 @@
 #include <string>
 #include <memory>
 
-#include "pixels.h"
+#include "Pixels.h"
 
 class Image
 {
 private:
     int _width{}, _height{};
 public:
-    std::unique_ptr<pixels> pixels;
+    std::unique_ptr<Pixels> pixels;
     explicit Image(const std::string &path);
     void save_png(const std::string &output_path) const;
 

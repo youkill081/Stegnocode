@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "exceptions.h"
-#include "runtime/files/SubTexture.h"
+#include "runtime/files/Subtexture.h"
 
 void Loader::init_variables(ByteBuffer& buffer, Runtime& runtime)
 {

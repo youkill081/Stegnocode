@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../SequenceManager.h"
-#include "../header.hpp"
+#include "../Header.hpp"
 
 #include <vector>
 

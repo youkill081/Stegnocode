@@ -24,7 +24,7 @@ Image::Image(const std::string& path)
         throw std::runtime_error("Can't load image at path : " + path);
     }
 
-    pixels = std::make_unique<::pixels>();
+    pixels = std::make_unique<::Pixels>();
     pixels->reserve(_width * _height);
 
     for (int y = 0; y < _height; ++y) {
