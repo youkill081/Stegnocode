@@ -16,7 +16,7 @@ draw_next_block:
 
     CALL get_block_type_is_4x4
 
-    CMPA R0, 0 ; Is 3x3
+    CMP R0, 0 ; Is 3x3
     JE draw_next_block_set_3x3_coords ; Is 3x3
     JMP draw_next_block_set_4x4_coords ; Is 4x4
 

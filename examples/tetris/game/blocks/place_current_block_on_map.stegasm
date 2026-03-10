@@ -4,12 +4,12 @@ place_current_block_on_map:
 place_current_block_on_map_loop:
     CALL get_next_block_coords
 
-    CMPA R4, 16 ; Reach end of loop
+    CMP R4, 16 ; Reach end of loop
     JE ret
 
     CALL compute_block_position_in_map ; Now R5 = X, R6 = Y
 
-    CMPA R6, 3 ; Lose if R6 < 3
+    CMP R6, 3 ; Lose if R6 < 3
     JB set_game_over ; Set the game_over flag and return
 
     ; Compute index in map
@@ -19,7 +19,7 @@ place_current_block_on_map_loop:
     PUSH R7
 
     LOAD R4, R6 ; R4 = Y
-    MULA R4, 10 ; R4 = Y*10
+    MUL R4, 10 ; R4 = Y*10
     ADD R4, R5 ; R4 = X + Y*10
 
     LOAD R3, map
@@ -38,7 +38,7 @@ place_current_block_on_map_loop:
 
 compute_current_block_value_in_map: ; Save the value in R4
     LOAD R4, [current_block_type]
-    MULA R4, 10
-    ADDA R4, [current_block_skin] ; R0 = next_block_type*10 + next_block_skin
+    MUL R4, 10
+    ADD R4, [current_block_skin] ; R0 = next_block_type*10 + next_block_skin
 
     RET

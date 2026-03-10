@@ -21,12 +21,12 @@ update_line_clear_anim:
     LOAD R1, [anim_clock] ; R1 = clock descriptor
     CLOCK_GET_ELAPSED_MS R0, R1 ; R0 = ms écoulées
 
-    CMPA R0, 500 ; Check Animation end after 500ms
+    CMP R0, 500 ; Check Animation end after 500ms
     JA anim_apply_end
     JE anim_apply_end ; anim_apply_end if >= 500ms
 
     LOAD R1, R0
-    DIVA R1, 75 ; R1 = palier
+    DIV R1, 75 ; R1 = palier
 
     ; left_col = 4 - palier
     LOAD R2, 4
@@ -35,7 +35,7 @@ update_line_clear_anim:
 
     ; right_col = 5 + palier
     LOAD R2, R1
-    ADDA R2, 5
+    ADD R2, 5
     STOREA R2, anim_right_col
 
     CALL draw_anim_crack_rows
@@ -57,7 +57,7 @@ draw_anim_crack_rows:
     LOAD R6, 0 ; R6 = slot (0..3)
 
 crack_slot_loop:
-    CMPA R6, 4
+    CMP R6, 4
     JE crack_slot_done
 
     ; Read pending_rows[R6]
@@ -65,7 +65,7 @@ crack_slot_loop:
     ADD R5, R6
     LOAD R5, [R5] ; R5 = index of line or 255
 
-    CMPA R5, 255
+    CMP R5, 255
     JE crack_slot_next ; No line pending
 
     ; Loop on column [left_col .. right_col]
@@ -73,7 +73,7 @@ crack_slot_loop:
 
 crack_col_loop:
     LOAD R0, [anim_right_col]
-    CMPR R7, R0
+    CMP R7, R0
     JA crack_col_done ; R7 > right_col ; finished of this slot
 
     PUSH R5
@@ -95,12 +95,12 @@ crack_col_loop:
     POP R6
     POP R5
 
-    ADDA R7, 1
+    ADD R7, 1
     JMP crack_col_loop
 
 crack_col_done:
 crack_slot_next:
-    ADDA R6, 1
+    ADD R6, 1
     JMP crack_slot_loop
 
 crack_slot_done:

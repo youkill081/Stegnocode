@@ -32,14 +32,14 @@ section .text
 ; R1 -> Y pixel coordinate
 compute_block_position_from_coords:
     LOAD R3, R1 ; R3 = col
-    MULA R3, 8
-    ADDA R3, [map_x_padding]
+    MUL R3, 8
+    ADD R3, [map_x_padding]
 
     ; compute Y = row * 8 + map_y_padding
     LOAD R4, R2 ; R4 = row
-    SUBA R4, 2 ; Sub 2 due to 2 invisibles cells above the map
-    MULA R4, 8
-    ADDA R4, [map_y_padding]
+    SUB R4, 2 ; Sub 2 due to 2 invisibles cells above the map
+    MUL R4, 8
+    ADD R4, [map_y_padding]
 
     LOAD R0, R3 ; result X
     LOAD R1, R4 ; result Y
@@ -55,9 +55,9 @@ compute_block_position_from_index:
     ; col = index % 10
     ; row = index / 10
     LOAD R2, R1 ; R2 = index (we'll use R2/R3 as temps)
-    MODA R2, 10 ; R2 = col
+    MOD R2, 10 ; R2 = col
     LOAD R3, R1
-    DIVA R3, 10 ; R3 = row
+    DIV R3, 10 ; R3 = row
 
     LOAD R1, R2
     LOAD R2, R3
@@ -69,14 +69,14 @@ compute_block_position_from_index:
 draw_map:
     LOAD R6, 20 ; R6 = starting cell index (skip top 2 rows = 20 cells)
     LOAD R7, map
-    ADDA R7, 20
+    ADD R7, 20
 
 draw_map_loop:
-    CMPA R6, 220
+    CMP R6, 220
     JE draw_map_end
 
     LOAD R5, [R7] ; R5 = current cell value
-    CMPA R5, 0
+    CMP R5, 0
     JE draw_map_next
 
 
@@ -85,9 +85,9 @@ draw_map_loop:
 
     ; Decode : R2 = block type (color), R3 = skin
     LOAD R2, R5
-    DIVA R2, 10
+    DIV R2, 10
     LOAD R3, R5
-    MODA R3, 10
+    MOD R3, 10
 
     CALL draw_white_background_at_coordinate ; Need R0 (X), R1 (Y)
     CALL set_color_by_block_type ; Need R2 (block type)
@@ -96,8 +96,8 @@ draw_map_loop:
     CALL draw_skin_at_coordinate ; Need R0 (X), R1 (Y), R2 (skin number)
 
 draw_map_next:
-    ADDA R6, 1
-    ADDA R7, 1
+    ADD R6, 1
+    ADD R7, 1
     JMP draw_map_loop
 
 draw_map_end:
@@ -111,13 +111,13 @@ reset_map:
     LOAD R1, map
     LOAD R2, 0 ; always 0
 reset_map_loop:
-    CMPA R0, 220
+    CMP R0, 220
     JE reset_map_end
 
     STORER R2, R1 ; store 0 at R1 address
 
-    ADDA R0, 1
-    ADDA R1, 1
+    ADD R0, 1
+    ADD R1, 1
 
     JMP reset_map_loop
 reset_map_end:

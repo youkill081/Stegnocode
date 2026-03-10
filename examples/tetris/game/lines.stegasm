@@ -8,7 +8,7 @@ section .text
 
 display_broken_lines:
     LOAD R0, lines_string
-    ADDA R0, 6 ; Move pointer to the number
+    ADD R0, 6 ; Move pointer to the number
 
     LOAD R1, 3 ; Number of digits
     LOAD R2,  [broken_lines] ; Number of broken lines

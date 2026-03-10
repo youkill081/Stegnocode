@@ -28,7 +28,7 @@ display_scores:
     LOAD R1, 19
     WINDOW_DRAW_TEXT R0 R1 top_score_header_string
 
-    ADDA R1, 11
+    ADD R1, 11
     WINDOW_DRAW_TEXT R0 R1 top_score_string
 
 
@@ -37,7 +37,7 @@ display_scores:
     LOAD R1, 46
     WINDOW_DRAW_TEXT R0 R1 score_header_string
 
-    ADDA R1, 11
+    ADD R1, 11
     WINDOW_DRAW_TEXT R0 R1 score_string
 
     RET

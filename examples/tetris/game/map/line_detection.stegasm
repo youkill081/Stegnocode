@@ -17,22 +17,22 @@ init_animation:
 ; OUT R0 → 1 si complète, 0 sinon
 is_row_complete:
     LOAD R2, R1
-    MULA R2, 10
+    MUL R2, 10
     LOAD R3, map
     ADD R3, R2 ; R3 starting address of line
 
     LOAD R5, 0 ; Current col R5 = colonne courante
 
 is_row_complete_loop:
-    CMPA R5, 10
+    CMP R5, 10
     JE is_row_complete_yes
 
     LOAD R6, [R3] ; R6 = cell value
-    CMPA R6, 0
+    CMP R6, 0
     JE is_row_complete_no ; empty cell = not complete
 
-    ADDA R3, 1
-    ADDA R5, 1
+    ADD R3, 1
+    ADD R5, 1
     JMP is_row_complete_loop
 
 is_row_complete_no:
@@ -52,11 +52,11 @@ find_complete_rows:
     LOAD R0, pending_rows
     LOAD R1, 255
     STORER R1, R0
-    ADDA R0, 1
+    ADD R0, 1
     STORER R1, R0
-    ADDA R0, 1
+    ADD R0, 1
     STORER R1, R0
-    ADDA R0, 1
+    ADD R0, 1
     STORER R1, R0
 
     LOAD R1, 0
@@ -66,9 +66,9 @@ find_complete_rows:
     LOAD R7, 21 ; R7 = current line (21 == bottom line)
 
 find_rows_loop:
-    CMPA R7, 1
+    CMP R7, 1
     JE find_rows_done
-    CMPA R6, 4
+    CMP R6, 4
     JE find_rows_done
 
     PUSH R6
@@ -78,7 +78,7 @@ find_rows_loop:
     POP R7
     POP R6
 
-    CMPA R0, 0
+    CMP R0, 0
     JE find_rows_next
 
     ; pending_rows[R6] = R7
@@ -89,13 +89,13 @@ find_rows_loop:
     ; lines_cleared++
     LOAD R3, lines_cleared
     LOAD R3, [R3]
-    ADDA R3, 1
+    ADD R3, 1
     STOREA R3, lines_cleared
 
-    ADDA R6, 1
+    ADD R6, 1
 
 find_rows_next:
-    SUBA R7, 1
+    SUB R7, 1
     JMP find_rows_loop
 
 find_rows_done:
@@ -112,7 +112,7 @@ apply_line_clear:
     LOAD R7, 21 ; R7 = read_row  (source)
 
 compact_loop:
-    CMPA R7, 1
+    CMP R7, 1
     JE compact_fill_top
 
     PUSH R6
@@ -122,11 +122,11 @@ compact_loop:
     POP R7
     POP R6
 
-    CMPA R0, 1
+    CMP R0, 1
     JE compact_skip_row ; Complete line, no copy-paste
 
     ; Copy read_row → write_row only if lines are different
-    CMPR R6, R7
+    CMP R6, R7
     JE compact_same_row
 
     PUSH R6
@@ -138,15 +138,15 @@ compact_loop:
     POP R6
 
 compact_same_row:
-    SUBA R6, 1 ; Move up one line
+    SUB R6, 1 ; Move up one line
 
 compact_skip_row:
-    SUBA R7, 1
+    SUB R7, 1
     JMP compact_loop
 
 compact_fill_top:
     ; Fill remaining lines with 0
-    CMPA R6, 1
+    CMP R6, 1
     JE apply_done
 
     PUSH R6
@@ -154,7 +154,7 @@ compact_fill_top:
     CALL clear_row
     POP R6
 
-    SUBA R6, 1
+    SUB R6, 1
     JMP compact_fill_top
 
 apply_done:
@@ -167,27 +167,27 @@ apply_done:
 ; Clobbers : R3 R4 R5 R6 R7
 copy_row:
     LOAD R3, R1
-    MULA R3, 10
+    MUL R3, 10
     LOAD R4, map
     ADD R4, R3 ; R4 = ptr source
 
     LOAD R3, R2
-    MULA R3, 10
+    MUL R3, 10
     LOAD R5, map
     ADD R5, R3 ; R5 = ptr destination
 
     LOAD R6, 0 ; R6 = column
 
 copy_row_loop:
-    CMPA R6, 10
+    CMP R6, 10
     JE copy_row_end
 
     LOAD R7, [R4]
     STORER R7, R5
 
-    ADDA R4, 1
-    ADDA R5, 1
-    ADDA R6, 1
+    ADD R4, 1
+    ADD R5, 1
+    ADD R6, 1
     JMP copy_row_loop
 
 copy_row_end:
@@ -199,7 +199,7 @@ copy_row_end:
 ; Clobbers : R2 R3 R4 R5
 clear_row:
     LOAD R2, R1
-    MULA R2, 10
+    MUL R2, 10
     LOAD R3, map
     ADD R3, R2 ; R3 = ptr beg of line
 
@@ -207,12 +207,12 @@ clear_row:
     LOAD R5, 0 ; Empty value
 
 clear_row_loop:
-    CMPA R4, 10
+    CMP R4, 10
     JE clear_row_end
 
     STORER R5, R3
-    ADDA R3, 1
-    ADDA R4, 1
+    ADD R3, 1
+    ADD R4, 1
     JMP clear_row_loop
 
 clear_row_end:
@@ -225,19 +225,19 @@ clear_row_end:
 ;   1 = 100  |  2 = 300  |  3 = 500  |  4 = 800 (Tetris !)
 ; Clobbers : R2 R3
 add_score_for_lines:
-    CMPA R1, 1
+    CMP R1, 1
     JNE score_try_2
     LOAD R2, 100
     JMP score_apply
 
 score_try_2:
-    CMPA R1, 2
+    CMP R1, 2
     JNE score_try_3
     LOAD R2, 300
     JMP score_apply
 
 score_try_3:
-    CMPA R1, 3
+    CMP R1, 3
     JNE score_try_4
     LOAD R2, 500
     JMP score_apply
@@ -247,7 +247,7 @@ score_try_4:
 
 score_apply:
     LOAD R3, [level]
-    ADDA R3, 1 ; Add 1 to handle level 0
+    ADD R3, 1 ; Add 1 to handle level 0
     MUL R2, R3 ; Multiply with current level
 
     LOAD R3, score
@@ -266,7 +266,7 @@ check_lines_after_lock:
     CALL find_complete_rows
 
     LOAD R0, [lines_cleared]
-    CMPA R0, 0
+    CMP R0, 0
     JE lock_no_lines
 
     LOAD R1, [broken_lines]

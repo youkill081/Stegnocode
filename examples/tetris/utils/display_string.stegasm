@@ -4,12 +4,12 @@
 section .text
 display_string:
     LOAD R2 [R1] ; Load current char in R2
-    CMPA R2 0
+    CMP R2 0
     JE end ; If current char is 0 jump to end
 
     DISPLAY_C R2
 
-    ADDA R1 1
+    ADD R1 1
     JMP display_string
 end:
     RET

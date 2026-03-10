@@ -25,7 +25,7 @@ display_level:
     WINDOW_DRAW_TEXT R0 R1 level_header_string
 
     LOAD R0, 211
-    ADDA R1, 10
+    ADD R1, 10
     WINDOW_DRAW_TEXT R0 R1 level_number
 
     WINDOW_SET_TEXT_SIZE [default_string_size]
@@ -34,7 +34,7 @@ display_level:
 
 update_level:
     LOAD R0, [broken_lines]
-    DIVA R0, 10
+    DIV R0, 10
     STOREA R0, level
     RET
 
@@ -43,7 +43,7 @@ get_current_speed:
     LOAD R0, speed_table
 
     LOAD R1, [level]
-    MINA R1, 17 ; clamp to 17 ;  number of value in speed_table
+    MIN R1, 17 ; clamp to 17 ;  number of value in speed_table
 
     ADD R0, R1
     LOAD R0, [R0]
@@ -56,7 +56,7 @@ set_level_color:
     PUSH R1
 
     LOAD R1, [level]
-    MODA R1, 10
+    MOD R1, 10
 
     LOAD R3, red_level_table
     ADD R3, R1

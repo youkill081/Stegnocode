@@ -14,14 +14,14 @@ set_game_over:
 
 handle_game_over:
     LOAD R1, 2
-    CMPA R1, [game_state]
+    CMP R1, [game_state]
     JNE game_over_end ; Return if game is not over
 
     CALL handle_restart_key
     CALL handle_tab_key
 
     LOAD R1 [hide_game_hover_text]
-    CMPA R1, 1 ; Skip next part if menu is hidden
+    CMP R1, 1 ; Skip next part if menu is hidden
     JE game_over_end
 
     ; Draw game over main string
@@ -57,12 +57,12 @@ game_over_end:
 
 handle_tab_key:
     WINDOW_KEY_PRESSED R1 258 ; 258 = KEY_TAB
-    CMPA R1, 1
+    CMP R1, 1
     JNE game_over_end ; Return if key is not pressed
 
     LOAD R1 [hide_game_hover_text]
-    ADDA R1 1
-    MODA R1 2
+    ADD R1 1
+    MOD R1 2
     STOREA R1, hide_game_hover_text
     RET
 
@@ -70,7 +70,7 @@ handle_tab_key:
 
 handle_restart_key:
     WINDOW_KEY_PRESSED R1 82 ; 82 = KEY_R
-    CMPA R1, 1
+    CMP R1, 1
     JNE game_over_end ; Return if key is not pressed
 
     LOAD R1 0

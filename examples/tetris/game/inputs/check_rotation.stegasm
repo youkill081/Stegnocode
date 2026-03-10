@@ -1,7 +1,7 @@
 section .text
 check_rotation:
     WINDOW_KEY_PRESSED R1, 265 ; 265 = KEY_UP
-    CMPA R1, 1 ; If key was pressed
+    CMP R1, 1 ; If key was pressed
     JE rotate_current
 
     RET
@@ -18,7 +18,7 @@ rotate_current:
     LOAD R2, R1 ; Put R1 in R2
     CALL is_block_valid_on_map
 
-    CMPA R0, 0 ; Block is not valid
+    CMP R0, 0 ; Block is not valid
     JE rotate_current_abort ; Abort rotation if not valid
 
     POP R1 ; Restore R1
@@ -37,5 +37,5 @@ rotate_current_abort:
 ; R1 = (R1 % R2) + 1
 compute_next_rotation:
     MOD R1, R2
-    ADDA R1, 1
+    ADD R1, 1
     RET

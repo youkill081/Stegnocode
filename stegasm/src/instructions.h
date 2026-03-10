@@ -79,33 +79,30 @@ void instr_LOADD(Runtime &runtime, InstructionView view);
 void instr_LOADR(Runtime &runtime, InstructionView view);
 void instr_STORED(Runtime &runtime, InstructionView view);
 void instr_STORER(Runtime &runtime, InstructionView view);
-void instr_ADD(Runtime &runtime, InstructionView view);
-void instr_ADDA(Runtime &runtime, InstructionView view);
-void instr_SUB(Runtime &runtime, InstructionView view);
-void instr_SUBA(Runtime &runtime, InstructionView view);
-void instr_MUL(Runtime &runtime, InstructionView view);
-void instr_MULA(Runtime &runtime, InstructionView view);
-void instr_DIV(Runtime &runtime, InstructionView view);
-void instr_DIVA(Runtime &runtime, InstructionView view);
-void instr_MIN(Runtime &runtime, InstructionView view);
-void instr_MINA(Runtime &runtime, InstructionView view);
-void instr_MAX(Runtime &runtime, InstructionView view);
-void instr_MAXA(Runtime &runtime, InstructionView view);
-void instr_MOD(Runtime &runtime, InstructionView view);
-void instr_MODA(Runtime &runtime, InstructionView view);
+void instr_ADDR(Runtime &runtime, InstructionView view);
+void instr_ADDD(Runtime &runtime, InstructionView view);
+void instr_SUBR(Runtime &runtime, InstructionView view);
+void instr_SUBD(Runtime &runtime, InstructionView view);
+void instr_MULR(Runtime &runtime, InstructionView view);
+void instr_MULD(Runtime &runtime, InstructionView view);
+void instr_DIVR(Runtime &runtime, InstructionView view);
+void instr_DIVD(Runtime &runtime, InstructionView view);
+void instr_MINR(Runtime &runtime, InstructionView view);
+void instr_MIND(Runtime &runtime, InstructionView view);
+void instr_MAXR(Runtime &runtime, InstructionView view);
+void instr_MAXD(Runtime &runtime, InstructionView view);
+void instr_MODR(Runtime &runtime, InstructionView view);
+void instr_MODD(Runtime &runtime, InstructionView view);
 void instr_JMP(Runtime &runtime, InstructionView view);
 void instr_CMPR(Runtime &runtime, InstructionView view);
-void instr_CMPA(Runtime &runtime, InstructionView view);
+void instr_CMPD(Runtime &runtime, InstructionView view);
 void instr_JE(Runtime &runtime, InstructionView view);
 void instr_JNE(Runtime &runtime, InstructionView view);
 void instr_JA(Runtime &runtime, InstructionView view);
 void instr_JB(Runtime &runtime, InstructionView view);
 void instr_DISPLAY_N(Runtime &runtime, InstructionView view);
-void instr_DISPLAY_AN(Runtime &runtime, InstructionView view);
 void instr_DISPLAY_C(Runtime &runtime, InstructionView view);
-void instr_DISPLAY_AC(Runtime &runtime, InstructionView view);
 void instr_DISPLAY_B(Runtime &runtime, InstructionView view);
-void instr_DISPLAY_AB(Runtime &runtime, InstructionView view);
 void instr_HALT(Runtime &runtime, InstructionView view);
 void instr_ALOCA(Runtime &runtime, InstructionView view);
 void instr_ALOCR(Runtime &runtime, InstructionView view);
@@ -217,33 +214,52 @@ constexpr std::array rawInstructionSet =
         InstructionHandler(&instr_LOADR, REG, REG)},
     RawInstruction{"STOREA", true, InstructionHandler(&instr_STORED, REG, ONE_DATA)},
     RawInstruction{"STORER", true, InstructionHandler(&instr_STORER, REG, REG)},
-    RawInstruction{"ADD", true, InstructionHandler(&instr_ADD, REG, REG)},
-    RawInstruction{"ADDA", true, InstructionHandler(&instr_ADDA, REG, ONE_DATA)},
-    RawInstruction{"SUB", true, InstructionHandler(&instr_SUB, REG, REG)},
-    RawInstruction{"SUBA", true, InstructionHandler(&instr_SUBA, REG, ONE_DATA)},
-    RawInstruction{"MUL", true, InstructionHandler(&instr_MUL, REG, REG)},
-    RawInstruction{"MULA", true, InstructionHandler(&instr_MULA, REG, ONE_DATA)},
-    RawInstruction{"DIV", true, InstructionHandler(&instr_DIV, REG, REG)},
-    RawInstruction{"DIVA", true, InstructionHandler(&instr_DIVA, REG, ONE_DATA)},
-    RawInstruction{"MIN", true, InstructionHandler(&instr_MIN, REG, REG)},
-    RawInstruction{"MINA", true, InstructionHandler(&instr_MINA, REG, ONE_DATA)},
-    RawInstruction{"MAX", true, InstructionHandler(&instr_MAX, REG, REG)},
-    RawInstruction{"MAXA", true, InstructionHandler(&instr_MAXA, REG, ONE_DATA)},
-    RawInstruction{"MOD", true, InstructionHandler(&instr_MOD, REG, REG)},
-    RawInstruction{"MODA", true, InstructionHandler(&instr_MODA, REG, ONE_DATA)},
+    RawInstruction{"ADD", true,
+        InstructionHandler(&instr_ADDD, REG, ONE_DATA),
+        InstructionHandler(&instr_ADDR, REG, REG),
+        InstructionHandler(&instr_ADDR, REG, REG_ADDRESS)},
+    RawInstruction{"SUB", true,
+        InstructionHandler(&instr_SUBR, REG, REG),
+        InstructionHandler(&instr_SUBR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_SUBD, REG, ONE_DATA)},
+    RawInstruction{"MUL", true,
+        InstructionHandler(&instr_MULR, REG, REG),
+        InstructionHandler(&instr_MULR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_MULD, REG, ONE_DATA)},
+    RawInstruction{"DIV", true,
+        InstructionHandler(&instr_DIVR, REG, REG),
+        InstructionHandler(&instr_DIVR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_DIVD, REG, ONE_DATA)},
+    RawInstruction{"MIN", true,
+        InstructionHandler(&instr_MINR, REG, REG),
+        InstructionHandler(&instr_MINR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_MIND, REG, ONE_DATA)},
+    RawInstruction{"MAX", true,
+        InstructionHandler(&instr_MAXR, REG, REG),
+        InstructionHandler(&instr_MAXR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_MAXD, REG, ONE_DATA)},
+    RawInstruction{"MOD", true,
+        InstructionHandler(&instr_MODR, REG, REG),
+        InstructionHandler(&instr_MODR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_MODD, REG, ONE_DATA)},
     RawInstruction{"JMP", true, InstructionHandler(&instr_JMP, ONE_DATA)},
-    RawInstruction{"CMPR", true, InstructionHandler(&instr_CMPR, REG, REG)},
-    RawInstruction{"CMPA", true, InstructionHandler(&instr_CMPA, REG, ONE_DATA)},
+    RawInstruction{"CMP", true,
+        InstructionHandler(&instr_CMPR, REG, REG),
+        InstructionHandler(&instr_CMPR, REG, REG_ADDRESS),
+        InstructionHandler(&instr_CMPD, REG, ONE_DATA)},
     RawInstruction{"JE", true, InstructionHandler(&instr_JE, ONE_DATA)},
     RawInstruction{"JNE", true, InstructionHandler(&instr_JNE, ONE_DATA)},
     RawInstruction{"JA", true, InstructionHandler(&instr_JA, ONE_DATA)},
     RawInstruction{"JB", true, InstructionHandler(&instr_JB, ONE_DATA)},
-    RawInstruction{"DISPLAY_N", true, InstructionHandler(&instr_DISPLAY_N, REG)},
-    RawInstruction{"DISPLAY_AN", true, InstructionHandler(&instr_DISPLAY_AN, REG)},
-    RawInstruction{"DISPLAY_C", true, InstructionHandler(&instr_DISPLAY_C, REG)},
-    RawInstruction{"DISPLAY_AC", true, InstructionHandler(&instr_DISPLAY_AC, REG)},
-    RawInstruction{"DISPLAY_B", true, InstructionHandler(&instr_DISPLAY_B, REG)},
-    RawInstruction{"DISPLAY_AB", true, InstructionHandler(&instr_DISPLAY_AB, REG)},
+    RawInstruction{"DISPLAY_N", true,
+        InstructionHandler(&instr_DISPLAY_N, REG),
+        InstructionHandler(&instr_DISPLAY_B, REG_ADDRESS)},
+    RawInstruction{"DISPLAY_C", true,
+        InstructionHandler(&instr_DISPLAY_C, REG),
+        InstructionHandler(&instr_DISPLAY_B, REG_ADDRESS)},
+    RawInstruction{"DISPLAY_B", true,
+        InstructionHandler(&instr_DISPLAY_B, REG),
+        InstructionHandler(&instr_DISPLAY_B, REG_ADDRESS)},
     RawInstruction{"HALT", true, InstructionHandler(&instr_HALT)},
     RawInstruction{"ALOCA", true, InstructionHandler(&instr_ALOCA, REG, ONE_DATA)},
     RawInstruction{"ALOCR", true, InstructionHandler(&instr_ALOCR, REG, REG)},

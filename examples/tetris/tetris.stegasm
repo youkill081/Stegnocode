@@ -66,9 +66,9 @@ window_loop:
     CALL display_stats
 
     LOAD R0, [game_state]
-    CMPA R0, 1
+    CMP R0, 1
     JE window_loop_animating
-    CMPA R0, 2
+    CMP R0, 2
     JE window_loop_game_over
 
     CALL check_rotation
@@ -120,7 +120,7 @@ clear_window:
 
 close_if_should_close:
     WINDOW_SHOULD_CLOSE R1
-    CMPA R1, 0
+    CMP R1, 0
     JNE close_window
 
     RET

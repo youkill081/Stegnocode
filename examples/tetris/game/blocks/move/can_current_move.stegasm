@@ -20,27 +20,27 @@ init_can_move_loop: ; Set R3 = array address ; R4 = current_index_in_loop ;
 ; ---
 
 get_next_block_coords: ; iterate over all blocks and put coordinate in R5 = X ; R6 = Y ;
-    CMPA R4, 16
+    CMP R4, 16
     JE get_next_block_coords_end ; End of array, end
 
     LOAD R7, [R3] ; Load current value in R7
-    CMPA R7, 1
+    CMP R7, 1
     JE get_next_block_coords_compute_coords ; Compute coords and end
 
-    ADDA R4, 1 ; Next block index
-    ADDA R3, 1 ; Next pointer
+    ADD R4, 1 ; Next block index
+    ADD R3, 1 ; Next pointer
 
     JMP get_next_block_coords
 
 get_next_block_coords_compute_coords:
     LOAD R5, R4
-    MODA R5, 4 ; R5/X = index % 4
+    MOD R5, 4 ; R5/X = index % 4
 
     LOAD R6, R4
-    DIVA R6, 4 ; R6/Y = index / 4
+    DIV R6, 4 ; R6/Y = index / 4
 
-    ADDA R4, 1 ; Next block index
-    ADDA R3, 1 ; Next pointer
+    ADD R4, 1 ; Next block index
+    ADD R3, 1 ; Next pointer
 
 get_next_block_coords_end:
     RET
@@ -48,17 +48,17 @@ get_next_block_coords_end:
 ; ---
 
 compute_block_position_in_map: ; R5 = X ; R6 = Y ;
-    ADDA R5, [current_block_X]
-    ADDA R6, [current_block_Y]
+    ADD R5, [current_block_X]
+    ADD R6, [current_block_Y]
     RET
 
 ; ---
 
 check_is_outside_map: ; R5 = X ; R6 = Y ;
-    CMPA R5, 9
+    CMP R5, 9
     JA check_outside_map_end_is_outside
 
-    CMPA R6, 21
+    CMP R6, 21
     JA check_outside_map_end_is_outside
 
     JMP check_outside_map_end_not_outside
@@ -77,18 +77,18 @@ check_pos_available_in_map: ; R5 = X ; R6 = Y ;
     PUSH R4
 
     CALL check_is_outside_map ; Check is the block is outside the map
-    CMPA R0, 1
+    CMP R0, 1
     JE pos_not_available
 
     LOAD R4, R6 ; R4 = Y
-    MULA R4, 10 ; R4 = Y*10
+    MUL R4, 10 ; R4 = Y*10
     ADD R4, R5 ; R4 = X + Y*10
 
     LOAD R3, map
     ADD R3, R4 ; R3 = Final address
 
     LOAD R3, [R3] ; Load value in R3
-    CMPA R3, 0
+    CMP R3, 0
 
     JE pos_available
 
@@ -120,14 +120,14 @@ can_current_move_down:
 can_current_move_down_loop:
     CALL get_next_block_coords
 
-    CMPA R4, 16 ; Reach end of loop
+    CMP R4, 16 ; Reach end of loop
     JE can_mode_end_true
 
     CALL compute_block_position_in_map
-    ADDA R6, 1 ; Move down one line
+    ADD R6, 1 ; Move down one line
 
     CALL check_pos_available_in_map
-    CMPA R0, 0 ; Position is not available
+    CMP R0, 0 ; Position is not available
     JE can_mode_end_false
 
     JMP can_current_move_down_loop
@@ -139,14 +139,14 @@ can_current_move_left:
 can_current_move_left_loop:
     CALL get_next_block_coords
 
-    CMPA R4, 16 ; Reach end of loop
+    CMP R4, 16 ; Reach end of loop
     JE can_mode_end_true
 
     CALL compute_block_position_in_map
-    SUBA R5, 1 ; Move left one line
+    SUB R5, 1 ; Move left one line
 
     CALL check_pos_available_in_map
-    CMPA R0, 0 ; Position is not available
+    CMP R0, 0 ; Position is not available
     JE can_mode_end_false
 
     JMP can_current_move_left_loop
@@ -158,14 +158,14 @@ can_current_move_right:
 can_current_move_right_loop:
     CALL get_next_block_coords
 
-    CMPA R4, 16 ; Reach end of loop
+    CMP R4, 16 ; Reach end of loop
     JE can_mode_end_true
 
     CALL compute_block_position_in_map
-    ADDA R5, 1 ; Move right one line
+    ADD R5, 1 ; Move right one line
 
     CALL check_pos_available_in_map
-    CMPA R0, 0 ; Position is not available
+    CMP R0, 0 ; Position is not available
     JE can_mode_end_false
 
     JMP can_current_move_right_loop
@@ -184,13 +184,13 @@ is_block_valid_on_map: ; R2 = Block rotation
 is_block_valid_loop:
     CALL get_next_block_coords
 
-    CMPA R4, 16 ; Reach end of loop
+    CMP R4, 16 ; Reach end of loop
     JE can_mode_end_true
 
     CALL compute_block_position_in_map
     CALL check_pos_available_in_map
 
-    CMPA R0, 0 ; Position is not available
+    CMP R0, 0 ; Position is not available
     JE can_mode_end_false
 
     JMP is_block_valid_loop

@@ -84,15 +84,15 @@ void instr_STORER(Runtime &runtime, InstructionView view)
     );
 }
 
-void instr_ADD(Runtime &runtime, InstructionView view)
+void instr_ADDR(Runtime &runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
-        runtime.registries.read(view.r1()) + runtime.registries.read(view.r2())
+        runtime.registries.read(view.r1()) + view.get_r2(runtime)
     );
 }
 
-void instr_ADDA(Runtime& runtime, InstructionView view)
+void instr_ADDD(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
@@ -101,7 +101,7 @@ void instr_ADDA(Runtime& runtime, InstructionView view)
 }
 
 
-void instr_SUB(Runtime &runtime, InstructionView view)
+void instr_SUBR(Runtime &runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
@@ -109,7 +109,7 @@ void instr_SUB(Runtime &runtime, InstructionView view)
     );
 }
 
-void instr_SUBA(Runtime& runtime, InstructionView view)
+void instr_SUBD(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
@@ -117,15 +117,15 @@ void instr_SUBA(Runtime& runtime, InstructionView view)
     );
 }
 
-void instr_MUL(Runtime& runtime, InstructionView view)
+void instr_MULR(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
-        runtime.registries.read(view.r1()) * runtime.registries.read(view.r2())
+        runtime.registries.read(view.r1()) * view.get_r2(runtime)
     );
 }
 
-void instr_MULA(Runtime& runtime, InstructionView view)
+void instr_MULD(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
@@ -133,17 +133,17 @@ void instr_MULA(Runtime& runtime, InstructionView view)
     );
 }
 
-void instr_DIV(Runtime& runtime, InstructionView view)
+void instr_DIVR(Runtime& runtime, InstructionView view)
 {
-    if (runtime.registries.read(view.r2()) == 0)
+    if (view.get_r2(runtime) == 0)
         throw InterpreterError("[DIV] Division by zero !");
     runtime.registries.write(
         view.r1(),
-        runtime.registries.read(view.r1()) / runtime.registries.read(view.r2())
+        runtime.registries.read(view.r1()) / view.get_r2(runtime)
     );
 }
 
-void instr_DIVA(Runtime& runtime, InstructionView view)
+void instr_DIVD(Runtime& runtime, InstructionView view)
 {
     if (view.get_data(runtime) == 0)
         throw InterpreterError("[DIV] Division by zero !");
@@ -153,18 +153,18 @@ void instr_DIVA(Runtime& runtime, InstructionView view)
     );
 }
 
-void instr_MIN(Runtime& runtime, InstructionView view)
+void instr_MINR(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
         std::min(
             runtime.registries.read(view.r1()),
-            runtime.registries.read(view.r2())
+            static_cast<uint16_t>(view.get_r2(runtime))
         )
     );
 }
 
-void instr_MINA(Runtime& runtime, InstructionView view)
+void instr_MIND(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
@@ -175,18 +175,18 @@ void instr_MINA(Runtime& runtime, InstructionView view)
     );
 }
 
-void instr_MAX(Runtime& runtime, InstructionView view)
+void instr_MAXR(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
         std::max(
             runtime.registries.read(view.r1()),
-            runtime.registries.read(view.r2())
+            static_cast<uint16_t>(view.get_r2(runtime))
         )
     );
 }
 
-void instr_MAXA(Runtime& runtime, InstructionView view)
+void instr_MAXD(Runtime& runtime, InstructionView view)
 {
     runtime.registries.write(
         view.r1(),
@@ -197,17 +197,17 @@ void instr_MAXA(Runtime& runtime, InstructionView view)
     );
 }
 
-void instr_MOD(Runtime& runtime, InstructionView view)
+void instr_MODR(Runtime& runtime, InstructionView view)
 {
-    if (runtime.registries.read(view.r2()) == 0)
+    if (view.get_r2(runtime) == 0)
         throw InterpreterError("[MOD] Modulo by zero !");
     runtime.registries.write(
         view.r1(),
-        runtime.registries.read(view.r1()) % runtime.registries.read(view.r2())
+        runtime.registries.read(view.r1()) % view.get_r2(runtime)
     );
 }
 
-void instr_MODA(Runtime& runtime, InstructionView view)
+void instr_MODD(Runtime& runtime, InstructionView view)
 {
     if (view.get_data(runtime) == 0)
         throw InterpreterError("[MOD] Modulo by zero !");
@@ -234,11 +234,11 @@ void instr_CMPR(Runtime &runtime, InstructionView view)
     compute_CMP(
         runtime,
         runtime.registries.read(view.r1()),
-        runtime.registries.read(view.r2())
+        view.get_r2(runtime)
     );
 }
 
-void instr_CMPA(Runtime &runtime, InstructionView view)
+void instr_CMPD(Runtime &runtime, InstructionView view)
 {
     compute_CMP(
         runtime,
@@ -273,32 +273,17 @@ void instr_JB(Runtime& runtime, InstructionView view)
 
 void instr_DISPLAY_N(Runtime &runtime, InstructionView view)
 {
-    std::cout << runtime.registries.read(view.r1()) << std::endl;
-}
-
-void instr_DISPLAY_AN(Runtime &runtime, InstructionView view)
-{
-    std::cout << runtime.memory.read(runtime.registries.read(view.r1())) << std::endl;
+    std::cout << view.get_r1(runtime) << std::endl;
 }
 
 void instr_DISPLAY_C(Runtime &runtime, InstructionView view)
 {
-    std::cout << static_cast<char>(runtime.registries.read(view.r1())) << std::flush;
-}
-
-void instr_DISPLAY_AC(Runtime &runtime, InstructionView view)
-{
-    std::cout << static_cast<char>(runtime.memory.read(runtime.registries.read(view.r1()))) << std::flush;
+    std::cout << static_cast<char>(view.get_r1(runtime)) << std::flush;
 }
 
 void instr_DISPLAY_B(Runtime &runtime, InstructionView view)
 {
-    Logger::log_uint16_as_bit(runtime.registries.read(view.r1()));
-}
-
-void instr_DISPLAY_AB(Runtime &runtime, InstructionView view)
-{
-    Logger::log_uint16_as_bit(runtime.memory.read(runtime.registries.read(view.r1())));
+    Logger::log_uint16_as_bit(view.get_r1(runtime));
 }
 
 void instr_HALT(Runtime &runtime, InstructionView view)
