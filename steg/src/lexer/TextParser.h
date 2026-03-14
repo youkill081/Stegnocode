@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace lexer
+namespace compilator
 {
     class TextParser
     {

@@ -9,8 +9,8 @@
 
 int main()
 {
-    lexer::TextParser parser = lexer::TextParser::from_file("C:/Users/Roumite/CLionProjects/stegnocode/steg/examples/test.steg");
-    lexer::Lexer lexer(parser);
+    compilator::TextParser parser = compilator::TextParser::from_file("C:/Users/Roumite/CLionProjects/stegnocode/steg/examples/test.steg");
+    compilator::Lexer lexer(parser);
 
     try
     {

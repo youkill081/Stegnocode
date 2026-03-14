@@ -8,7 +8,7 @@
 #include <array>
 #include <string_view>
 
-namespace lexer
+namespace compilator
 {
     enum LexerTokensTypes
     {

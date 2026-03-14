@@ -10,7 +10,7 @@
 
 #include "exceptions.h"
 
-using namespace lexer;
+using namespace compilator;
 
 std::optional<LexerTokensTypes> lookup_keyword_or_symbol(const std::string_view &text) {
     for (const auto &entry : KEYWORDS) {
@@ -229,6 +229,33 @@ void Lexer::compute()
             break;
     }
     _has_compute = true;
+}
+
+void Lexer::init_browser()
+{
+    if (!_has_compute)
+        compute();
+    _browse_index = 0;
+}
+
+const LexerToken& Lexer::get_next()
+{
+    return _tokens[_browse_index++];
+}
+
+bool Lexer::has_next() const
+{
+    return _browse_index < _tokens.size();
+}
+
+const LexerToken& Lexer::peek_x(std::size_t offset)
+{
+    return _tokens[_browse_index + offset];
+}
+
+bool Lexer::has_peek_x(std::size_t offset) const
+{
+    return _browse_index + offset < _tokens.size();
 }
 
 void Lexer::display() const
