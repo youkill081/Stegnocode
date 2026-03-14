@@ -7,6 +7,12 @@ set(CMAKE_CXX_STANDARD 23)
 set(STEG_LIB_SOURCES
         src/main.cpp
         src/lexer/lexer_definitions.h
+        src/lexer/Lexer.cpp
+        src/lexer/Lexer.h
+        src/lexer/TextParser.cpp
+        src/lexer/TextParser.h
+        src/exceptions.h
+        src/exceptions.h
 )
 
 add_library(steg_lib STATIC ${STEG_LIB_SOURCES})
