@@ -10,7 +10,7 @@ section .files
     block_white_background "examples/tetris/ressources/block_white.png"
 
 section .data
-    number_of_block_skin 2
+    number_of_block_skin DB 2
 
     ; map of 22x10 cells, so vector of 220 cells
     ; 0 - empty cell
@@ -18,10 +18,10 @@ section .data
     ; first digits = block type, second digits = skin
     ; EX : 12 = block type 1, skin 2
     ; Two first row are invisible
-    map 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    map DB 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
-    map_x_padding 96
-    map_y_padding 42
+    map_x_padding DD 96
+    map_y_padding DD 42
 
 section .text
 ; compute_block_position_from_coords_in_map
@@ -31,18 +31,18 @@ section .text
 ; R0 -> X pixel coordinate
 ; R1 -> Y pixel coordinate
 compute_block_position_from_coords:
-    LOAD R3, R1 ; R3 = col
+    LOAD_8 R3, R1 ; R3 = col
     MUL R3, 8
     ADD R3, [map_x_padding]
 
     ; compute Y = row * 8 + map_y_padding
-    LOAD R4, R2 ; R4 = row
+    LOAD_8 R4, R2 ; R4 = row
     SUB R4, 2 ; Sub 2 due to 2 invisibles cells above the map
     MUL R4, 8
     ADD R4, [map_y_padding]
 
-    LOAD R0, R3 ; result X
-    LOAD R1, R4 ; result Y
+    LOAD_32 R0, R3 ; result X
+    LOAD_32 R1, R4 ; result Y
     RET
 
 ; compute_block_position_from_index
@@ -54,45 +54,45 @@ compute_block_position_from_index:
     ; Convert index -> col,row
     ; col = index % 10
     ; row = index / 10
-    LOAD R2, R1 ; R2 = index (we'll use R2/R3 as temps)
+    LOAD_8 R2, R1 ; R2 = index (we'll use R2/R3 as temps)
     MOD R2, 10 ; R2 = col
-    LOAD R3, R1
+    LOAD_8 R3, R1
     DIV R3, 10 ; R3 = row
 
-    LOAD R1, R2
-    LOAD R2, R3
+    LOAD_8 R1, R2
+    LOAD_8 R2, R3
     CALL compute_block_position_from_coords
 
     RET
 
 
 draw_map:
-    LOAD R6, 20 ; R6 = starting cell index (skip top 2 rows = 20 cells)
-    LOAD R7, map
+    LOAD_8 R6, 20 ; R6 = starting cell index (skip top 2 rows = 20 cells)
+    LOAD_32 R7, map
     ADD R7, 20
 
 draw_map_loop:
     CMP R6, 220
     JE draw_map_end
 
-    LOAD R5, [R7] ; R5 = current cell value
+    LOAD_8 R5, [R7] ; R5 = current cell value
     CMP R5, 0
     JE draw_map_next
 
 
-    LOAD R1, R6 ; Put current map index in R1
+    LOAD_16 R1, R6 ; Put current map index in R1
     CALL compute_block_position_from_index ; R0 = coords X, R1 = coords Y
 
     ; Decode : R2 = block type (color), R3 = skin
-    LOAD R2, R5
+    LOAD_8 R2, R5
     DIV R2, 10
-    LOAD R3, R5
+    LOAD_8 R3, R5
     MOD R3, 10
 
     CALL draw_white_background_at_coordinate ; Need R0 (X), R1 (Y)
     CALL set_color_by_block_type ; Need R2 (block type)
 
-    LOAD R2, R3
+    LOAD_8 R2, R3
     CALL draw_skin_at_coordinate ; Need R0 (X), R1 (Y), R2 (skin number)
 
 draw_map_next:
@@ -107,14 +107,14 @@ draw_map_end:
 ; ----
 
 reset_map:
-    LOAD R0, 0
-    LOAD R1, map
-    LOAD R2, 0 ; always 0
+    LOAD_8 R0, 0
+    LOAD_32 R1, map
+    LOAD_8 R2, 0 ; always 0
 reset_map_loop:
     CMP R0, 220
     JE reset_map_end
 
-    STORER R2, R1 ; store 0 at R1 address
+    STORE_8 R2, R1 ; store 0 at R1 address
 
     ADD R0, 1
     ADD R1, 1

@@ -8,21 +8,21 @@
 ; R7 -> padding Y (pixel) ;
 
 section .data
-    DAB_padding_x_pixel 0
-    DAB_padding_y_pixel 0
-    DAB_block_type 0
-    DAB_block_skin 0
-    DAB_block_grid_x 0  ; ADDED: stores block grid X (R4) to survive across compute_block_position_from_coords call
-    DAB_block_grid_y 0  ; ADDED: stores block grid Y (R5) to survive across compute_block_position_from_coords call
+    DAB_padding_x_pixel DD 0
+    DAB_padding_y_pixel DD 0
+    DAB_block_type DB 0
+    DAB_block_skin DB 0
+    DAB_block_grid_x DD 0  ; ADDED: stores block grid X (R4) to survive across compute_block_position_from_coords call
+    DAB_block_grid_y DD 0 ; ADDED: stores block grid Y (R5) to survive across compute_block_position_from_coords call
 
 section .text
 draw_alive_block:
-    STOREA R6, DAB_padding_x_pixel
-    STOREA R7, DAB_padding_y_pixel
-    STOREA R1, DAB_block_type
-    STOREA R3, DAB_block_skin
-    STOREA R4, DAB_block_grid_x
-    STOREA R5, DAB_block_grid_y
+    STORE_32 R6, DAB_padding_x_pixel
+    STORE_32 R7, DAB_padding_y_pixel
+    STORE_8 R1, DAB_block_type
+    STORE_8 R3, DAB_block_skin
+    STORE_32 R4, DAB_block_grid_x
+    STORE_32 R5, DAB_block_grid_y
 
     PUSH R3
     PUSH R4
@@ -32,8 +32,8 @@ draw_alive_block:
     POP R4
     POP R3
 
-    LOAD R6, 0 ; cell index
-    LOAD R7, R0 ; array address
+    LOAD_8 R6, 0 ; cell index
+    LOAD_32 R7, R0 ; array address
 
     PUSH R2 ; Save R2 - Now R2 = current cell value
 
@@ -41,7 +41,7 @@ draw_alive_block_loop:
     CMP R6, 16
     JE draw_alive_block_end
 
-    LOAD R2, [R7] ; load current cell value in R2
+    LOAD_8 R2, [R7] ; load current cell value in R2
     CMP R2, 0
     JE draw_alive_block_next
 
@@ -53,15 +53,15 @@ draw_alive_block_loop:
     PUSH R7
 
     ; Compute absolute grid col (X) = (cell_index % 4) + block_grid_x
-    LOAD R1, R6
+    LOAD_32 R1, R6
     MOD R1, 4
-    LOAD R4, [DAB_block_grid_x]
+    LOAD_32 R4, [DAB_block_grid_x]
     ADD R1, R4
 
     ; Compute absolute grid row (Y) = (cell_index / 4) + block_grid_y
-    LOAD R2, R6
+    LOAD_32 R2, R6
     DIV R2, 4
-    LOAD R5, [DAB_block_grid_y]
+    LOAD_32 R5, [DAB_block_grid_y]
     ADD R2, R5
 
     CMP R2, 2
@@ -74,10 +74,10 @@ draw_alive_block_loop:
 
     CALL draw_white_background_at_coordinate ; Need R0 (X), R1 (Y)
 
-    LOAD R2, [DAB_block_type]
+    LOAD_8 R2, [DAB_block_type]
     CALL set_color_by_block_type ; Need R2 (block type)
 
-    LOAD R2, [DAB_block_skin]
+    LOAD_8 R2, [DAB_block_skin]
     CALL draw_skin_at_coordinate ; Need R0 (X), R1 (Y), R2 (skin number)
 
 bypass_draw_current_block:

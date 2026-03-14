@@ -8,13 +8,13 @@ section .text
 ; -----------
 
 init_can_move_loop: ; Set R3 = array address ; R4 = current_index_in_loop ;
-    LOAD R1, [current_block_type]
-    LOAD R2, [current_block_rotation]
+    LOAD_8 R1, [current_block_type]
+    LOAD_8 R2, [current_block_rotation]
 
     CALL get_block_array_from_type_rotation ; GET R1 = type, R2 = rotation RETURN R0 = array address
-    LOAD R3, R0 ; save array address in R3
+    LOAD_32 R3, R0 ; save array address in R3
 
-    LOAD R4, 0
+    LOAD_8 R4, 0
     RET
 
 ; ---
@@ -23,7 +23,7 @@ get_next_block_coords: ; iterate over all blocks and put coordinate in R5 = X ; 
     CMP R4, 16
     JE get_next_block_coords_end ; End of array, end
 
-    LOAD R7, [R3] ; Load current value in R7
+    LOAD_8 R7, [R3] ; Load current value in R7
     CMP R7, 1
     JE get_next_block_coords_compute_coords ; Compute coords and end
 
@@ -33,10 +33,10 @@ get_next_block_coords: ; iterate over all blocks and put coordinate in R5 = X ; 
     JMP get_next_block_coords
 
 get_next_block_coords_compute_coords:
-    LOAD R5, R4
+    LOAD_32 R5, R4
     MOD R5, 4 ; R5/X = index % 4
 
-    LOAD R6, R4
+    LOAD_32 R6, R4
     DIV R6, 4 ; R6/Y = index / 4
 
     ADD R4, 1 ; Next block index
@@ -48,8 +48,17 @@ get_next_block_coords_end:
 ; ---
 
 compute_block_position_in_map: ; R5 = X ; R6 = Y ;
-    ADD R5, [current_block_X]
-    ADD R6, [current_block_Y]
+    PUSH R0
+
+    LOAD_8 R0, [current_block_X]
+    ADD R5, R0
+    MOD R5, 256
+
+    LOAD_8 R0, [current_block_Y]
+    ADD R6, R0
+    MOD R6, 256
+
+    POP R0
     RET
 
 ; ---
@@ -64,10 +73,10 @@ check_is_outside_map: ; R5 = X ; R6 = Y ;
     JMP check_outside_map_end_not_outside
 
 check_outside_map_end_is_outside:
-    LOAD R0, 1
+    LOAD_8 R0, 1
     RET
 check_outside_map_end_not_outside:
-    LOAD R0, 0
+    LOAD_8 R0, 0
     RET
 
 ; ---
@@ -80,23 +89,23 @@ check_pos_available_in_map: ; R5 = X ; R6 = Y ;
     CMP R0, 1
     JE pos_not_available
 
-    LOAD R4, R6 ; R4 = Y
+    LOAD_32 R4, R6 ; R4 = Y
     MUL R4, 10 ; R4 = Y*10
     ADD R4, R5 ; R4 = X + Y*10
 
-    LOAD R3, map
+    LOAD_32 R3, map
     ADD R3, R4 ; R3 = Final address
 
-    LOAD R3, [R3] ; Load value in R3
+    LOAD_8 R3, [R3] ; Load value in R3
     CMP R3, 0
 
     JE pos_available
 
 pos_not_available:
-    LOAD R0, 0
+    LOAD_8 R0, 0
     JMP pos_end
 pos_available:
-    LOAD R0, 1
+    LOAD_8 R0, 1
 pos_end:
     POP R4
     POP R3
@@ -105,10 +114,10 @@ pos_end:
 ; ---
 
 can_mode_end_true:
-    LOAD R0, 1
+    LOAD_8 R0, 1
     RET
 can_mode_end_false:
-    LOAD R0, 0
+    LOAD_8 R0, 0
     RET
 
 ; -----------
@@ -175,12 +184,12 @@ can_current_move_right_loop:
 ; Function purpose is identical to the previous one, but without modifying the coordinates.
 ; Used by check_rotation to verify the validity of the rotation
 is_block_valid_on_map: ; R2 = Block rotation
-    LOAD R1, [current_block_type]
+    LOAD_8 R1, [current_block_type]
 
     CALL get_block_array_from_type_rotation ; GET R1 = type, R2 = rotation RETURN R0 = array address
-    LOAD R3, R0 ; save array address in R3
+    LOAD_32 R3, R0 ; save array address in R3
 
-    LOAD R4, 0
+    LOAD_8 R4, 0
 is_block_valid_loop:
     CALL get_next_block_coords
 

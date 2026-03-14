@@ -1,15 +1,15 @@
 section .data
-    move_down_clock     "."
-    move_down_key_clock "."
+    move_down_clock DD 0
+    move_down_key_clock DD 0
 
-    soft_drop_count 0
+    soft_drop_count DB 0
 
 section .text
 init_move_down:
     CLOCK_CREATE R0
-    STOREA R0, move_down_clock
+    STORE_32 R0, move_down_clock
     CLOCK_CREATE R0
-    STOREA R0, move_down_key_clock
+    STORE_32 R0, move_down_key_clock
     RET
 
 check_move_down:
@@ -24,17 +24,17 @@ check_move_down_key:
     CMP R1, 0
     JE check_move_down_key_end ; If key is not pressed, return
 
-    LOAD R1, [move_down_key_clock]
+    LOAD_32 R1, [move_down_key_clock]
     CLOCK_GET_ELAPSED_MS R2, R1
     CMP R2, 75
     JB check_move_down_key_end ; if < 75ms passed, end
 
-    LOAD R1, [move_down_key_clock]
+    LOAD_32 R1, [move_down_key_clock]
     CLOCK_RESET R1
 
-    LOAD R0, [soft_drop_count]
+    LOAD_8 R0, [soft_drop_count]
     ADD R0, 1
-    STOREA R0, soft_drop_count ; soft_drop_count++
+    STORE_8 R0, soft_drop_count ; soft_drop_count++
 
     CALL try_move_down
 
@@ -45,12 +45,12 @@ check_move_down_key_end:
 
 check_move_down_clock:
     CALL get_current_speed ; R0 = current_speed in MS
-    LOAD R1, [move_down_clock]
+    LOAD_32 R1, [move_down_clock]
     CLOCK_GET_ELAPSED_MS R2, R1
     CMP R2, R0
     JB check_move_down_clock_end ; if < 500ms passed, end
 
-    LOAD R1, [move_down_clock]
+    LOAD_32 R1, [move_down_clock]
     CLOCK_RESET R1
 
     CALL try_move_down
@@ -72,16 +72,16 @@ try_move_down:
 ; -----
 
 emplace_current_block:
-    LOAD R0, [soft_drop_count]
+    LOAD_8 R0, [soft_drop_count]
     MUL R0, 4          ; R0 = soft_drop_count * 4
     MIN R0, 20         ; cap les points de drop à 20
 
-    LOAD R1, [score]
+    LOAD_32 R1, [score]
     ADD R1, R0          ; R1 = score + drop_points
-    STOREA R1, score
+    STORE_32 R1, score
 
-    LOAD R0, 0
-    STOREA R0, soft_drop_count
+    LOAD_8 R0, 0
+    STORE_8 R0, soft_drop_count
 
     CALL increase_current_block_stat
     CALL place_current_block_on_map

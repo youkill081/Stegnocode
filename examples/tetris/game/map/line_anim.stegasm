@@ -1,6 +1,6 @@
 section .data
-    anim_left_col  0
-    anim_right_col 0
+    anim_left_col  DB 0
+    anim_right_col DB 0
 
 section .text
 
@@ -8,7 +8,7 @@ section .text
 ; Call when set game_state to one
 ; Reset the clock and properly start the animation
 start_line_clear_anim:
-    LOAD R0, [anim_clock] ; R0 = clock descriptor
+    LOAD_32 R0, [anim_clock] ; R0 = clock descriptor
     CLOCK_RESET R0
     RET
 
@@ -18,25 +18,25 @@ start_line_clear_anim:
 ; call each frame when game_state = 1
 update_line_clear_anim:
     ; Read the elapsed time
-    LOAD R1, [anim_clock] ; R1 = clock descriptor
+    LOAD_32 R1, [anim_clock] ; R1 = clock descriptor
     CLOCK_GET_ELAPSED_MS R0, R1 ; R0 = ms écoulées
 
     CMP R0, 500 ; Check Animation end after 500ms
     JA anim_apply_end
     JE anim_apply_end ; anim_apply_end if >= 500ms
 
-    LOAD R1, R0
+    LOAD_32 R1, R0
     DIV R1, 75 ; R1 = palier
 
     ; left_col = 4 - palier
-    LOAD R2, 4
+    LOAD_8 R2, 4
     SUB R2, R1
-    STOREA R2, anim_left_col
+    STORE_8 R2, anim_left_col
 
     ; right_col = 5 + palier
-    LOAD R2, R1
+    LOAD_32 R2, R1
     ADD R2, 5
-    STOREA R2, anim_right_col
+    STORE_8 R2, anim_right_col
 
     CALL draw_anim_crack_rows
     RET
@@ -44,8 +44,8 @@ update_line_clear_anim:
 anim_apply_end:
     CALL apply_line_clear
 
-    LOAD R0, 0
-    STOREA R0, game_state
+    LOAD_8 R0, 0
+    STORE_8 R0, game_state
 
     CALL move_next_to_current
     RET
@@ -54,25 +54,25 @@ anim_apply_end:
 ; draw_anim_crack_rows
 ; For each pending line, hide drawed block [left_col..right_col]
 draw_anim_crack_rows:
-    LOAD R6, 0 ; R6 = slot (0..3)
+    LOAD_8 R6, 0 ; R6 = slot (0..3)
 
 crack_slot_loop:
     CMP R6, 4
     JE crack_slot_done
 
     ; Read pending_rows[R6]
-    LOAD R5, pending_rows
+    LOAD_32  R5, pending_rows
     ADD R5, R6
-    LOAD R5, [R5] ; R5 = index of line or 255
+    LOAD_8 R5, [R5] ; R5 = index of line or 255
 
     CMP R5, 255
     JE crack_slot_next ; No line pending
 
     ; Loop on column [left_col .. right_col]
-    LOAD R7, [anim_left_col]
+    LOAD_8 R7, [anim_left_col]
 
 crack_col_loop:
-    LOAD R0, [anim_right_col]
+    LOAD_8 R0, [anim_right_col]
     CMP R7, R0
     JA crack_col_done ; R7 > right_col ; finished of this slot
 
@@ -80,13 +80,14 @@ crack_col_loop:
     PUSH R6
     PUSH R7
 
-    LOAD R1, R7 ; col
-    LOAD R2, R5 ; row
+    LOAD_32 R1, R7 ; col
+    LOAD_32 R2, R5 ; row
+
     CALL compute_block_position_from_coords ; OUT : R0=X, R1=Y
 
-    LOAD R2, 0
-    LOAD R3, 0
-    LOAD R4, 0
+    LOAD_8 R2, 0
+    LOAD_8 R3, 0
+    LOAD_8 R4, 0
     WINDOW_SET_TEXTURE_COLOR_MASK R2, R3, R4
     WINDOW_DRAW_TEXTURE R0, R1, block_white_background
     WINDOW_RESET_TEXTURE_COLOR_MASK

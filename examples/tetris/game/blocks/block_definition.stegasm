@@ -10,68 +10,68 @@ section .import
     "examples/tetris/game/blocks/move/move_current.stegasm"
 
 section .data
-    number_of_block_type 7
+    number_of_block_type DB 7
 
     ; Block O
-    block_type_1_is_4x4 1
-    block_type_1_rotations 1
-    block_type_1_r1 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0
+    block_type_1_is_4x4 DB 1
+    block_type_1_rotations DB 1
+    block_type_1_r1 DB 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0
 
     ; Block I
-    block_type_2_is_4x4 1
-    block_type_2_rotations 2
-    block_type_2_r1 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0
-    block_type_2_r2 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0
+    block_type_2_is_4x4 DB 1
+    block_type_2_rotations DB 2
+    block_type_2_r1 DB 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0
+    block_type_2_r2 DB 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0
 
     ; Block S
-    block_type_3_is_4x4 0
-    block_type_3_rotations 2
-    block_type_3_r1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 0
-    block_type_3_r2 0 1 0 0 1 1 0 0 1 0 0 0 0 0 0 0
+    block_type_3_is_4x4 DB 0
+    block_type_3_rotations DB 2
+    block_type_3_r1 DB 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 0
+    block_type_3_r2 DB 0 1 0 0 1 1 0 0 1 0 0 0 0 0 0 0
 
     ; Block Z
-    block_type_4_is_4x4 0
-    block_type_4_rotations 2
-    block_type_4_r1 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0
-    block_type_4_r2 1 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0
+    block_type_4_is_4x4 DB 0
+    block_type_4_rotations DB 2
+    block_type_4_r1 DB 0 0 0 0 0 1 1 0 1 1 0 0 0 0 0 0
+    block_type_4_r2 DB 1 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0
 
     ; Block T
-    block_type_5_is_4x4 0
-    block_type_5_rotations 4
-    block_type_5_r1 0 0 0 0 1 1 1 0 0 1 0 0 0 0 0 0
-    block_type_5_r2 0 1 0 0 1 1 0 0 0 1 0 0 0 0 0 0
-    block_type_5_r3 0 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0
-    block_type_5_r4 0 1 0 0 0 1 1 0 0 1 0 0 0 0 0 0
+    block_type_5_is_4x4 DB 0
+    block_type_5_rotations DB 4
+    block_type_5_r1 DB 0 0 0 0 1 1 1 0 0 1 0 0 0 0 0 0
+    block_type_5_r2 DB 0 1 0 0 1 1 0 0 0 1 0 0 0 0 0 0
+    block_type_5_r3 DB 0 1 0 0 1 1 1 0 0 0 0 0 0 0 0 0
+    block_type_5_r4 DB 0 1 0 0 0 1 1 0 0 1 0 0 0 0 0 0
 
     ; Block J
-    block_type_6_is_4x4 0
-    block_type_6_rotations 4
-    block_type_6_r1 0 0 0 0 1 1 1 0 0 0 1 0 0 0 0 0
-    block_type_6_r2 0 1 0 0 0 1 0 0 1 1 0 0 0 0 0 0
-    block_type_6_r3 1 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0
-    block_type_6_r4 1 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0
+    block_type_6_is_4x4 DB 0
+    block_type_6_rotations DB 4
+    block_type_6_r1 DB 0 0 0 0 1 1 1 0 0 0 1 0 0 0 0 0
+    block_type_6_r2 DB 0 1 0 0 0 1 0 0 1 1 0 0 0 0 0 0
+    block_type_6_r3 DB 1 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0
+    block_type_6_r4 DB 1 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0
 
     ; Block L
-    block_type_7_is_4x4 0
-    block_type_7_rotations 4
-    block_type_7_r1 0 0 0 0 1 1 1 0 1 0 0 0 0 0 0 0
-    block_type_7_r2 1 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0
-    block_type_7_r3 0 0 1 0 1 1 1 0 0 0 0 0 0 0 0 0
-    block_type_7_r4 1 0 0 0 1 0 0 0 1 1 0 0 0 0 0 0
+    block_type_7_is_4x4 DB 0
+    block_type_7_rotations DB 4
+    block_type_7_r1 DB 0 0 0 0 1 1 1 0 1 0 0 0 0 0 0 0
+    block_type_7_r2 DB 1 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0
+    block_type_7_r3 DB 0 0 1 0 1 1 1 0 0 0 0 0 0 0 0 0
+    block_type_7_r4 DB 1 0 0 0 1 0 0 0 1 1 0 0 0 0 0 0
 
     ; usefull variable definition
-    current_block_type 0
-    current_block_rotation 0
-    current_block_skin 0
-    current_block_X 3 ; Default X value
-    current_block_Y 0 ; Default Y value
+    current_block_type DB DB 0
+    current_block_rotation DB 0
+    current_block_skin DB 0
+    current_block_X DB 3 ; Default X value
+    current_block_Y DB 0 ; Default Y value
 
-    next_block_type 0
-    next_block_rotation 0
-    next_block_skin 0
+    next_block_type DB 0
+    next_block_rotation DB 0
+    next_block_skin DB 0
 
-    block_padding_x 0
-    block_padding_y 0
+    block_padding_x DB 0
+    block_padding_y DB 0
 
 section .text
 ; Function get_block_array_from_type_rotation ;
@@ -95,31 +95,31 @@ get_block_array_from_type_rotation:
     JE get_block_addr_type_7
 
 get_block_addr_type_1:
-    LOAD R0, block_type_1_r1
+    LOAD_32 R0, block_type_1_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_type_2:
-    LOAD R0, block_type_2_r1
+    LOAD_32 R0, block_type_2_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_type_3:
-    LOAD R0, block_type_3_r1
+    LOAD_32 R0, block_type_3_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_type_4:
-    LOAD R0, block_type_4_r1
+    LOAD_32 R0, block_type_4_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_type_5:
-    LOAD R0, block_type_5_r1
+    LOAD_32 R0, block_type_5_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_type_6:
-    LOAD R0, block_type_6_r1
+    LOAD_32 R0, block_type_6_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_type_7:
-    LOAD R0, block_type_7_r1
+    LOAD_32 R0, block_type_7_r1
     JMP get_block_addr_apply_rotation
 
 get_block_addr_apply_rotation:
@@ -151,31 +151,31 @@ get_block_type_is_4x4:
     JE get_block_type_is_4x4_7
 
 get_block_type_is_4x4_1:
-    LOAD R0, [block_type_1_is_4x4]
+    LOAD_8 R0, [block_type_1_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_2:
-    LOAD R0, [block_type_2_is_4x4]
+    LOAD_8 R0, [block_type_2_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_3:
-    LOAD R0, [block_type_3_is_4x4]
+    LOAD_8 R0, [block_type_3_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_4:
-    LOAD R0, [block_type_4_is_4x4]
+    LOAD_8 R0, [block_type_4_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_5:
-    LOAD R0, [block_type_5_is_4x4]
+    LOAD_8 R0, [block_type_5_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_6:
-    LOAD R0, [block_type_6_is_4x4]
+    LOAD_8 R0, [block_type_6_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_7:
-    LOAD R0, [block_type_7_is_4x4]
+    LOAD_8 R0, [block_type_7_is_4x4]
     JMP get_block_type_is_4x4_end
 
 get_block_type_is_4x4_end:
@@ -202,31 +202,31 @@ get_block_type_rotation_count:
     JE get_block_type_rot_7
 
 get_block_type_rot_1:
-    LOAD R0, [block_type_1_rotations]
+    LOAD_8 R0, [block_type_1_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_2:
-    LOAD R0, [block_type_2_rotations]
+    LOAD_8 R0, [block_type_2_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_3:
-    LOAD R0, [block_type_3_rotations]
+    LOAD_8 R0, [block_type_3_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_4:
-    LOAD R0, [block_type_4_rotations]
+    LOAD_8 R0, [block_type_4_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_5:
-    LOAD R0, [block_type_5_rotations]
+    LOAD_8 R0, [block_type_5_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_6:
-    LOAD R0, [block_type_6_rotations]
+    LOAD_8 R0, [block_type_6_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_7:
-    LOAD R0, [block_type_7_rotations]
+    LOAD_8 R0, [block_type_7_rotations]
     JMP get_block_type_rot_end
 
 get_block_type_rot_end:

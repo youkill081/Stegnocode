@@ -1,30 +1,30 @@
 section .data
-    level_header_string "LEVEL"
-    level_number ".."
-    level 0
+    level_header_string DB "LEVEL"
+    level_number DB ".."
+    level DB 0
 
-    level_text_size 11
+    level_text_size DD 11
 
-    speed_table 430, 370, 310, 260, 220, 180, 150, 120, 100, 85, 70, 60, 50, 40, 30, 25, 20, 16
+    speed_table DW 430, 370, 310, 260, 220, 180, 150, 120, 100, 85, 70, 60, 50, 40, 30, 25, 20, 16
 
-    red_level_table 63 34 163 63 237 0 136 112 63 237
-    green_level_table 73 177 73 73 28 162 0 146 73 28
-    blue_level_table 204 76 164 204 36 232 21 190 204 36
+    red_level_table DB 63 34 163 63 237 0 136 112 63 237
+    green_level_table DB 73 177 73 73 28 162 0 146 73 28
+    blue_level_table DB 204 76 164 204 36 232 21 190 204 36
 
 section .text
 display_level:
-    LOAD R0, level_number
-    LOAD R1, 2 ; Number of digits
-    LOAD R2, [level]
+    LOAD_32 R0, level_number ; Load pointer in R0
+    LOAD_8 R1, 2 ; Number of digits
+    LOAD_8 R2, [level]
     CALL number_to_string
 
     WINDOW_SET_TEXT_SIZE [level_text_size]
 
-    LOAD R0, 193
-    LOAD R1, 151
+    LOAD_8 R0, 193
+    LOAD_8 R1, 151
     WINDOW_DRAW_TEXT R0 R1 level_header_string
 
-    LOAD R0, 211
+    LOAD_8 R0, 211
     ADD R1, 10
     WINDOW_DRAW_TEXT R0 R1 level_number
 
@@ -33,20 +33,21 @@ display_level:
     RET
 
 update_level:
-    LOAD R0, [broken_lines]
+    LOAD_8 R0, [broken_lines]
     DIV R0, 10
-    STOREA R0, level
+    STORE_8 R0, level
     RET
 
 ; Put in R0 the speed of the current level
 get_current_speed:
-    LOAD R0, speed_table
+    LOAD_32 R0, speed_table ; Load pointer in R0
 
-    LOAD R1, [level]
+    LOAD_8 R1, [level]
     MIN R1, 17 ; clamp to 17 ;  number of value in speed_table
 
+    MUL R1, 2 ; speed_table is save in 2 bytes
     ADD R0, R1
-    LOAD R0, [R0]
+    LOAD_16 R0, [R0]
     RET
 
 ; ---
@@ -55,20 +56,20 @@ get_current_speed:
 set_level_color:
     PUSH R1
 
-    LOAD R1, [level]
+    LOAD_8 R1, [level]
     MOD R1, 10
 
-    LOAD R3, red_level_table
+    LOAD_32 R3, red_level_table
     ADD R3, R1
-    LOAD R3, [R3]
+    LOAD_8 R3, [R3]
 
-    LOAD R4, green_level_table
+    LOAD_32 R4, green_level_table
     ADD R4, R1
-    LOAD R4, [R4]
+    LOAD_8 R4, [R4]
 
-    LOAD R5, blue_level_table
+    LOAD_32 R5, blue_level_table
     ADD R5, R1
-    LOAD R5, [R5]
+    LOAD_8 R5, [R5]
 
     POP R1
 
