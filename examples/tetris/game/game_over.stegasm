@@ -1,52 +1,53 @@
 section .data
-    game_over_string "Game Over !"
-    game_over_string2 "Press 'R' to restart"
+    game_over_string DB "Game Over !"
+    game_over_string2 DB "   Press 'R' to restart" 10 "Press 'Tab' to hide/show menu"
 
-    hide_game_hover_text 0
+    hide_game_hover_text DB 0
 
 section .text
 ; Set the game over
 set_game_over:
-    LOADA R1, 2 ; game over flag
-    STOREA R1, game_state
+    LOAD_8 R1, 2 ; game over flag
+    STORE_8 R1, game_state
 
     RET
 
 handle_game_over:
-    LOADA R1, 2
-    CMPA R1, [game_state]
+    LOAD_8 R0, [game_state]
+    LOAD_8 R1, 2
+    CMP R1, R0
     JNE game_over_end ; Return if game is not over
 
     CALL handle_restart_key
     CALL handle_tab_key
 
-    LOADA R1 [hide_game_hover_text]
-    CMPA R1, 1 ; Skip next part if menu is hidden
+    LOAD_8 R1 [hide_game_hover_text]
+    CMP R1, 1 ; Skip next part if menu is hidden
     JE game_over_end
 
     ; Draw game over main string
 
-    LOADA R1 255 ; Red
-    LOADA R2 0 ; Green
-    LOADA R3 0 ; Blue
+    LOAD_8 R1 255 ; Red
+    LOAD_8 R2 0 ; Green
+    LOAD_8 R3 0 ; Blue
     WINDOW_SET_TEXT_COLOR R1, R2, R3
 
     WINDOW_SET_TEXT_SIZE 40
 
-    LOADA R1 25 ; X
-    LOADA R2 78 ; Y
+    LOAD_8 R1 25 ; X
+    LOAD_8 R2 78 ; Y
     WINDOW_DRAW_TEXT R1, R2 game_over_string
 
     ; Draw game over main second string
 
-    LOADA R1 255 ; Red
-    LOADA R2 255 ; Green
-    LOADA R3 255 ; Blue
+    LOAD_8 R1 255 ; Red
+    LOAD_8 R2 255 ; Green
+    LOAD_8 R3 255 ; Blue
     WINDOW_SET_TEXT_COLOR R1, R2, R3 ; Set color white
 
     WINDOW_SET_TEXT_SIZE 20
-    LOADA R1 30; X
-    LOADA R2 118 ; Y
+    LOAD_8 R1 10; X
+    LOAD_8 R2 118 ; Y
     WINDOW_DRAW_TEXT R1, R2 game_over_string2
 
     WINDOW_SET_TEXT_SIZE [default_string_size] ; Reset to default text size
@@ -57,28 +58,28 @@ game_over_end:
 
 handle_tab_key:
     WINDOW_KEY_PRESSED R1 258 ; 258 = KEY_TAB
-    CMPA R1, 1
+    CMP R1, 1
     JNE game_over_end ; Return if key is not pressed
 
-    LOADA R1 [hide_game_hover_text]
-    ADDA R1 1
-    MODA R1 2
-    STOREA R1, hide_game_hover_text
+    LOAD_8 R1 [hide_game_hover_text]
+    ADD R1 1
+    MOD R1 2
+    STORE_8 R1, hide_game_hover_text
     RET
 
 ; -----
 
 handle_restart_key:
     WINDOW_KEY_PRESSED R1 82 ; 82 = KEY_R
-    CMPA R1, 1
+    CMP R1, 1
     JNE game_over_end ; Return if key is not pressed
 
-    LOADA R1 0
-    STOREA R1, score ; score = 0
-    STOREA R1, level ; level = 0
-    STOREA R1, broken_lines ; broken_lines = 0
-    STOREA R1, game_state ; game_state = 0
-    STOREA R1, hide_game_hover_text ; hide_game_hover_text = 0
+    LOAD_8 R1 0
+    STORE_32 R1, score ; score = 0
+    STORE_8 R1, level ; level = 0
+    STORE_8 R1, broken_lines ; broken_lines = 0
+    STORE_8 R1, game_state ; game_state = 0
+    STORE_8 R1, hide_game_hover_text ; hide_game_hover_text = 0
 
     CALL reset_map
     CALL reset_stats_values

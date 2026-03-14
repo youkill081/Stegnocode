@@ -1,26 +1,26 @@
 section .data
-    stat_title "STATISTICS"
+    stat_title DB "STATISTICS"
 
-    stat_block_T 0
-    stat_block_T_string "..."
+    stat_block_T DB 0
+    stat_block_T_string DB "..."
 
-    stat_block_J 0
-    stat_block_J_string "..."
+    stat_block_J DB 0
+    stat_block_J_string DB "..."
 
-    stat_block_S 0
-    stat_block_S_string "..."
+    stat_block_S DB 0
+    stat_block_S_string DB "..."
 
-    stat_block_O 0
-    stat_block_O_string "..."
+    stat_block_O DB 0
+    stat_block_O_string DB "..."
 
-    stat_block_Z 0
-    stat_block_Z_string "..."
+    stat_block_Z DB 0
+    stat_block_Z_string DB "..."
 
-    stat_block_L 0
-    stat_block_L_string "..."
+    stat_block_L DB 0
+    stat_block_L_string DB "..."
 
-    stat_block_I 0
-    stat_block_I_string "..."
+    stat_block_I DB 0
+    stat_block_I_string DB "..."
 
 section .text
 display_stats:
@@ -28,145 +28,145 @@ display_stats:
 
     WINDOW_SET_TEXT_SIZE 10 ; Title text size
 
-    LOADA R1 15 ; X
-    LOADA R2 63 ; Y
+    LOAD_8 R1 15 ; X
+    LOAD_8 R2 63 ; Y
     WINDOW_DRAW_TEXT R1 R2 stat_title
 
     ; Set text color and size
 
-    LOADA R0 246
-    LOADA R1 54
-    LOADA R2 20
+    LOAD_8 R0 246
+    LOAD_8 R1 54
+    LOAD_8 R2 20
     WINDOW_SET_TEXT_COLOR R0 R1 R2
     WINDOW_SET_TEXT_SIZE 10
 
     ; Draw T
 
     CALL set_bocks_common_values
-    LOADA R1 5 ; T = type 5
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 19 ; Padding Y
+    LOAD_8 R1 5 ; T = type 5
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 19 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_T_string ; The string
-    LOADA R2, [stat_block_T] ; The stat
+    LOAD_32 R0, stat_block_T_string ; The string
+    LOAD_8 R2, [stat_block_T] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 79 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 79 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_T_string
 
     ; Draw J
 
     CALL set_bocks_common_values
-    LOADA R1 6 ; J = type 5
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 38 ; Padding Y
+    LOAD_8 R1 6 ; J = type 5
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 38 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_J_string ; The string
-    LOADA R2, [stat_block_J] ; The stat
+    LOAD_32 R0, stat_block_J_string ; The string
+    LOAD_8 R2, [stat_block_J] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 98 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 98 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_J_string
 
     ; Draw S
 
     CALL set_bocks_common_values
-    LOADA R3 1 ; Set a different skin
-    LOADA R1 3 ; S = type 3
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 57 ; Padding Y
+    LOAD_8 R3 1 ; Set a different skin
+    LOAD_8 R1 3 ; S = type 3
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 57 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_S_string ; The string
-    LOADA R2, [stat_block_S] ; The stat
+    LOAD_32 R0, stat_block_S_string ; The string
+    LOAD_8 R2, [stat_block_S] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 117 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 117 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_S_string
 
     ; Draw O
 
     CALL set_bocks_common_values
-    LOADA R3 1 ; Set a different skin
-    LOADA R1 1 ; O = type 1
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 76 ; Padding Y
+    LOAD_8 R3 1 ; Set a different skin
+    LOAD_8 R1 1 ; O = type 1
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 76 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_O_string ; The string
-    LOADA R2, [stat_block_O] ; The stat
+    LOAD_32 R0, stat_block_O_string ; The string
+    LOAD_8 R2, [stat_block_O] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 136 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 136 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_O_string
 
     ; Draw Z
 
     CALL set_bocks_common_values
-    LOADA R1 4 ; Z = type 4
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 95 ; Padding Y
+    LOAD_8 R1 4 ; Z = type 4
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 95 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_Z_string ; The string
-    LOADA R2, [stat_block_Z] ; The stat
+    LOAD_32 R0, stat_block_Z_string ; The string
+    LOAD_8 R2, [stat_block_Z] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 155 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 155 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_Z_string
 
     ; Draw L
 
     CALL set_bocks_common_values
-    LOADA R1 7 ; L = type 7
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 114 ; Padding Y
+    LOAD_8 R1 7 ; L = type 7
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 114 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_L_string ; The string
-    LOADA R2, [stat_block_L] ; The stat
+    LOAD_32 R0, stat_block_L_string ; The string
+    LOAD_8 R2, [stat_block_L] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 174 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 174 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_L_string
 
     ; Draw I
 
     CALL set_bocks_common_values
-    LOADA R3 1 ; Set a different skin
-    LOADA R1 2 ; I = type 2
-    LOADA R6 65461 ; Padding X -> Height value to create overflow and draw at the left of the map
-    LOADA R7 133 ; Padding Y
+    LOAD_8 R3 1 ; Set a different skin
+    LOAD_8 R1 2 ; I = type 2
+    LOAD_32 R6 4294967221 ; Padding X -> Height value to create overflow and draw at the left of the map
+    LOAD_8 R7 133 ; Padding Y
     CALL draw_alive_block
 
     CALL set_text_common_values
-    LOADA R0, stat_block_I_string ; The string
-    LOADA R2, [stat_block_I] ; The stat
+    LOAD_32 R0, stat_block_I_string ; The string
+    LOAD_8 R2, [stat_block_I] ; The stat
     CALL number_to_string
 
-    LOADA R0 56 ; Text X
-    LOADA R1 193 ; Text Y
+    LOAD_8 R0 56 ; Text X
+    LOAD_8 R1 193 ; Text Y
     WINDOW_DRAW_TEXT R0 R1 stat_block_I_string
 
     ; Reset text values
 
-    LOADA R0 255
-    LOADA R1 255
-    LOADA R2 255
+    LOAD_8 R0 255
+    LOAD_8 R1 255
+    LOAD_8 R2 255
     WINDOW_SET_TEXT_COLOR R0 R1 R2
     WINDOW_SET_TEXT_SIZE [default_string_size]
 
@@ -174,87 +174,87 @@ display_stats:
 
 
 set_bocks_common_values:
-    LOADA R4 0 ; X
-    LOADA R5 3 ; Y
-    LOADA R2 1 ; First rotation
-    LOADA R3 2 ; Second skin
+    LOAD_8 R4 0 ; X
+    LOAD_8 R5 3 ; Y
+    LOAD_8 R2 1 ; First rotation
+    LOAD_8 R3 2 ; Second skin
     RET
 
 set_text_common_values:
-    LOADA R1, 3 ; Number of digits
+    LOAD_8 R1, 3 ; Number of digits
     RET
 
 ; -----
 
 reset_stats_values:
-    LOADA R1 0
-    STOREA R1 stat_block_T
-    STOREA R1 stat_block_J
-    STOREA R1 stat_block_S
-    STOREA R1 stat_block_O
-    STOREA R1 stat_block_Z
-    STOREA R1 stat_block_L
-    STOREA R1 stat_block_I
+    LOAD_8 R1 0
+    STORE_8 R1 stat_block_T
+    STORE_8 R1 stat_block_J
+    STORE_8 R1 stat_block_S
+    STORE_8 R1 stat_block_O
+    STORE_8 R1 stat_block_Z
+    STORE_8 R1 stat_block_L
+    STORE_8 R1 stat_block_I
     RET
 
 ; -----
 
 increase_current_block_stat:
-    LOADA R1 [current_block_type]
-    CMPA R1 1
+    LOAD_8 R1 [current_block_type]
+    CMP R1 1
     JE increase_block_O_stat
-    CMPA R1 2
+    CMP R1 2
     JE increase_block_I_stat
-    CMPA R1 3
+    CMP R1 3
     JE increase_block_S_stat
-    CMPA R1 4
+    CMP R1 4
     JE increase_block_Z_stat
-    CMPA R1 5
+    CMP R1 5
     JE increase_block_T_stat
-    CMPA R1 6
+    CMP R1 6
     JE increase_block_J_stat
-    CMPA R1 7
+    CMP R1 7
     JE increase_block_L_stat
     RET
 
 increase_block_T_stat:
-    LOADA R1, [stat_block_T]
-    ADDA R1, 1
-    STOREA R1, stat_block_T
+    LOAD_8 R1, [stat_block_T]
+    ADD R1, 1
+    STORE_8 R1, stat_block_T
     RET
 
 increase_block_J_stat:
-    LOADA R1, [stat_block_J]
-    ADDA R1, 1
-    STOREA R1, stat_block_J
+    LOAD_8 R1, [stat_block_J]
+    ADD R1, 1
+    STORE_8 R1, stat_block_J
     RET
 
 increase_block_S_stat:
-    LOADA R1, [stat_block_S]
-    ADDA R1, 1
-    STOREA R1, stat_block_S
+    LOAD_8 R1, [stat_block_S]
+    ADD R1, 1
+    STORE_8 R1, stat_block_S
     RET
 
 increase_block_O_stat:
-    LOADA R1, [stat_block_O]
-    ADDA R1, 1
-    STOREA R1, stat_block_O
+    LOAD_8 R1, [stat_block_O]
+    ADD R1, 1
+    STORE_8 R1, stat_block_O
     RET
 
 increase_block_Z_stat:
-    LOADA R1, [stat_block_Z]
-    ADDA R1, 1
-    STOREA R1, stat_block_Z
+    LOAD_8 R1, [stat_block_Z]
+    ADD R1, 1
+    STORE_8 R1, stat_block_Z
     RET
 
 increase_block_L_stat:
-    LOADA R1, [stat_block_L]
-    ADDA R1, 1
-    STOREA R1, stat_block_L
+    LOAD_8 R1, [stat_block_L]
+    ADD R1, 1
+    STORE_8 R1, stat_block_L
     RET
 
 increase_block_I_stat:
-    LOADA R1, [stat_block_I]
-    ADDA R1, 1
-    STOREA R1, stat_block_I
+    LOAD_8 R1, [stat_block_I]
+    ADD R1, 1
+    STORE_8 R1, stat_block_I
     RET

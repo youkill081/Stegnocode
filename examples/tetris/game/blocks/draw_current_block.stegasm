@@ -1,13 +1,13 @@
 ; Draw the current controller block on the map ;
 section .text
 draw_current_block:
-    LOADA R1, [current_block_type]
-    LOADA R2, [current_block_rotation]
-    LOADA R3, [current_block_skin]
-    LOADA R4, [current_block_X]
-    LOADA R5, [current_block_Y]
-    LOADA R6, 0 ; No padding for current_block
-    LOADA R7, 0 ; No padding for current_block
+    LOAD_8 R1, [current_block_type]
+    LOAD_8 R2, [current_block_rotation]
+    LOAD_8 R3, [current_block_skin]
+    LOAD_8 R4, [current_block_X]
+    LOAD_8 R5, [current_block_Y]
+    LOAD_8 R6, 0 ; No padding for current_block
+    LOAD_8 R7, 0 ; No padding for current_block
 
     CALL draw_alive_block
 

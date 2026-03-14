@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include "ByteBuffer.h"
-#include "Logger.h"
 #include "assembler/Assembler.h"
 #include "assembler/assembler_exception.h"
 #include "interpreter/Vm.h"

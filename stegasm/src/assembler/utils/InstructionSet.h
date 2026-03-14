@@ -16,20 +16,33 @@ namespace assembler
 {
     struct ParsedLine;
 
-    using UsedRegistries = std::array<RegNames, 8>;
+    struct RegistryParsingResult
+    {
+        RegTypes type = REG_NO;
+        RegNames registry = R0;
+    };
+
+    using UsedRegistries = std::array<RegistryParsingResult, 3>;
 
     struct DataValueParsingResult
     {
-        bool is_address;
-        uint16_t value;
+        DataCount data_count = NO_DATA;
+        uint32_t value = 0;
+        bool is_address = false;
     };
-    using DataValues = std::array<DataValueParsingResult, 2>;
+
+    struct InstructionParameters
+    {
+        UsedRegistries registries{};
+        DataValueParsingResult data_value{};
+    };
 
     struct Instruction
     {
         const InstructionDesc &desc;
-        UsedRegistries registries;
-        DataValues datas;
+        HandlerNumber handler_number = HANDLER_0;
+
+        InstructionParameters instruction_parameters{};
     };
 
     class InstructionSet : private std::vector<Instruction>
@@ -38,16 +51,15 @@ namespace assembler
     private:
         static const InstructionDesc &get_instruction_desc_from_name(const std::string& name);
         static RegNames string_to_reg_name(const std::string &reg_name);
-        static UsedRegistries get_used_registries_from_parsed_line(const InstructionDesc &desc, const ParsedLine &line);
+        static bool is_registry(const std::string &reg_name);
         static std::string remove_brackets(const std::string &token);
         static bool token_is_in_brackets(const std::string &token);
-        static DataValueParsingResult parse_data_value(std::string token, const SymbolSet &symbols);
-        static DataValues get_data_values_from_parsed_line(const InstructionDesc &desc, const ParsedLine &line, const SymbolSet &symbols);
+        static InstructionParameters parse_data_and_registries_from_line(const ParsedLine& line, const SymbolSet& symbols);
+        static HandlerNumber get_handler_number(const InstructionDesc& desc, const InstructionParameters& data_registries);
+        static uint32_t parse_data_value(std::string token, const SymbolSet &symbols);
         static Instruction parsed_line_to_instruction(const ParsedLine &line, const SymbolSet &symbols);
         static Instruction get_eof_instruction();
     public:
-        void display() const;
-
         static InstructionSet from_parsed_lines(const std::vector<ParsedLine> &lines, const SymbolSet &symbols, Linter &);
         static uint64_t count_text_lines(const std::vector<ParsedLine> &lines);
 

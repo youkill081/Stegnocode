@@ -30,10 +30,20 @@ Chaqu'une d'entre elles pourras possédé plusieurs mot en mémoire ce terminant
 -> uint32 nombre de variables (appelé X)  
 -> X fois struct variable
 
-struct variable :   
--> uint16 adresse de la variable  
+struct variable :
+-> uint8 variable_flag
+-> uint32 adresse de la variable  
 -> uint16 nombre de mots dans la variable (appelé M)  
--> M fois uint16 ; valeurs initiales de chaque mot dans la variable
+-> M fois <taille_variable> ; valeurs initiales de chaque mot dans la variable
+
+Avec variable_flag :
+````c++
+enum VariableFlag {
+    DATA_UINT8 = 0b01000000, // DB
+    DATA_UINT16 = 0b10000000, // DW
+    DATA_UINT32 = 0b11000000 // DD
+};
+````
 
 #### Les fichiers
 
@@ -79,63 +89,51 @@ struct subtexture :
 Les instructions seront ensuite écrites les unes après les autres ; elles seront écrites dans la section `.text` du fichier assembleur.
 Les instructions seront toutes alignées sur 32 bits ; on utilise le codage suivant :
 
-| Opération | RegX(1)  |  Flag  |  RegX(2)  |   data1   | 
-|:---------:|:--------:|:------:|:---------:|:---------:|
-|  8 bits   |  3 bits  | 2 bits |  3 bits   |  16 bits  |
-|  bit 1-8  | bit 9-11 | 12-13  | bit 14-16 | bit 17-32 |
+| Opération | Handler Number | RegX(1) is address |  RegX(1)   | RegX(2) is address |  RegX(2)   | RegX(3) is address |  RegX(3)   | number_of_registry | data_type  |
+|:---------:|:--------------:|:------------------:|:----------:|:------------------:|:----------:|:------------------:|:----------:|:------------------:|------------|
+|  8 bits   |     2 bit      |       1 bit        |   5 bits   |       1 bit        |   5 bits   |       1 bit        |   5 bits   |       2 bits       | 2 bits     |
+| bits 1-8  |   bits 9-10    |       bit 11       | bits 12-16 |       bit 17       | bits 18-22 |       bit 23       | bits 24-28 |     bits 29-30     | bits 31-32 |
 
-Les deux bits de flag permettront de savoir si `data1` et `data2` doivent être interprétés comme une adresse ou comme une valeur.
-Le premier bit s'applique à `data1`, le second à `data2`. Si le bit est à 0, la donnée devra être interprétée comme une valeur ; si il est à 1, elle sera alors considérée comme une adresse.
+Avec data_type : 
 
-Certaines opérations auront besoin de plus de données ou de registres pour fonctionner ;
-elles seront alors suivies d'un second bloc uint32 sous ce format :
+|    |                 |
+|----|-----------------|
+| 00 | NO_DATA         |
+| 01 | Data is value   |
+| 10 | Data is address |
 
-| RegX(3) | RegX(4) | RegX(5) |  RegX(6)  |  RegX(7)  | None  |   data2   |
-|:-------:|:-------:|:-------:|:---------:|:---------:|:-----:|:---------:|
-| 3 bits  | 3 bits  | 3 bits  |  3 bits   |  3 bits   | 1 bit |  16 bits  |
-| bit 1-3 | bit 4-6 | bit 7-9 | bit 10-12 | bit 13-15 |  16   | bit 17-32 |
+Si data != NO_DATA, alors un second block suit pour stocker la data:
 
-Les opérations peuvent donc utiliser au maximum 7 registres et 2 données.
+| data      |
+|-----------|
+| 32 bits   |
+| bits 1-32 |
+
 
 ### Liste des opérandes
 
-Toutes les opérations auront des signatures fixes ; c'est-à-dire que l'on connaît leur nombre de registres et de données.
-De plus, les op-codes seront automatiquement calculés lors de la compilation.
 
 | Opération                       | Registre(s) et Donnée(s)  |                                                                             Description                                                                             |
 |:--------------------------------|:-------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| LOADA                           |      RegX(1) ; data1      |                                                       Charge une donnée depuis data1 dans le registre RegX(1)                                                       |
-| LOADR                           |     RegX(1) ; RegX(2)     |                                 Charge une donnée depuis une adresse **stockée dans un registre** RegX(2) dans le registre RegX(1)                                  |
+| LOAD                            |         dest, src         |                                                                  Copie le contenu de src dans dest                                                                  |
 | STOREA                          |      RegX(1) ; data1      |                                   Enregistre une donnée en RAM depuis un registre RegX(1) vers une adresse **codée en dur** data1                                   |
 | STORER                          |     RegX(1) ; RegX(2)     |                         Enregistre une donnée en RAM depuis un registre RegX(1) vers une adresse **stockée dans un autre registre** RegX(2)                         |
-| MOV                             |     RegX(1) ; RegX(2)     |                                                         Déplace la valeur du registre RegX(2) vers RegX(1)                                                          |
-| ADD                             |     RegX(1) ; RegX(2)     |                                                 Additionne RegX(1) avec RegX(2) et stocke le résultat dans RegX(1)                                                  |
-| ADDA                            |      RegX(1), data1       |                                                  Additionne RegX(1) avec data1 et stocke le résultat dans RegX(1)                                                   |
-| SUB                             |     RegX(1) ; RegX(2)     |                                                   Soustrait RegX(2) de RegX(1) et stocke le résultat dans RegX(1)                                                   |
-| SUBA                            |      RegX(1) ; data1      |                                                    Soustrait data1 de RegX(1) et stocke le résultat dans RegX(1)                                                    |
-| MUL                             |     RegX(1) ; RegX(2)     |                                                  Multiplie RegX(1) avec RegX(2) et stocke le résultat dans RegX(1)                                                  |
-| MULA                            |      RegX(1) ; data1      |                                                   Multiplie RegX(1) avec data1 et stocke le résultat dans RegX(1)                                                   |
-| DIV                             |      RegX(1) ; data1      |                                                   Divide RegX(1) avec RegX(2) et stocke le résultat dans RegX(1)                                                    |
-| DIVA                            |      RegX(1) ; data1      |                                                    Divise RegX(1) avec data1 et stocke le résultat dans RegX(1)                                                     |
-| MIN                             |     RegX(1), RegX(2)      |                                                  Min entre RegX(1) avec RegX(2) et stocke le résultat dans RegX(1)                                                  |
-| MINA                            |      RegX(1), data1       |                                                   Min entre RegX(1) avec data1 et stocke le résultat dans RegX(1)                                                   |
-| MAX                             |          RegX(1)          |                                                   Max in RegX(1) avec RegX(2) et stocke le résultat dans RegX(1)                                                    |
-| MAXA                            |      RegX(1), data1       |                                                    Max in RegX(1) avec data1 et stocke le résultat dans RegX(1)                                                     |
-| MOD                             |      RegX(1) ; data1      |                                                   Modulo RegX(1) avec RegX(2) et stocke le résultat dans RegX(1)                                                    |
-| MODA                            |      RegX(1) ; data1      |                                                    Modulo RegX(1) avec data1 et stocke le résultat dans RegX(1)                                                     |
+| ADD                             |         dest, src         |                                                                              dest+src                                                                               |
+| SUB                             |         dest, src         |                                                                              dest-src                                                                               |
+| MUL                             |         dest, src         |                                                                              dest*src                                                                               |
+| DIV                             |         dest, src         |                                                                              dest/src                                                                               |
+| MIN                             |         dest, src         |                                                                           min(dest, src)                                                                            |
+| MAX                             |         dest, src         |                                                                           max(dest, src)                                                                            |
+| MOD                             |         dest, src         |                                                                             dest % src                                                                              |
 | JMP                             |           data1           |                                                              Saute à l'instruction data1 du programme                                                               |
-| CMPR                            |     RegX(1) ; RegX(2)     |                                                                Compare les valeurs de deux registres                                                                |
-| CMPA                            |      RegX(1) ; data1      |                                                        Compare la valeur dans le registre RegX(1) avec data1                                                        |
+| CMP                             |         dest, src         |                                                     Compare les deux valeurs et stock le résultat dans les flag                                                     |
 | JE                              |           data1           |                                                          Saute à l'instruction data1 du programme si A==B                                                           |
 | JNE                             |           data1           |                                                          Saute à l'instruction data1 du programme si A!=B                                                           |
 | JA                              |           data1           |                                                           Saute à l'instruction data1 du programme si A>B                                                           |
 | JB                              |           data1           |                                                           Saute à l'instruction data1 du programme si A<B                                                           |
 | DISPLAY_N                       |          RegX(1)          |                                                       Affiche le contenu du registre RegX(1) comme un nombre                                                        |
-| DISPLAY_AN                      |          RegX(1)          |                                           Affiche la valeur à l'adresse contenue dans le registre RegX(1) comme un nombre                                           |
 | DISPLAY_C                       |          RegX(1)          |                                                      Affiche le contenu du registre RegX(1) comme un caractère                                                      |
-| DISPLAY_AC                      |          RegX(1)          |                                         Affiche la valeur à l'adresse contenue dans le registre RegX(1) comme un caractère                                          |
 | DISPLAY_B                       |          RegX(1)          |                                                          Affiche le contenu du registre RegX(1) en binaire                                                          |
-| DISPLAY_AB                      |          RegX(1)          |                                             Affiche la valeur à l'adresse contenue dans le registre RegX(1) en binaire                                              |
 | HALT                            |                           |                                            Met fin au programme ; la valeur de retour sera la valeur enregistrée dans R0                                            |
 | ALOCA                           |      RegX(1), data1       |                                                  Alloue data1 mots et retourne l'adresse dans le registre RegX(1)                                                   |
 | ALOCR                           |     RegX(1), RegX(2)      |                                                 Alloue RegX(2) mots et retourne l'adresse dans le registre RegX(1)                                                  |

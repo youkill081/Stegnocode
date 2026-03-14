@@ -1,9 +1,8 @@
 section .import
-    ; Utils
+;    ; Utils
     "examples/tetris/utils/number_in_string.stegasm"
-    "examples/tetris/utils/display_string.stegasm"
 
-    ; Game
+;    ; Game
     "examples/tetris/game/lines.stegasm"
     "examples/tetris/game/score.stegasm"
     "examples/tetris/game/level.stegasm"
@@ -12,9 +11,9 @@ section .import
     "examples/tetris/game/inputs/check_rotation.stegasm"
     "examples/tetris/game/inputs/check_right_left.stegasm"
     "examples/tetris/game/inputs/check_move_down.stegasm"
-
+;
     "examples/tetris/game/map.stegasm"
-
+;
     "examples/tetris/game/blocks/block_definition.stegasm"
 
 section .files
@@ -23,21 +22,20 @@ section .files
     backgroundImage "examples/tetris/ressources/background.png"
 
 section .data
-    window_title "Stegasm Tetris"
-    game_mode "S-TYPE"
+    window_title DB "Stegasm Tetris"
+    game_mode DB "S-TYPE"
 
-    test_string "...."
-    default_string_size 13
+    test_string DB "...."
 
-    game_state 0 ; 0 = Playing ; 1 = Line clear anim ; 2 = Game over
-
+    game_state DB 0 ; 0 = Playing ; 1 = Line clear anim ; 2 = Game over
+    default_string_size DD 13
 section .text
-    LOADA R0, 1280 ; window size X
-    LOADA R1, 1125 ; window size Y
+    LOAD_32 R0, 1280 ; window size X
+    LOAD_32 R1, 1125 ; window size Y
     WINDOW_CREATE R0 R1 window_title
 
-    LOADA R0 256 ; viewport size X
-    LOADA R1 225  ; viewport size Y
+    LOAD_32 R0 256 ; viewport size X
+    LOAD_32 R1 225  ; viewport size Y
     WINDOW_SET_VIEWPORT_SIZE R0 R1
 
     WINDOW_SET_TARGET_FPS 60
@@ -65,16 +63,16 @@ window_loop:
     CALL display_level
     CALL display_stats
 
-    LOADA R0, [game_state]
-    CMPA R0, 1
+    LOAD_8 R0, [game_state]
+    CMP R0, 1
     JE window_loop_animating
-    CMPA R0, 2
+    CMP R0, 2
     JE window_loop_game_over
-
+;
     CALL check_rotation
     CALL check_right_left
     CALL check_move_down
-
+;
     ; Draw blocks
     CALL draw_map
     CALL draw_current_block
@@ -97,37 +95,37 @@ window_loop_game_over:
     JMP window_loop
 
 display_background:
-    LOADA R0, 0
-    LOADA R1, 0
+    LOAD_8 R0, 0
+    LOAD_8 R1, 0
     WINDOW_DRAW_TEXTURE R0 R1 backgroundImage
     RET
 
 display_game_mode:
-    LOADA R0, 23
-    LOADA R1, 23
+    LOAD_8 R0, 23
+    LOAD_8 R1, 23
     WINDOW_DRAW_TEXT R0 R1 game_mode
     RET
 
 ; ------ WINDOW UTILS ------ ;
 
 clear_window:
-    LOADA R0, 0
-    LOADA R1, 0
-    LOADA R2, 0
+    LOAD_8 R0, 0
+    LOAD_8 R1, 0
+    LOAD_8 R2, 0
     WINDOW_CLEAR R0 R1 R2
 
     RET
 
 close_if_should_close:
     WINDOW_SHOULD_CLOSE R1
-    CMPA R1, 0
+    CMP R1, 0
     JNE close_window
 
     RET
 
 close_window:
     WINDOW_CLOSE
-    LOADA R0, 0
+    LOAD_32 R0, 0
     HALT
 
 ret:

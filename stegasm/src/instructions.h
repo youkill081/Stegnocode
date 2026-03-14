@@ -5,6 +5,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <cstdint>
 #include <string_view>
 
@@ -12,95 +13,131 @@ class Runtime;
 
 enum RegNames
 {
-    R0 = 0b000,
-    R1 = 0b001,
-    R2 = 0b010,
-    R3 = 0b011,
-    R4 = 0b100,
-    R5 = 0b101,
-    R6 = 0b110,
-    R7 = 0b111
+    R0 = 0b00000,
+    R1 = 0b00001,
+    R2 = 0b00010,
+    R3 = 0b00011,
+    R4 = 0b00100,
+    R5 = 0b00101,
+    R6 = 0b00110,
+    R7 = 0b00111,
+    R8 = 0b01000,
+    R9 = 0b01001,
+    R10 = 0b01010,
+    R11 = 0b01011,
+    R12 = 0b01100,
+    R13 = 0b01101,
+    R14 = 0b01110,
+    R15 = 0b01111,
+    R16 = 0b10000,
+    R17 = 0b10001,
+    R18 = 0b10010,
+    R19 = 0b10011,
+    R20 = 0b10100,
+    R21 = 0b10101,
+    R22 = 0b10110,
+    R23 = 0b10111,
+    R24 = 0b11000,
+    R25 = 0b11001,
+    R26 = 0b11010,
+    R27 = 0b11011,
+    R28 = 0b11100,
+    R29 = 0b11101,
+    R30 = 0b11110,
+    R31 = 0b11111
 };
 
-constexpr uint16_t number_of_registries = 8;
+constexpr uint16_t number_of_registries = 32;
 
 enum RegCount
 {
     NO_REG = 0,
     ONE_REG = 1,
     TWO_REG = 2,
-    THREE_REG = 3,
-    FOUR_REG = 4,
-    FIVE_REG = 5,
-    SIX_REG = 6
+    THREE_REG = 3
+};
+
+enum RegTypes
+{
+    REG_NO,
+    REG,
+    REG_ADDRESS,
+    REG_BOTH
 };
 
 enum DataCount
 {
     NO_DATA = 0,
-    ONE_DATA = 1,
-    TWO_DATA = 2
+    ONE_DATA = 1
 };
 
 struct InstructionView
 {
     uint64_t raw_data;
 
-    // opcode
     [[nodiscard]] uint8_t opcode() const { return static_cast<uint8_t>((raw_data >> 56) & 0xFF); }
 
-    // Registries
-    [[nodiscard]] RegNames r1() const { return static_cast<RegNames>((raw_data >> 53) & 0x7); }
-    [[nodiscard]] RegNames r2() const { return static_cast<RegNames>((raw_data >> 48) & 0x7); }
-    [[nodiscard]] RegNames r3() const { return static_cast<RegNames>((raw_data >> 29) & 0x7); }
-    [[nodiscard]] RegNames r4() const { return static_cast<RegNames>((raw_data >> 26) & 0x7); }
-    [[nodiscard]] RegNames r5() const { return static_cast<RegNames>((raw_data >> 23) & 0x7); }
-    [[nodiscard]] RegNames r6() const { return static_cast<RegNames>((raw_data >> 20) & 0x7); }
-    [[nodiscard]] RegNames r7() const { return static_cast<RegNames>((raw_data >> 17) & 0x7); }
+    [[nodiscard]] uint32_t header() const { return static_cast<uint32_t>((raw_data >> 32) & 0xFFFFFFFF); }
+    [[nodiscard]] uint8_t handler_number() const { return static_cast<uint8_t>((header() >> 22) & 0x03); }
 
-    // Datas
-    [[nodiscard]] bool is_d1_addr() const { return (raw_data >> 52) & 0x1; }
-    [[nodiscard]] bool is_d2_addr() const { return (raw_data >> 51) & 0x1; }
-    [[nodiscard]] uint16_t get_d1(const Runtime&, bool force_as_address=false) const;
-    [[nodiscard]] uint16_t get_d2(const Runtime&, bool force_as_address=false) const;
+    [[nodiscard]] bool is_r1_addr() const { return (header() >> 21) & 0x1; }
+    [[nodiscard]] RegNames r1() const { return static_cast<RegNames>((header() >> 16) & 0x1F); }
+    [[nodiscard]] uint32_t get_r1(const Runtime& rt, uint8_t size = 4) const;
 
+    [[nodiscard]] bool is_r2_addr() const { return (header() >> 15) & 0x1; }
+    [[nodiscard]] RegNames r2() const { return static_cast<RegNames>((header() >> 10) & 0x1F); }
+    [[nodiscard]] uint32_t get_r2(const Runtime& rt, uint8_t size = 4) const;
+
+    [[nodiscard]] bool is_r3_addr() const { return (header() >> 9) & 0x1; }
+    [[nodiscard]] RegNames r3() const { return static_cast<RegNames>((header() >> 4) & 0x1F); }
+    [[nodiscard]] uint32_t get_r3(const Runtime& rt, uint8_t size = 4) const;
+
+    [[nodiscard]] uint8_t data_type() const { return static_cast<uint8_t>(header() & 0x3); }
+    [[nodiscard]] uint32_t get_raw_data() const { return static_cast<uint32_t>(raw_data & 0xFFFFFFFF); }
+    [[nodiscard]] uint32_t get_data(const Runtime& rt, uint8_t size = 4) const;
 };
 
 using InstructionFct = void(*)(Runtime &, InstructionView raw_data);
 
 void instr_EOF(Runtime &runtime, InstructionView view);
-void instr_LOADA(Runtime &runtime, InstructionView view);
-void instr_LOADR(Runtime &runtime, InstructionView view);
-void instr_STOREA(Runtime &runtime, InstructionView view);
-void instr_STORER(Runtime &runtime, InstructionView view);
-void instr_MOV(Runtime &runtime, InstructionView view);
-void instr_ADD(Runtime &runtime, InstructionView view);
-void instr_ADDA(Runtime &runtime, InstructionView view);
-void instr_SUB(Runtime &runtime, InstructionView view);
-void instr_SUBA(Runtime &runtime, InstructionView view);
-void instr_MUL(Runtime &runtime, InstructionView view);
-void instr_MULA(Runtime &runtime, InstructionView view);
-void instr_DIV(Runtime &runtime, InstructionView view);
-void instr_DIVA(Runtime &runtime, InstructionView view);
-void instr_MIN(Runtime &runtime, InstructionView view);
-void instr_MINA(Runtime &runtime, InstructionView view);
-void instr_MAX(Runtime &runtime, InstructionView view);
-void instr_MAXA(Runtime &runtime, InstructionView view);
-void instr_MOD(Runtime &runtime, InstructionView view);
-void instr_MODA(Runtime &runtime, InstructionView view);
+void instr_LOADD_32(Runtime &runtime, InstructionView view);
+void instr_LOADR_32(Runtime &runtime, InstructionView view);
+void instr_LOADD_16(Runtime &runtime, InstructionView view);
+void instr_LOADR_16(Runtime &runtime, InstructionView view);
+void instr_LOADD_8(Runtime &runtime, InstructionView view);
+void instr_LOADR_8(Runtime &runtime, InstructionView view);
+void instr_STORED_32(Runtime &runtime, InstructionView view);
+void instr_STORER_32(Runtime &runtime, InstructionView view);
+void instr_STORED_16(Runtime &runtime, InstructionView view);
+void instr_STORER_16(Runtime &runtime, InstructionView view);
+void instr_STORED_8(Runtime &runtime, InstructionView view);
+void instr_STORER_8(Runtime &runtime, InstructionView view);
+void instr_ADDR(Runtime &runtime, InstructionView view);
+void instr_ADDD(Runtime &runtime, InstructionView view);
+void instr_SUBR(Runtime &runtime, InstructionView view);
+void instr_SUBD(Runtime &runtime, InstructionView view);
+void instr_MULR(Runtime &runtime, InstructionView view);
+void instr_MULD(Runtime &runtime, InstructionView view);
+void instr_DIVR(Runtime &runtime, InstructionView view);
+void instr_DIVD(Runtime &runtime, InstructionView view);
+void instr_MINR(Runtime &runtime, InstructionView view);
+void instr_MIND(Runtime &runtime, InstructionView view);
+void instr_MAXR(Runtime &runtime, InstructionView view);
+void instr_MAXD(Runtime &runtime, InstructionView view);
+void instr_MODR(Runtime &runtime, InstructionView view);
+void instr_MODD(Runtime &runtime, InstructionView view);
 void instr_JMP(Runtime &runtime, InstructionView view);
 void instr_CMPR(Runtime &runtime, InstructionView view);
-void instr_CMPA(Runtime &runtime, InstructionView view);
+void instr_CMPD(Runtime &runtime, InstructionView view);
 void instr_JE(Runtime &runtime, InstructionView view);
 void instr_JNE(Runtime &runtime, InstructionView view);
 void instr_JA(Runtime &runtime, InstructionView view);
+void instr_JSA(Runtime &runtime, InstructionView view);
 void instr_JB(Runtime &runtime, InstructionView view);
+void instr_JSB(Runtime &runtime, InstructionView view);
 void instr_DISPLAY_N(Runtime &runtime, InstructionView view);
-void instr_DISPLAY_AN(Runtime &runtime, InstructionView view);
 void instr_DISPLAY_C(Runtime &runtime, InstructionView view);
-void instr_DISPLAY_AC(Runtime &runtime, InstructionView view);
 void instr_DISPLAY_B(Runtime &runtime, InstructionView view);
-void instr_DISPLAY_AB(Runtime &runtime, InstructionView view);
 void instr_HALT(Runtime &runtime, InstructionView view);
 void instr_ALOCA(Runtime &runtime, InstructionView view);
 void instr_ALOCR(Runtime &runtime, InstructionView view);
@@ -150,108 +187,165 @@ void instr_CLOCK_GET_ELAPSED_MS(Runtime &runtime, InstructionView view);
 void instr_CLOCK_GET_ELAPSED_S(Runtime &runtime, InstructionView view);
 void instr_CLOCK_RESET(Runtime &runtime, InstructionView view);
 
+struct InstructionHandler
+{
+    constexpr InstructionHandler() : fn(nullptr) {}
+
+    constexpr explicit InstructionHandler(const InstructionFct &fct, DataCount data = NO_DATA)
+        : fn(fct), data_type(data) {}
+    constexpr InstructionHandler(const InstructionFct &fct, RegTypes first, DataCount data = NO_DATA)
+        : fn(fct), first_reg_type(first), data_type(data) {}
+    constexpr InstructionHandler(const InstructionFct &fct, RegTypes first, RegTypes second, DataCount data = NO_DATA)
+        : fn(fct), first_reg_type(first), second_reg_type(second), data_type(data) {}
+    constexpr InstructionHandler(const InstructionFct &fct, RegTypes first, RegTypes second, RegTypes third, DataCount data = NO_DATA)
+        : fn(fct), first_reg_type(first), second_reg_type(second), third_reg_type(third), data_type(data) {}
+
+    InstructionFct fn;
+    RegTypes first_reg_type = REG_NO;
+    RegTypes second_reg_type = REG_NO;
+    RegTypes third_reg_type = REG_NO;
+    DataCount data_type = NO_DATA;
+};
+
+enum HandlerNumber
+{
+    HANDLER_0 = 0b00,
+    HANDLER_1 = 0b01,
+    HANDLER_2 = 0b10,
+    HANDLER_3 = 0b11,
+};
+
+constexpr std::size_t max_instruction_handlers = 4; // This value can be moved if needed
+
 struct RawInstruction
 {
-    const std::string_view name;
-    RegCount regCount;
-    DataCount dataCount;
-    InstructionFct fn;
-    bool user_usable = true;
+    std::string_view name;
+    bool user_usable;
+    std::array<InstructionHandler, max_instruction_handlers> handlers;
+    size_t handler_count;
+
+    template<typename... Args>
+    constexpr RawInstruction(std::string_view n, bool u, Args... h)
+            : name(n), user_usable(u),
+              handlers{{h...}},
+              handler_count(sizeof...(Args)) {}
 };
 
 struct InstructionDesc
 {
     std::string_view name;
     uint8_t opcode;
-    RegCount regCount;
-    DataCount dataCount;
-    InstructionFct fn;
     bool user_usable;
+    size_t handler_count;
+    std::array<InstructionHandler, max_instruction_handlers> handlers;
 };
 
 constexpr std::array rawInstructionSet =
 {
-    RawInstruction{"EOF", NO_REG, NO_DATA, &instr_EOF, false}, // Added by Assembler when reach and of .text sections
-    RawInstruction{"LOADA", ONE_REG, ONE_DATA, &instr_LOADA},
-    RawInstruction{"LOADR", TWO_REG, NO_DATA, &instr_LOADR},
-    RawInstruction{"STOREA", ONE_REG, ONE_DATA, &instr_STOREA},
-    RawInstruction{"STORER", TWO_REG, NO_DATA, &instr_STORER},
-    RawInstruction{"MOV", TWO_REG, NO_DATA, &instr_MOV},
-    RawInstruction{"ADD", TWO_REG, NO_DATA, &instr_ADD},
-    RawInstruction{"ADDA", ONE_REG, ONE_DATA, &instr_ADDA},
-    RawInstruction{"SUB", TWO_REG, NO_DATA, &instr_SUB},
-    RawInstruction{"SUBA", ONE_REG, ONE_DATA, &instr_SUBA},
-    RawInstruction{"MUL", TWO_REG, NO_DATA, &instr_MUL},
-    RawInstruction{"MULA", ONE_REG, ONE_DATA, &instr_MULA},
-    RawInstruction{"DIV", TWO_REG, NO_DATA, &instr_DIV},
-    RawInstruction{"DIVA", ONE_REG, ONE_DATA, &instr_DIVA},
-    RawInstruction{"MIN", TWO_REG, NO_DATA, &instr_MIN},
-    RawInstruction{"MINA", ONE_REG, ONE_DATA, &instr_MINA},
-    RawInstruction{"MAX", TWO_REG, NO_DATA, &instr_MAX},
-    RawInstruction{"MAXA", ONE_REG, ONE_DATA, &instr_MAXA},
-    RawInstruction{"MOD", TWO_REG, NO_DATA, &instr_MOD},
-    RawInstruction{"MODA", ONE_REG, ONE_DATA, &instr_MODA},
-    RawInstruction{"JMP", NO_REG, ONE_DATA, &instr_JMP},
-    RawInstruction{"CMPR", TWO_REG, NO_DATA, &instr_CMPR},
-    RawInstruction{"CMPA", ONE_REG, ONE_DATA, &instr_CMPA},
-    RawInstruction{"JE", NO_REG, ONE_DATA, &instr_JE},
-    RawInstruction{"JNE", NO_REG, ONE_DATA, &instr_JNE},
-    RawInstruction{"JA", NO_REG, ONE_DATA, &instr_JA},
-    RawInstruction{"JB", NO_REG, ONE_DATA, &instr_JB},
-    RawInstruction{"DISPLAY_N", ONE_REG, NO_DATA, &instr_DISPLAY_N},
-    RawInstruction{"DISPLAY_AN", ONE_REG, NO_DATA, &instr_DISPLAY_AN},
-    RawInstruction{"DISPLAY_C", ONE_REG, NO_DATA, &instr_DISPLAY_C},
-    RawInstruction{"DISPLAY_AC", ONE_REG, NO_DATA, &instr_DISPLAY_AC},
-    RawInstruction{"DISPLAY_B", ONE_REG, NO_DATA, &instr_DISPLAY_B},
-    RawInstruction{"DISPLAY_AB", ONE_REG, NO_DATA, &instr_DISPLAY_AB},
-    RawInstruction{"HALT", NO_REG, NO_DATA, &instr_HALT},
-    RawInstruction{"ALOCA", ONE_REG, ONE_DATA, &instr_ALOCA},
-    RawInstruction{"ALOCR", TWO_REG, NO_DATA, &instr_ALOCR},
-    RawInstruction{"FREE", ONE_REG, NO_DATA, &instr_FREE},
-    RawInstruction{"DEBUG_R", NO_REG, NO_DATA, &instr_DEBUG_R},
-    RawInstruction{"DEBUG_M", NO_REG, NO_DATA, &instr_DEBUG_M},
-    RawInstruction{"CALL", NO_REG, ONE_DATA, &instr_CALL},
-    RawInstruction{"RET", NO_REG, NO_DATA, &instr_RET},
-    RawInstruction{"PUSH", ONE_REG, NO_DATA, &instr_PUSH},
-    RawInstruction{"POP", ONE_REG, NO_DATA, &instr_POP},
-    RawInstruction{"RAND", ONE_REG, NO_DATA, &instr_RAND},
-    RawInstruction{"WINDOW_CREATE", TWO_REG, ONE_DATA, &instr_WINDOW_CREATE},
-    RawInstruction{"WINDOW_CLOSE", NO_REG, NO_DATA, &instr_WINDOW_CLOSE},
-    RawInstruction{"WINDOW_SET_VIEWPORT_SIZE", TWO_REG, NO_DATA, &instr_WINDOW_SET_VIEWPORT_SIZE},
-    RawInstruction{"WINDOW_DISABLE_VIEWPORT", TWO_REG, NO_DATA, &instr_WINDOW_DISABLE_VIEWPORT},
-    RawInstruction{"WINDOW_POOL", NO_REG, NO_DATA, &instr_WINDOW_POOL},
-    RawInstruction{"WINDOW_SHOULD_CLOSE", ONE_REG, NO_DATA, &instr_WINDOW_SHOULD_CLOSE},
-    RawInstruction{"WINDOW_CLEAR", THREE_REG, NO_DATA, &instr_WINDOW_CLEAR},
-    RawInstruction{"WINDOW_PRESENT", NO_REG, NO_DATA, &instr_WINDOW_PRESENT},
-    RawInstruction{"WINDOW_KEY_PRESSED", ONE_REG, ONE_DATA, &instr_WINDOW_KEY_PRESSED},
-    RawInstruction{"WINDOW_KEY_DOWN", ONE_REG, ONE_DATA, &instr_WINDOW_KEY_DOWN},
-    RawInstruction{"WINDOW_SET_TARGET_FPS", NO_REG, ONE_DATA, &instr_WINDOW_SET_TARGET_FPS},
-    RawInstruction{"WINDOW_SET_TEXT_SIZE", NO_REG, ONE_DATA, &instr_WINDOW_SET_TEXT_SIZE},
-    RawInstruction{"WINDOW_SET_TEXT_COLOR", THREE_REG, NO_DATA, &instr_WINDOW_SET_TEXT_COLOR},
-    RawInstruction{"WINDOW_SET_FONT", NO_REG, ONE_DATA, &instr_WINDOW_SET_FONT},
-    RawInstruction{"WINDOW_DRAW_TEXT", TWO_REG, ONE_DATA, &instr_WINDOW_DRAW_TEXT},
-    RawInstruction{"WINDOW_DRAW_TEXTURE", TWO_REG, ONE_DATA, &instr_WINDOW_DRAW_TEXTURE},
-    RawInstruction{"WINDOW_SET_TEXTURE_COLOR_MASK", THREE_REG, NO_DATA, &instr_WINDOW_SET_TEXTURE_COLOR_MASK},
-    RawInstruction{"WINDOW_RESET_TEXTURE_COLOR_MASK", NO_REG, NO_DATA, &instr_WINDOW_RESET_TEXTURE_COLOR_MASK},
-    RawInstruction{"WINDOW_SET_ICON", NO_REG, ONE_DATA, &instr_WINDOW_SET_ICON},
-    RawInstruction{"FILE_OPEN", ONE_REG, ONE_DATA, &instr_FILE_OPEN},
-    RawInstruction{"FILE_CREATE", ONE_REG, ONE_DATA, &instr_FILE_CREATE},
-    RawInstruction{"FILE_SAVE", ONE_REG, NO_DATA, &instr_FILE_SAVE},
-    RawInstruction{"FILE_DELETE", ONE_REG, NO_DATA, &instr_FILE_DELETE},
-    RawInstruction{"FILE_CLOSE", ONE_REG, NO_DATA, &instr_FILE_CLOSE},
-    RawInstruction{"FILE_RESET_CURSOR", ONE_REG, NO_DATA, &instr_FILE_RESET_CURSOR},
-    RawInstruction{"FILE_CLEAR_DATA", ONE_REG, NO_DATA, &instr_FILE_CLEAR_DATA},
-    RawInstruction{"FILE_READ_BYTE", TWO_REG, NO_DATA, &instr_FILE_READ_BYTE},
-    RawInstruction{"FILE_READ_WORD", TWO_REG, NO_DATA, &instr_FILE_READ_WORD},
-    RawInstruction{"FILE_APPEND_BYTE", TWO_REG, NO_DATA, &instr_FILE_APPEND_BYTE},
-    RawInstruction{"FILE_APPEND_WORD", TWO_REG, NO_DATA, &instr_FILE_APPEND_WORD},
-    RawInstruction{"FILE_IS_BYTE_REMAINING", TWO_REG, NO_DATA, &instr_FILE_IS_BYTE_REMAINING},
-    RawInstruction{"FILE_IS_WORD_REMAINING", TWO_REG, NO_DATA, &instr_FILE_IS_WORD_REMAINING},
-    RawInstruction{"CLOCK_CREATE", ONE_REG, NO_DATA, &instr_CLOCK_CREATE},
-    RawInstruction{"CLOCK_DELETE", ONE_REG, NO_DATA, &instr_CLOCK_DELETE},
-    RawInstruction{"CLOCK_GET_ELAPSED_MS", TWO_REG, NO_DATA, &instr_CLOCK_GET_ELAPSED_MS},
-    RawInstruction{"CLOCK_GET_ELAPSED_S", TWO_REG, NO_DATA, &instr_CLOCK_GET_ELAPSED_S},
-    RawInstruction{"CLOCK_RESET", ONE_REG, NO_DATA, &instr_CLOCK_RESET},
+    RawInstruction{"EOF", false, InstructionHandler(&instr_EOF)},
+    RawInstruction{"LOAD_32", true,
+        InstructionHandler(&instr_LOADD_32, REG, ONE_DATA),
+        InstructionHandler(&instr_LOADR_32, REG, REG_BOTH)},
+    RawInstruction{"LOAD_16", true,
+        InstructionHandler(&instr_LOADD_16, REG, ONE_DATA),
+        InstructionHandler(&instr_LOADR_16, REG, REG_BOTH)},
+    RawInstruction{"LOAD_8", true,
+        InstructionHandler(&instr_LOADD_8, REG, ONE_DATA),
+        InstructionHandler(&instr_LOADR_8, REG, REG_BOTH)},
+    RawInstruction{"STORE_32", true,
+        InstructionHandler(&instr_STORED_32, REG_BOTH, ONE_DATA),
+        InstructionHandler(&instr_STORER_32, REG_BOTH, REG)},
+    RawInstruction{"STORE_16", true,
+        InstructionHandler(&instr_STORED_16, REG_BOTH, ONE_DATA),
+        InstructionHandler(&instr_STORER_16, REG_BOTH, REG)},
+    RawInstruction{"STORE_8", true,
+        InstructionHandler(&instr_STORED_8, REG_BOTH, ONE_DATA),
+        InstructionHandler(&instr_STORER_8, REG_BOTH, REG)},
+    RawInstruction{"ADD", true,
+        InstructionHandler(&instr_ADDD, REG, ONE_DATA),
+        InstructionHandler(&instr_ADDR, REG, REG_BOTH)},
+    RawInstruction{"SUB", true,
+        InstructionHandler(&instr_SUBR, REG, REG_BOTH),
+        InstructionHandler(&instr_SUBD, REG, ONE_DATA)},
+    RawInstruction{"MUL", true,
+        InstructionHandler(&instr_MULR, REG, REG_BOTH),
+        InstructionHandler(&instr_MULD, REG, ONE_DATA)},
+    RawInstruction{"DIV", true,
+        InstructionHandler(&instr_DIVR, REG, REG_BOTH),
+        InstructionHandler(&instr_DIVD, REG, ONE_DATA)},
+    RawInstruction{"MIN", true,
+        InstructionHandler(&instr_MINR, REG, REG_BOTH),
+        InstructionHandler(&instr_MIND, REG, ONE_DATA)},
+    RawInstruction{"MAX", true,
+        InstructionHandler(&instr_MAXR, REG, REG_BOTH),
+        InstructionHandler(&instr_MAXD, REG, ONE_DATA)},
+    RawInstruction{"MOD", true,
+        InstructionHandler(&instr_MODR, REG, REG_BOTH),
+        InstructionHandler(&instr_MODD, REG, ONE_DATA)},
+    RawInstruction{"JMP", true, InstructionHandler(&instr_JMP, ONE_DATA)},
+    RawInstruction{"CMP", true,
+        InstructionHandler(&instr_CMPR, REG_BOTH, REG_BOTH),
+        InstructionHandler(&instr_CMPD, REG, ONE_DATA)},
+    RawInstruction{"JE", true, InstructionHandler(&instr_JE, ONE_DATA)},
+    RawInstruction{"JNE", true, InstructionHandler(&instr_JNE, ONE_DATA)},
+    RawInstruction{"JA", true, InstructionHandler(&instr_JA, ONE_DATA)},
+    RawInstruction{"JSA", true, InstructionHandler(&instr_JSA, ONE_DATA)},
+    RawInstruction{"JB", true, InstructionHandler(&instr_JB, ONE_DATA)},
+    RawInstruction{"JSB", true, InstructionHandler(&instr_JSB, ONE_DATA)},
+    RawInstruction{"DISPLAY_N", true,
+        InstructionHandler(&instr_DISPLAY_N, REG_BOTH)},
+    RawInstruction{"DISPLAY_C", true,
+        InstructionHandler(&instr_DISPLAY_C, REG_BOTH)},
+    RawInstruction{"DISPLAY_B", true,
+        InstructionHandler(&instr_DISPLAY_B, REG_BOTH)},
+    RawInstruction{"HALT", true, InstructionHandler(&instr_HALT)},
+    RawInstruction{"ALOCA", true, InstructionHandler(&instr_ALOCA, REG, ONE_DATA)},
+    RawInstruction{"ALOCR", true, InstructionHandler(&instr_ALOCR, REG, REG)},
+    RawInstruction{"FREE", true, InstructionHandler(&instr_FREE, REG)},
+    RawInstruction{"DEBUG_R", true, InstructionHandler(&instr_DEBUG_R)},
+    RawInstruction{"DEBUG_M", true, InstructionHandler(&instr_DEBUG_M)},
+    RawInstruction{"CALL", true, InstructionHandler(&instr_CALL, ONE_DATA)},
+    RawInstruction{"RET", true, InstructionHandler(&instr_RET)},
+    RawInstruction{"PUSH", true, InstructionHandler(&instr_PUSH, REG)},
+    RawInstruction{"POP", true, InstructionHandler(&instr_POP, REG)},
+    RawInstruction{"RAND", true, InstructionHandler(&instr_RAND, REG)},
+    RawInstruction{"WINDOW_CREATE", true, InstructionHandler(&instr_WINDOW_CREATE, REG, REG, ONE_DATA)},
+    RawInstruction{"WINDOW_CLOSE", true, InstructionHandler(&instr_WINDOW_CLOSE)},
+    RawInstruction{"WINDOW_SET_VIEWPORT_SIZE", true, InstructionHandler(&instr_WINDOW_SET_VIEWPORT_SIZE, REG, REG)},
+    RawInstruction{"WINDOW_DISABLE_VIEWPORT", true, InstructionHandler(&instr_WINDOW_DISABLE_VIEWPORT, REG, REG)},
+    RawInstruction{"WINDOW_POOL", true, InstructionHandler(&instr_WINDOW_POOL)},
+    RawInstruction{"WINDOW_SHOULD_CLOSE", true, InstructionHandler(&instr_WINDOW_SHOULD_CLOSE, REG)},
+    RawInstruction{"WINDOW_CLEAR", true, InstructionHandler(&instr_WINDOW_CLEAR, REG, REG, REG)},
+    RawInstruction{"WINDOW_PRESENT", true, InstructionHandler(&instr_WINDOW_PRESENT)},
+    RawInstruction{"WINDOW_KEY_PRESSED", true, InstructionHandler(&instr_WINDOW_KEY_PRESSED, REG, ONE_DATA)},
+    RawInstruction{"WINDOW_KEY_DOWN", true, InstructionHandler(&instr_WINDOW_KEY_DOWN, REG, ONE_DATA)},
+    RawInstruction{"WINDOW_SET_TARGET_FPS", true, InstructionHandler(&instr_WINDOW_SET_TARGET_FPS, ONE_DATA)},
+    RawInstruction{"WINDOW_SET_TEXT_SIZE", true, InstructionHandler(&instr_WINDOW_SET_TEXT_SIZE, ONE_DATA)},
+    RawInstruction{"WINDOW_SET_TEXT_COLOR", true, InstructionHandler(&instr_WINDOW_SET_TEXT_COLOR, REG, REG, REG)},
+    RawInstruction{"WINDOW_SET_FONT", true, InstructionHandler(&instr_WINDOW_SET_FONT, ONE_DATA)},
+    RawInstruction{"WINDOW_DRAW_TEXT", true, InstructionHandler(&instr_WINDOW_DRAW_TEXT, REG, REG, ONE_DATA)},
+    RawInstruction{"WINDOW_DRAW_TEXTURE", true, InstructionHandler(&instr_WINDOW_DRAW_TEXTURE, REG, REG, ONE_DATA)},
+    RawInstruction{"WINDOW_SET_TEXTURE_COLOR_MASK", true, InstructionHandler(&instr_WINDOW_SET_TEXTURE_COLOR_MASK, REG, REG, REG)},
+    RawInstruction{"WINDOW_RESET_TEXTURE_COLOR_MASK", true, InstructionHandler(&instr_WINDOW_RESET_TEXTURE_COLOR_MASK)},
+    RawInstruction{"WINDOW_SET_ICON", true, InstructionHandler(&instr_WINDOW_SET_ICON, ONE_DATA)},
+    RawInstruction{"FILE_OPEN", true, InstructionHandler(&instr_FILE_OPEN, REG, ONE_DATA)},
+    RawInstruction{"FILE_CREATE", true, InstructionHandler(&instr_FILE_CREATE, REG, ONE_DATA)},
+    RawInstruction{"FILE_SAVE", true, InstructionHandler(&instr_FILE_SAVE, REG)},
+    RawInstruction{"FILE_DELETE", true, InstructionHandler(&instr_FILE_DELETE, REG)},
+    RawInstruction{"FILE_CLOSE", true, InstructionHandler(&instr_FILE_CLOSE, REG)},
+    RawInstruction{"FILE_RESET_CURSOR", true, InstructionHandler(&instr_FILE_RESET_CURSOR, REG)},
+    RawInstruction{"FILE_CLEAR_DATA", true, InstructionHandler(&instr_FILE_CLEAR_DATA, REG)},
+    RawInstruction{"FILE_READ_BYTE", true, InstructionHandler(&instr_FILE_READ_BYTE, REG, REG)},
+    RawInstruction{"FILE_READ_WORD", true, InstructionHandler(&instr_FILE_READ_WORD, REG, REG)},
+    RawInstruction{"FILE_APPEND_BYTE", true, InstructionHandler(&instr_FILE_APPEND_BYTE, REG, REG)},
+    RawInstruction{"FILE_APPEND_WORD", true, InstructionHandler(&instr_FILE_APPEND_WORD, REG, REG)},
+    RawInstruction{"FILE_IS_BYTE_REMAINING", true, InstructionHandler(&instr_FILE_IS_BYTE_REMAINING, REG, REG)},
+    RawInstruction{"FILE_IS_WORD_REMAINING", true, InstructionHandler(&instr_FILE_IS_WORD_REMAINING, REG, REG)},
+    RawInstruction{"CLOCK_CREATE", true, InstructionHandler(&instr_CLOCK_CREATE, REG)},
+    RawInstruction{"CLOCK_DELETE", true, InstructionHandler(&instr_CLOCK_DELETE, REG)},
+    RawInstruction{"CLOCK_GET_ELAPSED_MS", true, InstructionHandler(&instr_CLOCK_GET_ELAPSED_MS, REG, REG)},
+    RawInstruction{"CLOCK_GET_ELAPSED_S", true, InstructionHandler(&instr_CLOCK_GET_ELAPSED_S, REG, REG)},
+    RawInstruction{"CLOCK_RESET", true, InstructionHandler(&instr_CLOCK_RESET, REG)}
 };
 
 constexpr std::array<InstructionDesc, rawInstructionSet.size()> compute_instructions()
@@ -263,10 +357,9 @@ constexpr std::array<InstructionDesc, rawInstructionSet.size()> compute_instruct
         result.data()[i] = InstructionDesc{
             rawInstructionSet[i].name,
             current_op_code++,
-            rawInstructionSet[i].regCount,
-            rawInstructionSet[i].dataCount,
-            rawInstructionSet[i].fn,
-            rawInstructionSet[i].user_usable
+            rawInstructionSet[i].user_usable,
+            rawInstructionSet[i].handler_count,
+            rawInstructionSet[i].handlers
         };
     }
     return result;
