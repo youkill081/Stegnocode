@@ -10,6 +10,7 @@ add_subdirectory(libs/lsp-framework)
 add_subdirectory(libs/stegcommon)
 add_subdirectory(libs/raylib)
 
+add_subdirectory(steg)
 add_subdirectory(stegasm)
 add_subdirectory(stegasmLsp)
 
