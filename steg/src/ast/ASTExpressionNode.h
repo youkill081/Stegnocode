@@ -1,0 +1,224 @@
+//
+// Created by Roumite on 14/03/2026.
+//
+
+#pragma once
+
+#include "ASTNode.h"
+
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace compilator
+{
+    class ASTExpressionNode : public ASTNode
+        {};
+
+
+    class ASTBinaryExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        enum binaryOperationType
+        {
+            ADDITION,
+            SUBTRACTION,
+            MULTIPLICATION,
+            DIVISION,
+            MODULO,
+            COMPARISON_EQUAL,
+            COMPARISON_NOT_EQUAL,
+            COMPARISON_LESS,
+            COMPARISON_GREATER,
+            COMPARISON_LESS_OR_EQUAL,
+            COMPARISON_GREATER_OR_EQUAL,
+            COMPARISON_AND,
+            COMPARISON_OR
+        };
+
+        ASTBinaryExpressionNode(
+            std::unique_ptr<ASTExpressionNode> left,
+            std::unique_ptr<ASTExpressionNode> right,
+            const binaryOperationType op_type
+        ) : left(std::move(left)), right(std::move(right)), op_type(op_type) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTExpressionNode> left;
+        std::unique_ptr<ASTExpressionNode> right;
+        binaryOperationType op_type;
+    };
+
+
+    class ASTUnaryExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        enum unaryOperationType
+        {
+            NEGATION
+        };
+
+        ASTUnaryExpressionNode(
+            std::unique_ptr<ASTExpressionNode> expression,
+            const unaryOperationType op_type
+        ) : expression(std::move(expression)), op_type(op_type) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTExpressionNode> expression;
+        unaryOperationType op_type;
+    };
+
+
+    class ASTTypeNode final : public ASTNode
+    {
+    public:
+        enum Types
+        {
+            UINT8,
+            INT8,
+            UINT16,
+            INT16,
+            UINT32,
+            INT32,
+            BOOL,
+            VOID
+        };
+
+        ASTTypeNode(const Types type) : type(type) {}
+        void display(std::size_t left_padding) override;
+        Types type;
+    };
+
+
+    class ASTLiteralExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        ASTLiteralExpressionNode(const std::string &value, std::unique_ptr<ASTTypeNode> type)
+            : value(value), type(std::move(type)) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::string value;
+        std::unique_ptr<ASTTypeNode> type;
+    };
+
+
+    class ASTIdentifierExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        ASTIdentifierExpressionNode(const std::string &name) : name(name) {}
+        void display(std::size_t left_padding) override;
+        std::string name;
+    };
+
+
+    class ASTCallExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        ASTCallExpressionNode(
+            std::unique_ptr<ASTIdentifierExpressionNode> callee,
+            std::vector<std::unique_ptr<ASTExpressionNode>> args
+        ) : callee(std::move(callee)), args(std::move(args)) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTIdentifierExpressionNode> callee;
+        std::vector<std::unique_ptr<ASTExpressionNode>> args;
+    };
+
+
+    class ASTIndexExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        ASTIndexExpressionNode(
+            std::unique_ptr<ASTExpressionNode> array,
+            std::unique_ptr<ASTExpressionNode> index
+        ) : array(std::move(array)), index(std::move(index)) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTExpressionNode> array;
+        std::unique_ptr<ASTExpressionNode> index;
+    };
+
+    class ASTAssignExpressionStatement final : public ASTExpressionNode
+    {
+    public:
+        enum assignmentType {
+            ASSIGN
+        };
+
+        ASTAssignExpressionStatement(
+            std::unique_ptr<ASTExpressionNode> target,
+            const assignmentType op,
+            std::unique_ptr<ASTExpressionNode> value
+        ) : target(std::move(target)), op(op), value(std::move(value)) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTExpressionNode> target;
+        assignmentType op;
+        std::unique_ptr<ASTExpressionNode> value;
+    };
+
+    class ASTAddressOfExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        ASTAddressOfExpressionNode(std::unique_ptr<ASTExpressionNode> expr)
+            : expression(std::move(expr)) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTExpressionNode> expression;
+    };
+
+    class ASTDereferenceExpressionNode final : public ASTExpressionNode
+    {
+    public:
+        ASTDereferenceExpressionNode(std::unique_ptr<ASTExpressionNode> expr)
+            : expression(std::move(expr)) {}
+
+        void display(std::size_t left_padding) override;
+
+        std::unique_ptr<ASTExpressionNode> expression;
+    };
+
+    /* UTILS */
+
+    static inline std::map<ASTTypeNode::Types, std::string_view> ASTTypeNode_type_to_string = {
+        {ASTTypeNode::Types::UINT8, "UINT8"},
+        {ASTTypeNode::Types::INT8, "INT8"},
+        {ASTTypeNode::Types::UINT16, "UINT16"},
+        {ASTTypeNode::Types::INT16, "INT16"},
+        {ASTTypeNode::Types::UINT32, "UINT32"},
+        {ASTTypeNode::Types::INT32, "INT32"},
+        {ASTTypeNode::Types::BOOL, "BOOL"},
+        {ASTTypeNode::Types::VOID, "VOID"}
+    };
+
+    static inline std::map<ASTUnaryExpressionNode::unaryOperationType, std::string_view> ASTUnaryExpressionNode_type_to_string = {
+        {ASTUnaryExpressionNode::unaryOperationType::NEGATION, "NEGATION"}
+    };
+
+    static inline std::map<ASTBinaryExpressionNode::binaryOperationType, std::string_view> ASTBinaryExpressionNode_type_to_string = {
+        {ASTBinaryExpressionNode::binaryOperationType::ADDITION, "ADDITION"},
+        {ASTBinaryExpressionNode::binaryOperationType::SUBTRACTION, "SUBTRACTION"},
+        {ASTBinaryExpressionNode::binaryOperationType::MULTIPLICATION, "MULTIPLICATION"},
+        {ASTBinaryExpressionNode::binaryOperationType::DIVISION, "DIVISION"},
+        {ASTBinaryExpressionNode::binaryOperationType::MODULO, "MODULO"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_EQUAL, "COMPARISON_EQUAL"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_NOT_EQUAL, "COMPARISON_NOT_EQUAL"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_LESS, "COMPARISON_LESS"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_GREATER, "COMPARISON_GREATER"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_LESS_OR_EQUAL, "COMPARISON_LESS_OR_EQUAL"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_GREATER_OR_EQUAL, "COMPARISON_GREATER_OR_EQUAL"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_AND, "COMPARISON_AND"},
+        {ASTBinaryExpressionNode::binaryOperationType::COMPARISON_OR, "COMPARISON_OR"},
+    };
+
+    static inline std::map<ASTAssignExpressionStatement::assignmentType, std::string_view> ASTAssignExpressionStatement_type_to_string = {
+        {ASTAssignExpressionStatement::ASSIGN, "ASSIGN"}
+    };
+}

@@ -13,6 +13,13 @@ set(STEG_LIB_SOURCES
         src/lexer/TextParser.h
         src/exceptions.h
         src/exceptions.h
+        src/ast/ASTNode.h
+        src/ast/ASTStatementNode.cpp
+        src/ast/ASTStatementNode.h
+        src/ast/ASTExpressionNode.cpp
+        src/ast/ASTExpressionNode.h
+        src/ast/ASTProgramNode.cpp
+        src/ast/ASTProgramNode.h
 )
 
 add_library(steg_lib STATIC ${STEG_LIB_SOURCES})
